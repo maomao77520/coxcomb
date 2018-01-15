@@ -11,29 +11,88 @@ function Chart(svg) {
     this.svg = svg;
     this.defaultOptions = {
         scaleAngle: 30,
-        scaleNum: 5,
+        scaleNum: 4,
         scaleColor: 'rgba(25,25,25,0.5)',
-        totalSector: 10,
-        outerRadius: 200,
+        totalSector: 8,
+        outerRadius: 250,
         borderColor: '#f00',
-        innerRadiusRadio: 0.3,
+        innerRadiusRadio: 0.2,
         scaleFontSize: 14,
         scaleFontColor: 'rgba(255,255,255,0.3)',
         outerTextColor: 'rgba(255,255,255,0.3)',
-        barNum: 4,
-        barIntervalAngle: 2,
+        barNum: 5,
+        barIntervalAngle: 3,
     }
 }
 
+var statistics = [
+    {
+        className: '中间件',
+        data: [100, 150, 120, 80, 180],
+        barColor: '#f00',
+        bgColor1: '#522366',
+        bgColor2: '#362c7d'
+    },
+    {
+        className: '应用',
+        data: [200, 50, 100, 20, 160],
+        barColor: '#ff0',
+        bgColor1: '#522366',
+        bgColor2: '#362c7d'
+    },
+    {
+        className: '基础设施',
+        data: [120, 70, 130, 65, 198],
+        barColor: '#00f',
+        bgColor1: '#522366',
+        bgColor2: '#362c7d'
+    },
+    {
+        className: '基础设施',
+        data: [20, 70, 110, 65, 136],
+        barColor: '#fff',
+        bgColor1: '#522366',
+        bgColor2: '#362c7d'
+    },
+    {
+        className: '中间件',
+        data: [100, 150, 120, 80, 180],
+        barColor: '#0ff',
+        bgColor1: '#376872',
+        bgColor2: '#0f3763'
+    },
+    {
+        className: '应用',
+        data: [200, 50, 100, 20, 160],
+        barColor: '#0f0',
+        bgColor1: '#376872',
+        bgColor2: '#0f3763'
+    },
+    {
+        className: '基础设施',
+        data: [100, 90, 30, 75, 115],
+        barColor: '#f0f',
+        bgColor1: '#376872',
+        bgColor2: '#0f3763'
+    },
+    {
+        className: '基础设施',
+        data: [120, 70, 130, 65, 198],
+        barColor: '#fff',
+        bgColor1: '#376872',
+        bgColor2: '#0f3763'
+    }
+];
 
 Chart.prototype = {
-    
     init: function (params) {
         this.data = mix(params || {}, this.defaultOptions);
         this.contentWrap = this.svg.append('svg:g');
         this.data.innerRadius = this.data.outerRadius * this.data.innerRadiusRadio;
         this.data.center = {x: this.data.width / 2, y: this.data.height / 2};
         this.data.sectorAngle = (360 - this.data.scaleAngle) / this.data.totalSector;
+        this.data.maxY = 200;
+        this.data.minY = 0;
         // this.renderCircle();
         this.renderSectors();
         this.getXAsix();
@@ -119,17 +178,14 @@ Chart.prototype = {
             endAngle: (start + data.sectorAngle) / 180 * Math.PI
         });
         for (var i = 0; i < data.totalSector; i++) {
-            
-
             var gradientData = [
                 {
                     offset: '0%',
-                    stopColor: '#522366'
+                    stopColor: statistics[i].bgColor1
                 },
                 {
                     offset: '100%',
-                    stopColor: '#362c7d'
-                    // stopColor: '#fff'
+                    stopColor: statistics[i].bgColor2
                 }
             ];
             var defs = this.contentWrap.append('defs').append('linearGradient')
@@ -156,8 +212,7 @@ Chart.prototype = {
 
     // 渲染圆环轴刻度文字
     renderYText: function () {
-        this.data.maxY = 200;
-        this.data.minY = 0;
+        
         var scaleLen = (this.data.outerRadius - this.data.innerRadius) / (this.data.scaleNum - 1);
         var textInterval = this.data.maxY / (this.data.scaleNum - 1);
         var x = this.data.center.x;
@@ -172,7 +227,7 @@ Chart.prototype = {
                 .attr('text-anchor', 'middle')
                 .attr('dominant-baseline', 'middle')
                 .attr('fill', this.data.scaleFontColor)
-                .text(textInterval*i)
+                .text(parseInt(textInterval*i))
         }
     },
 
@@ -186,7 +241,7 @@ Chart.prototype = {
                 .attr('class', 'outer-text')
                 .attr('dy', -10)
                 .append("textPath")
-                .text('hello')
+                .text(statistics[i-1].className)
                 .attr('fill', this.data.outerTextColor)
                 .attr('text-anchor', 'start')
                 .attr('xlink:href', '#text-path-' + (i-1))
@@ -201,123 +256,31 @@ Chart.prototype = {
     renderBar: function () {
         var data =this.data;
         var me = this;
-        var i = 0;
-        var startAngle = data.scaleAngle / 2 + i * data.sectorAngle;
-        var endAngle = startAngle + data.sectorAngle;
-        var barAngle = (data.sectorAngle - data.barIntervalAngle * (data.barNum + 1)) / data.barNum;
-        var lineScale = d3.scaleLinear()
-            .domain([1, data.barNum])
-            .range([startAngle + data.barIntervalAngle, endAngle - barAngle - data.barIntervalAngle]);
-
-        // var v1 ={};
-        // var v2 ={};
-
-        // v1.x = data.innerRadius * Math.sin(startAngle/180*Math.PI) + data.center.x;
-        // v1.y = data.center.y - data.innerRadius * Math.cos(startAngle/180*Math.PI);
-
-        // v2.x = data.innerRadius * Math.sin(endAngle/180*Math.PI) + data.center.x;
-        // v2.y = data.center.y - data.innerRadius * Math.cos(endAngle/180*Math.PI);
-        // var d = 'M ' + v1.x + ' ' + v1.y + ' A ' + data.innerRadius + ' ' + data.innerRadius
-        // + ',0,0,1,' + v2.x + ' ' + v2.y + '';
-
-
-        // var path = this.contentWrap.append('path')
-        //     .attr('d', d)
-        //     .attr('stroke', '#fff')
-        //     .attr('stroke-width', 2)
-        //     .attr('fill', 'none');
-
-        // var pathLength = path.node().getTotalLength();
-
-
-        var statistics = [
-            {tag: 1, value: 100},
-            {tag: 2, value: 150},
-            {tag: 3, value: 120},
-            {tag: 4, value: 80}
-        ];
-    console.log(lineScale(2))  
-        
-        var arc = d3.arc()
-            // .innerRadius(data.innerRadius)
-            // .outerRadius(120)
-            // .startAngle(16/180*Math.PI)
-            // .endAngle(23/180*Math.PI)
-
-        for (var n = 1; n <= data.barNum; n++) {
-            var s = lineScale(n);
-            var e = s + barAngle;
-            console.log(s,e)
-            var arcD = arc({
-                innerRadius: data.innerRadius + 4,
-                outerRadius: statistics[n-1].value,
-                startAngle: s/180*Math.PI,
-                endAngle: e/180*Math.PI
-            });
-            this.contentWrap.append('path')
-                .attr('d', arcD)
-                .attr('transform', 'translate(300,300)')
-                .attr('fill', '#ff0')
+        var arc = d3.arc();
+        for (var i = 0; i < data.totalSector; i++) {
+            var startAngle = data.scaleAngle / 2 + i * data.sectorAngle;
+            var endAngle = startAngle + data.sectorAngle;
+            var barAngle = (data.sectorAngle - data.barIntervalAngle * (data.barNum + 1)) / data.barNum;
+            var lineScale = d3.scaleLinear()
+                .domain([1, data.barNum])
+                .range([startAngle + data.barIntervalAngle, endAngle - barAngle - data.barIntervalAngle]);
+     
+            var avg = (data.outerRadius - data.innerRadius) / data.maxY;
+            for (var n = 1; n <= data.barNum; n++) {
+                var s = lineScale(n);
+                var e = s + barAngle;
+                var arcD = arc({
+                    innerRadius: data.innerRadius + 4,
+                    outerRadius: statistics[i].data[n-1] * avg + data.innerRadius,
+                    startAngle: s/180*Math.PI,
+                    endAngle: e/180*Math.PI
+                });
+                this.contentWrap.append('path')
+                    .attr('d', arcD)
+                    .attr('transform', 'translate(300,300)')
+                    .attr('fill', statistics[i].barColor)
+            }
         }
-
-
-
-
-
-        // var N = 5;
-        // var barWidth = (pathLength / N) - 1;
-        // var someData = [];
-        // var color = d3.scaleOrdinal(d3.schemeCategory10);
-        // for (var i = 0; i < N; i++) {
-        //     var currentDate = new Date();
-        //     currentDate.setDate(currentDate.getDate() + i);
-        //     someData.push({
-        //         date: currentDate,
-        //         value: Math.random(),
-        //         group: currentDate.getMonth()
-        //     });
-        // }
-
-        // var timeScale = d3.scaleTime()
-        //     .domain(d3.extent(someData, function (d) {
-        //         return d.date;
-        //     }))
-        //     .range([0, pathLength]);
-
-        // var me = this;
-        // svg.selectAll("rect")
-        //     .data(someData)
-        //     .enter()
-        //     .append("rect")
-        //     .attr("x", function (d, i) {
-
-        //         var linePer = timeScale(d.date);
-        //         var posOnLine = path.node().getPointAtLength(linePer);
-        //         var angleOnLine = path.node().getPointAtLength(linePer - barWidth);
-
-        //         d.linePer = linePer; // % distance are on the spiral
-        //         d.x = posOnLine.x; // x postion on the spiral
-        //         d.y = posOnLine.y; // y position on the spiral
-
-        //         d.a = (Math.atan2(angleOnLine.y, angleOnLine.x) * 180 / Math.PI) + 180 - me.data.scaleAngle / 2; // angle at the spiral position
-
-        //         return d.x;
-        //     })
-        //     .attr("y", function (d) {
-        //         return d.y;
-        //     })
-        //     .attr("width", function (d) {
-        //         return barWidth;
-        //     })
-        //     .attr("height", function (d) {
-        //         return 30;
-        //     })
-        //     .style("fill", function (d) {
-        //         return color(d.group);
-        //     })
-        //     .style("stroke", "none")
-        //     .attr("transform", function (d) {
-        //         return "rotate(" + d.a + "," + d.x + "," + d.y + ")"; // rotate the bar
-        //     });
+        
     },
 };
