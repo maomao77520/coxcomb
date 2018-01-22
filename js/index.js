@@ -10,32 +10,48 @@ function mix(des, src) {
 function Chart(svg) {
     this.svg = svg;
     this.defaultOptions = {
+        width: 600,
+        height: 600,
         scaleAngleRatio: 1.5,
-        scaleNum: 4,
-        scaleColor: 'rgba(25,25,25,0.5)',
+        scaleNum: 5,
         totalSector: 8,
         outerRadius: 250,
         borderColor: '#f00',
         innerRadiusRadio: 0.2,
+        scaleColor: 'rgba(25,25,25,0.5)',
         scaleFontSize: 14,
         scaleFontColor: 'rgba(255,255,255,0.3)',
-        outerTextColor: 'rgba(255,255,255,0.3)',
-        outerTextPos: 10,
+        scaleFontWeight: 'normal',
+        isShowXAsix: true,
+        isShowYAsix: true,
+        labelTextColor: 'rgba(255,255,255,0.3)',
+        labelTextPos: 20,
+        labelTextFontSize: 16,
+        labelTextFontWeight: 'normal',
         classIntervalRatio: 0,
         barIntervalRatio: 0.05,
         barNum: 5,
         barColor: ['#00f', '#0ff', '#f00', '#ff0', '#fff'],
+        isShowBarNum: true,
+        barFloatNum: 0,
+        barTextColor: '#aaa',
+        barTextSize: 12,
         paddingLeft: 10,
         paddingTop: 10,
         paddingRight: 10,
         paddingBottom: 10,
+        isShowLegend: true,
         legendFontColor: '#aaa',
         legendFontSize: 14,
-        legendWidth: 15,
-        legendHeight: 15,
-        legendPosition: 'topleft',
-        legendHeightRatio: 0.05,
-        legendWidthRatio: 0.05,
+        legendFontWeight: 'normal',
+        legendWidth: 0,
+        legendHeight: 0,
+        legendPosition: 'topcenter',
+        legendHeightRatio: 0.15,
+        legendWidthRatio: 0.15,
+        legendMargin: 4,
+        legendTextPaddingLeft: 4,
+        
     }
 }
 
@@ -98,8 +114,8 @@ var statistics = [
     }
 ];
 var legendData = [
-    {name: '测试测试', color: '#00f'},
-    {name: 'series22', color: '#0ff'},
+    {name: '测试测试测试测试测试测试', color: '#00f'},
+    {name: '数据', color: '#0ff'},
     {name: 'series333', color: '#f00'},
     {name: 'series4444', color: '#ff0'},
     {name: 'series5', color: '#fff'},
@@ -110,37 +126,52 @@ Chart.prototype = {
         this.data = mix(params || {}, this.defaultOptions);
         this.contentWrap = this.svg.append('svg:g');
 
+        if (this.data.isShowLegend) {
+            this.data.legendWidth = this.data.legendWidthRatio * this.data.width;
+            this.data.legendHeight = this.data.legendHeightRatio * this.data.height;
+        }
         var w = this.data.width - this.data.paddingLeft - this.data.paddingRight;
         var h = this.data.height - this.data.paddingTop -this.data.paddingBottom;
-        this.data.outerRadius = w > h ? h / 2 : w / 2;
-        this.data.outerRadius = this.data.outerRadius - 2 * this.data.outerTextPos;
-console.log(this.data.outerRadius)
+
+        if (this.data.legendPosition.indexOf('left') > -1 || this.data.legendPosition.indexOf('right') > -1) {
+            w = w - this.data.legendWidth * 2;
+        }
+        if (this.data.legendPosition.indexOf('top') > -1 || this.data.legendPosition.indexOf('bottom') > -1) {
+            h = h - this.data.legendHeight * 2;
+        }
+
+        var r = w > h ? h / 2 : w / 2;
+        this.data.outerRadius = r - this.data.labelTextPos - 3 / 2 * this.data.labelTextFontSize;
         this.data.innerRadius = this.data.outerRadius * this.data.innerRadiusRadio;
-        this.data.center = {x: this.data.width / 2, y: this.data.height / 2};
-        
-        // this.data.sectorAngle = (360 - this.data.scaleAngle) / this.data.totalSector;
-        
+        this.data.center = {
+            x: this.data.width / 2, 
+            y: this.data.height / 2
+        };
+console.log(this.data.outerRadius, this.data.center, '<<')      
         this.data.sectorAngle = this.getSectorAngle();
         this.data.scaleAngle = this.data.sectorAngle * this.data.scaleAngleRatio;
         this.data.barIntervalAngle = this.data.sectorAngle * this.data.barIntervalRatio;
         this.data.classIntervalAngle = this.data.sectorAngle * this.data.classIntervalRatio;
-        console.log(this.data.sectorAngle, this.data.scaleAngle, this.data.classIntervalAngle)
+        this.data.barAngle = (this.data.sectorAngle - this.data.barIntervalAngle * (this.data.barNum + 1)) / this.data.barNum;
 
         this.data.maxY = 200;
         this.data.minY = 0;
 
-this.contentWrap.append('g').attr('id', 'outertext');
-
         // this.renderCircle();
         this.renderSectors();
-        this.getXAsix();
-        this.getYAsix();
+        if (this.data.isShowXAsix) {
+            this.getXAsix();
+        }
+        if (this.data.isShowYAsix) {
+            this.getYAsix();
+        }
         this.renderYText();
-        // this.renderOuterText();
-        // this.renderBar();
+        this.renderBar();
 
         // this.getLegendSize();
-        this.renderLegend();
+        if (this.data.isShowLegend) {
+            this.renderLegend();
+        }
     },
 
     getSectorAngle: function () {
@@ -155,8 +186,8 @@ this.contentWrap.append('g').attr('id', 'outertext');
     renderCircle: function () {
         this.circle = this.contentWrap.append('circle')
             .attr('class', 'circleWrap')
-            .attr('cx', this.data.width / 2)
-            .attr('cy', this.data.height / 2)
+            .attr('cx', this.data.center.x)
+            .attr('cy', this.data.center.y)
             .attr('r', this.data.outerRadius)
             .attr('stroke', this.data.borderColor)
             .attr('fill', 'none')
@@ -187,43 +218,44 @@ this.contentWrap.append('g').attr('id', 'outertext');
             preV.x = startV2.x;
             preV.y = startV2.y;
             vAngle1 = this.data.scaleAngle / 2 + this.data.sectorAngle * i + i * this.data.classIntervalAngle;
-            startV1.x = this.data.innerRadius * Math.sin(vAngle1/180*Math.PI) + this.data.center.x;
+            startV1.x = this.data.center.x + this.data.innerRadius * Math.sin(vAngle1/180*Math.PI);
             startV1.y = this.data.center.y - this.data.innerRadius * Math.cos(vAngle1/180*Math.PI);
-            startV2.x = (this.data.outerRadius + this.data.outerTextPos) * Math.sin(vAngle1/180*Math.PI) + this.data.center.x;
-            startV2.y = this.data.center.y - (this.data.outerRadius + this.data.outerTextPos) * Math.cos(vAngle1/180*Math.PI);
+            startV2.x = (this.data.outerRadius + this.data.labelTextPos) * Math.sin(vAngle1/180*Math.PI) + this.data.center.x;
+            startV2.y = this.data.center.y - (this.data.outerRadius + this.data.labelTextPos) * Math.cos(vAngle1/180*Math.PI);
             this.renderYAsix(startV1, startV2);
 
             if (this.data.classIntervalRatio > 0) {
                 vAngle2 = this.data.scaleAngle / 2 + this.data.sectorAngle * (i+1) + i * this.data.classIntervalAngle;
                 endV1.x = this.data.innerRadius * Math.sin(vAngle2/180*Math.PI) + this.data.center.x;
                 endV1.y = this.data.center.y - this.data.innerRadius * Math.cos(vAngle2/180*Math.PI);
-                endV2.x = (this.data.outerRadius + 10) * Math.sin(vAngle2/180*Math.PI) + this.data.center.x;
+                endV2.x = (this.data.outerRadius  + this.data.labelTextPos) * Math.sin(vAngle2/180*Math.PI) + this.data.center.x;
                 endV2.y = this.data.center.y - (this.data.outerRadius + 10) * Math.cos(vAngle2/180*Math.PI);
                 this.renderYAsix(endV1, endV2);
 
-                this.renderOuterText(startV2, endV2, i);
+                this.renderLabelText(startV2, endV2, i);
             }
             else if (i > 0) {
-                this.renderOuterText(preV, startV2, i-1);
+                this.renderLabelText(preV, startV2, i-1);
             }
         }
     },
 
     // 根据角度渲染圆环轴刻度线
     renderXAsix: function (r) {
-        var me = this
+        var me = this;
+        var data = this.data;
         var d = d3.arc()({
             innerRadius: 0,
             outerRadius: r,
-            startAngle: me.data.scaleAngle / 2 / 180 * Math.PI,
-            endAngle: (360-me.data.scaleAngle / 2) / 180 * Math.PI
+            startAngle: data.scaleAngle / 2 / 180 * Math.PI,
+            endAngle: (360-data.scaleAngle / 2) / 180 * Math.PI
         });
 
         var me = this;
         this.contentWrap.select('#xasix').append('path')
         .attr('d', d.split('L')[0])
-        .attr('transform', 'translate(300,300)')
-        .attr('stroke', this.data.scaleColor)
+        .attr('transform', 'translate(' + data.center.x + ',' + data.center.y + ')')
+        .attr('stroke', data.scaleColor)
         .attr('fill', 'none')
     },
 
@@ -285,13 +317,13 @@ this.contentWrap.append('g').attr('id', 'outertext');
             this.contentWrap.select('#sectorwrap').append('path')
                 // .attr('id', 'text-path-' + i)
                 .attr('d', d)
-                .attr('transform', 'translate(300,300) rotate(' + (data.scaleAngle + (data.sectorAngle - data.scaleAngle)/2 +i*data.sectorAngle + i * data.classIntervalAngle) +')')
+                .attr('transform', 'translate(' + data.center.x + ',' + data.center.y + ') rotate(' + (data.scaleAngle + (data.sectorAngle - data.scaleAngle)/2 +i*data.sectorAngle + i * data.classIntervalAngle) +')')
                 .attr('fill', 'url(#sector-lineGradient-'+ i + ')')
 
             this.contentWrap.select('#sectorwrap').append('path')
                 .attr('d', dInterval)
                 // .attr('transform', 'translate(300,300) rotate(' + (data.scaleAngle + (data.classIntervalAngle - data.scaleAngle)/2 +i*data.sectorAngle) +')')
-                .attr('transform', 'translate(300,300) rotate(' + ((data.scaleAngle - data.classIntervalAngle)/2 + data.classIntervalAngle + (i+1) * data.sectorAngle + i*data.classIntervalAngle) + ')')
+                .attr('transform', 'translate(' + data.center.x + ',' + data.center.y + ') rotate(' + ((data.scaleAngle - data.classIntervalAngle)/2 + data.classIntervalAngle + (i+1) * data.sectorAngle + i*data.classIntervalAngle) + ')')
                 .attr('fill', 'none')
         }
     },
@@ -311,6 +343,7 @@ this.contentWrap.append('g').attr('id', 'outertext');
                 .attr('x', x)
                 .attr('y', y)
                 .attr('font-size', this.data.scaleFontSize)
+                .attr('font-weight', this.data.scaleFontWeight)
                 .attr('text-anchor', 'middle')
                 .attr('dominant-baseline', 'text-before-edge')
                 .attr('fill', this.data.scaleFontColor)
@@ -318,62 +351,47 @@ this.contentWrap.append('g').attr('id', 'outertext');
         }
     },
 
-    renderOuterText: function (v1, v2, i) {
-        console.log(v1, v2)
+    renderLabelText: function (v1, v2, i) {
         var data = this.data;
         var direction = 1;
         var me = this;
         var d = 'M' + v1.x + ' ' + v1.y + ' A ' + data.outerRadius + ' ' + data.outerRadius
             + ',0,0,1,' + v2.x + ',' + v2.y;
+        
         if (v1.y >= data.center.y) {
             d = 'M' + v2.x + ' ' + v2.y + ' A ' + data.outerRadius + ' ' + data.outerRadius
                 + ',0,0,0,' + v1.x + ',' + v1.y;
             direction = 2;
         }
+        this.contentWrap.append('g').attr('id', 'outertext');
         
-        
-        this.contentWrap.select('#outertext').append('defs').append('path')
+        this.contentWrap.select('#outertext')
+            .append('defs')
+            .append('path')
             .attr('d', d)
-            .attr('id', 'coxcomb-text-path-' + i)
+            .attr('id', 'coxcomb-text-path-' + i);
 
         this.contentWrap.select('#outertext').append('text')
             .attr('dy', function () {
-                if (direction === 1) {
-                    return 0;
+                if (direction == 1) {
+                    return -data.labelTextFontSize / 2;
                 }
-                return me.data.outerTextPos;
+                return data.labelTextFontSize/2;
+            })
+            .attr('dominant-baseline', function () {
+                return 'middle'
             })
             .append("textPath")
             .text(statistics[i].className)
-            .attr('fill', this.data.outerTextColor)
-            .attr('text-anchor', 'start')
+            .attr('font-size', data.labelTextFontSize)
+            .attr('fill', data.labelTextColor)
+            .attr('font-weight', data.labelTextFontWeight)
             .attr('xlink:href', '#coxcomb-text-path-' + (i))
             .attr('startOffset', function () {
                 var box = d3.select(this).node().getBBox();
                 var pathLength = d3.select('#coxcomb-text-path-' + i).node().getTotalLength();
                 return (pathLength - box.width)/2;
-            });
-        // }
-        // var pathLength = d3.select('#text-path-0').node().getTotalLength();
-        // var sectorOuterLength = 2 * Math.PI * this.data.outerRadius * this.data.sectorAngle / 360;
-        // this.contentWrap.append('g').attr('id', 'outertext');
-        // for (var i = 1; i <= this.data.totalSector; i++) {
-        //     var angle = this.data.scaleAngle / 2 + this.data.sectorAngle * 1;
-        //     this.contentWrap.select('#outertext').append('text')
-        //         .attr('class', 'outer-text')
-        //         .attr('dy', -this.data.outerTextPos)
-        //         .append("textPath")
-        //         .text(statistics[i-1].className)
-        //         .attr('fill', this.data.outerTextColor)
-        //         .attr('text-anchor', 'start')
-        //         .attr('xlink:href', '#text-path-' + (i-1))
-        //         .attr('transform', 'rotate(180)')
-        //         .attr('startOffset', function () {
-        //             var box = d3.select(this).node().getBBox();
-        //             var w = box.width * Math.sin(angle/180*Math.PI)
-        //             return (sectorOuterLength - w) / 2 / pathLength * 100 + '%'
-        //         })
-        // }     
+            });    
     },
 
     renderBar: function () {
@@ -381,90 +399,117 @@ this.contentWrap.append('g').attr('id', 'outertext');
         var me = this;
         var arc = d3.arc();
         this.contentWrap.append('g').attr('id', 'barwrap');
+        this.contentWrap.append('g').attr('id', 'bartextwrap');
+        var startV = {};
+        var s, e, barOuterR;
         for (var i = 0; i < data.totalSector; i++) {
-            var startAngle = data.scaleAngle / 2 + i * data.sectorAngle;
+            var startAngle = data.scaleAngle / 2 + i * data.sectorAngle + i * data.classIntervalAngle;
             var endAngle = startAngle + data.sectorAngle;
-            var barAngle = (data.sectorAngle - data.barIntervalAngle * (data.barNum + 1)) / data.barNum;
             var lineScale = d3.scaleLinear()
                 .domain([1, data.barNum])
-                .range([startAngle + data.barIntervalAngle, endAngle - barAngle - data.barIntervalAngle]);
+                .range([startAngle + data.barIntervalAngle, endAngle - data.barAngle - data.barIntervalAngle]);
      
             var avg = (data.outerRadius - data.innerRadius) / data.maxY;
             for (var n = 1; n <= data.barNum; n++) {
-                var s = lineScale(n);
-                var e = s + barAngle;
+                s = lineScale(n);
+                e = s + data.barAngle;
+                barOuterR = statistics[i].data[n-1] * avg + data.innerRadius;
                 var arcD = arc({
                     innerRadius: data.innerRadius + 4,
-                    outerRadius: statistics[i].data[n-1] * avg + data.innerRadius,
+                    outerRadius: barOuterR,
                     startAngle: s/180*Math.PI,
                     endAngle: e/180*Math.PI
                 });
                 this.contentWrap.select('#barwrap').append('path')
                     .attr('d', arcD)
-                    .attr('transform', 'translate(300,300)')
-                    .attr('fill', data.barColor[n - 1]);
+                    .attr('id', 'coxcomb-bar-text-path-' + i + '-' + n)
+                    .attr('transform', 'translate(' + data.center.x + ',' + data.center.y + ')')
+                    .attr('fill', data.barColor[n - 1])
+                    .attr('data-start', function () {
+                        startV = d3.select(this).node().getPointAtLength(0);
+                    });
+                var arcLength = 2 * Math.PI * barOuterR * data.barAngle / 360;
+                if (this.data.isShowBarNum) {
+                    this.contentWrap.select('#bartextwrap').append('g')
+                        .attr('transform', function () {
+                            
+                            var rotateAngle = data.scaleAngle / 2 + i * data.sectorAngle
+                                + (i-1)*data.classIntervalAngle + n * data.barAngle
+                                + (n-1) * data.barIntervalAngle;
+                            return 'translate('
+                                + (data.center.x + startV.x) + ',' + (data.center.y + startV.y)
+                                + ') rotate(' + rotateAngle + ')'
+                        })
+                        .append('text')
+                        .text(Number(statistics[i].data[n-1]).toFixed(data.barFloatNum))
+                        .attr('x', arcLength / 2)
+                        .attr('dy', data.barTextSize)
+                        .attr('text-anchor', 'middle')
+                        .attr('fill', data.barTextColor)
+                        .attr('font-size', data.barTextSize);
+                }
             }
-        }  
+        }
     },
 
     renderLegend: function () {
         var data =this.data;
-        this.legend = this.contentWrap.append('g').attr('id', 'legendwrap');
         var item;
         var me = this;
         var box;
-        var pos;
+        var pos = this.getLegendPosition();
+        var itemSize = data.legendHeight / legendData.length - data.legendMargin;
+        this.legend = this.contentWrap.append('g').attr('id', 'legendwrap')
+            .attr('transform', 'translate(' + pos.x + ',' + pos.y +')');
+
+        this.legend
+            .append('defs')
+            .append('path')
+            .attr('d', 'M ' + (itemSize + data.legendTextPaddingLeft) + ' ' + pos.y + ' L ' + (data.legendWidth) + ' ' + pos.y)
+            .attr('id', 'coxcomb-legend-text-path')
+
         for (var i = 0; i < legendData.length; i++) {
             item = this.legend.append('g')
                 .attr('text-anchor', 'start')
-                .attr('transform', 'translate(0, ' + (data.legendHeight + 5) * i + ')');
+                .attr('transform', 'translate(0, ' + (itemSize + data.legendMargin) * i + ')');
 
             item.append('text')
+                .append('textPath')
+                .attr('xlink:href', '#coxcomb-legend-text-path')
                 .text(legendData[i].name)
-                .attr('x', function () {
-                    box = d3.select(this).node().getBBox();
-                    pos = me.getLegendPosition(box);
-                    return pos.x + data.legendWidth + 5;
-                })
-                // .attr('x', data.paddingLeft + data.legendWidth + 5)
-                .attr('y', data.paddingTop + (data.legendHeight - data.legendFontSize) / 2)
-                .attr('dy', '0.5em')
                 .attr('dominant-baseline', 'middle')
                 .attr('fill', data.legendFontColor)
                 .attr('font-size', data.legendFontSize)
+                .attr('font-weight', data.legendFontWeight)
+
             item.append('rect')
-                .attr('width', data.legendWidth)
-                .attr('height', data.legendHeight)
-                .attr('x', pos.x)
-                // .attr('x', data.paddingLeft)
-                .attr('y', data.paddingTop)
+                .attr('width', itemSize)
+                .attr('height', itemSize)
                 .attr('fill', legendData[i].color)
         }
     },
 
-    getLegendPosition: function (box) {
+    getLegendPosition: function () {
         var data = this.data;
         var pos = data.legendPosition;
         var res = {
             x: data.paddingLeft,
             y: data.paddingTop
         };
-        switch (pos) {
-            case 'topleft':
-                break;
-            case 'topcenter':
-                res.x = data.width / 2 - box.width / 2;
-                break;
-            case 'topright':
-                res.x = data.width - box.width - data.paddingRight - data.legendWidth - 5;
-                break;
-            case 'middleleft':
-                // res.y = 
-            case 'middleright':
-            case 'bottomleft':
-            case 'bottomcenter':
-            case 'bottomright':
+        if (pos.indexOf('center') > -1) {
+            res.x = data.width / 2 - data.legendWidth / 2;
         }
+        else if (pos.indexOf('right') > -1) {
+            res.x = data.width - data.paddingRight - data.legendWidth;
+        }
+
+        if (pos.indexOf('middle') > -1) {
+            res.y = data.height / 2 - data.legendHeight / 2;
+        }
+        else if (pos.indexOf('bottom') > -1) {
+            res.y = data.height - data.paddingBottom - data.legendHeight;
+        }
+        console.log(data.width,data.paddingRight, data.legendWidth, res)
         return res;
     },
 };
