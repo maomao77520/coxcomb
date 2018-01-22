@@ -36,10 +36,10 @@ function Chart(svg) {
         barFloatNum: 0,
         barTextColor: '#aaa',
         barTextSize: 12,
-        paddingLeft: 10,
-        paddingTop: 10,
-        paddingRight: 10,
-        paddingBottom: 10,
+        paddingLeft: 0,
+        paddingTop: 0,
+        paddingRight: 0,
+        paddingBottom: 0,
         isShowLegend: true,
         legendFontColor: '#aaa',
         legendFontSize: 14,
@@ -51,6 +51,10 @@ function Chart(svg) {
         legendWidthRatio: 0.15,
         legendMargin: 4,
         legendTextPaddingLeft: 4,
+        innerText: 88,
+        innerTextColor: '#fff',
+        innerTextSize: 30,
+        innerTextWeight: 'bold',
         
     }
 }
@@ -147,7 +151,7 @@ Chart.prototype = {
             x: this.data.width / 2, 
             y: this.data.height / 2
         };
-console.log(this.data.outerRadius, this.data.center, '<<')      
+     
         this.data.sectorAngle = this.getSectorAngle();
         this.data.scaleAngle = this.data.sectorAngle * this.data.scaleAngleRatio;
         this.data.barIntervalAngle = this.data.sectorAngle * this.data.barIntervalRatio;
@@ -157,21 +161,21 @@ console.log(this.data.outerRadius, this.data.center, '<<')
         this.data.maxY = 200;
         this.data.minY = 0;
 
-        // this.renderCircle();
+        // this.renderCircleBorder();
         this.renderSectors();
+        this.renderYText();
+        this.renderInnerCircle();
         if (this.data.isShowXAsix) {
             this.getXAsix();
         }
         if (this.data.isShowYAsix) {
             this.getYAsix();
         }
-        this.renderYText();
-        this.renderBar();
-
-        // this.getLegendSize();
         if (this.data.isShowLegend) {
             this.renderLegend();
         }
+        this.renderBar();
+
     },
 
     getSectorAngle: function () {
@@ -183,14 +187,39 @@ console.log(this.data.outerRadius, this.data.center, '<<')
     },
 
     // 渲染最外层边框
-    renderCircle: function () {
-        this.circle = this.contentWrap.append('circle')
-            .attr('class', 'circleWrap')
+    renderCircleBorder: function () {
+        this.circleBorder = this.contentWrap.append('circle')
+            // .attr('class', 'coxcomb-circle-wrap')
             .attr('cx', this.data.center.x)
             .attr('cy', this.data.center.y)
             .attr('r', this.data.outerRadius)
             .attr('stroke', this.data.borderColor)
             .attr('fill', 'none')
+    },
+
+    renderInnerCircle: function () {
+        var data = this.data;
+        this.innerCircle = this.contentWrap.append('g')
+            .attr('id', 'coxcomb-inner-circle');
+        this.innerCircle.append('circle')
+            .attr('cx', data.center.x)
+            .attr('cy', data.center.y)
+            .attr('r', data.innerRadius)
+            .attr('fill', function () {
+                return data.innerCircleBg || 'none';
+            });
+        this.innerCircle.append('text')
+            .attr('fill', data.innerTextColor)
+            .attr('font-size', data.innerTextSize)
+            .attr('font-weight', data.innerTextWeight)
+            .text(data.innerText)
+            .attr('dominant-baseline', 'text-after-edge')
+            .attr('text-anchor', 'middle')
+            .attr('x', data.center.x)
+            .attr('y', function () {
+                var b = d3.select(this).node().getBBox();
+                return data.center.y + b.height / 2;
+            });
     },
 
     // 计算x轴（圆环轴）刻度（半径）
@@ -229,7 +258,7 @@ console.log(this.data.outerRadius, this.data.center, '<<')
                 endV1.x = this.data.innerRadius * Math.sin(vAngle2/180*Math.PI) + this.data.center.x;
                 endV1.y = this.data.center.y - this.data.innerRadius * Math.cos(vAngle2/180*Math.PI);
                 endV2.x = (this.data.outerRadius  + this.data.labelTextPos) * Math.sin(vAngle2/180*Math.PI) + this.data.center.x;
-                endV2.y = this.data.center.y - (this.data.outerRadius + 10) * Math.cos(vAngle2/180*Math.PI);
+                endV2.y = this.data.center.y - (this.data.outerRadius + this.data.labelTextPos) * Math.cos(vAngle2/180*Math.PI);
                 this.renderYAsix(endV1, endV2);
 
                 this.renderLabelText(startV2, endV2, i);
@@ -315,16 +344,19 @@ console.log(this.data.outerRadius, this.data.center, '<<')
                 .attr('stop-color', function (d) {return d.stopColor})
 
             this.contentWrap.select('#sectorwrap').append('path')
-                // .attr('id', 'text-path-' + i)
                 .attr('d', d)
-                .attr('transform', 'translate(' + data.center.x + ',' + data.center.y + ') rotate(' + (data.scaleAngle + (data.sectorAngle - data.scaleAngle)/2 +i*data.sectorAngle + i * data.classIntervalAngle) +')')
+                .attr('transform', 'translate(' + data.center.x + ',' + data.center.y
+                    + ') rotate(' + (data.scaleAngle + (data.sectorAngle - data.scaleAngle) / 2
+                    + i * data.sectorAngle + i * data.classIntervalAngle) + ')')
                 .attr('fill', 'url(#sector-lineGradient-'+ i + ')')
 
-            this.contentWrap.select('#sectorwrap').append('path')
-                .attr('d', dInterval)
-                // .attr('transform', 'translate(300,300) rotate(' + (data.scaleAngle + (data.classIntervalAngle - data.scaleAngle)/2 +i*data.sectorAngle) +')')
-                .attr('transform', 'translate(' + data.center.x + ',' + data.center.y + ') rotate(' + ((data.scaleAngle - data.classIntervalAngle)/2 + data.classIntervalAngle + (i+1) * data.sectorAngle + i*data.classIntervalAngle) + ')')
-                .attr('fill', 'none')
+            // this.contentWrap.select('#sectorwrap').append('path')
+            //     .attr('d', dInterval)
+            //     .attr('transform', 'translate(' + data.center.x + ',' + data.center.y
+            //         + ') rotate(' + ((data.scaleAngle - data.classIntervalAngle)/2
+            //         + data.classIntervalAngle + (i+1) * data.sectorAngle
+            //         + i * data.classIntervalAngle) + ')')
+            //     .attr('fill', 'red')
         }
     },
 
@@ -400,7 +432,7 @@ console.log(this.data.outerRadius, this.data.center, '<<')
         var arc = d3.arc();
         this.contentWrap.append('g').attr('id', 'barwrap');
         this.contentWrap.append('g').attr('id', 'bartextwrap');
-        var startV = {};
+        var startV = {}, endV = {};
         var s, e, barOuterR;
         for (var i = 0; i < data.totalSector; i++) {
             var startAngle = data.scaleAngle / 2 + i * data.sectorAngle + i * data.classIntervalAngle;
@@ -414,6 +446,7 @@ console.log(this.data.outerRadius, this.data.center, '<<')
                 s = lineScale(n);
                 e = s + data.barAngle;
                 barOuterR = statistics[i].data[n-1] * avg + data.innerRadius;
+                var arcLength = 2 * Math.PI * barOuterR * data.barAngle / 360;
                 var arcD = arc({
                     innerRadius: data.innerRadius + 4,
                     outerRadius: barOuterR,
@@ -428,13 +461,14 @@ console.log(this.data.outerRadius, this.data.center, '<<')
                     .attr('data-start', function () {
                         startV = d3.select(this).node().getPointAtLength(0);
                     });
-                var arcLength = 2 * Math.PI * barOuterR * data.barAngle / 360;
+                
+                var endV = 
+
                 if (this.data.isShowBarNum) {
                     this.contentWrap.select('#bartextwrap').append('g')
                         .attr('transform', function () {
-                            
                             var rotateAngle = data.scaleAngle / 2 + i * data.sectorAngle
-                                + (i-1)*data.classIntervalAngle + n * data.barAngle
+                                + (i-1) * data.classIntervalAngle + n * data.barAngle
                                 + (n-1) * data.barIntervalAngle;
                             return 'translate('
                                 + (data.center.x + startV.x) + ',' + (data.center.y + startV.y)
@@ -465,7 +499,7 @@ console.log(this.data.outerRadius, this.data.center, '<<')
         this.legend
             .append('defs')
             .append('path')
-            .attr('d', 'M ' + (itemSize + data.legendTextPaddingLeft) + ' ' + pos.y + ' L ' + (data.legendWidth) + ' ' + pos.y)
+            .attr('d', 'M ' + (itemSize + data.legendTextPaddingLeft) + ' 0 L ' + (data.legendWidth) + ' 0')
             .attr('id', 'coxcomb-legend-text-path')
 
         for (var i = 0; i < legendData.length; i++) {
@@ -477,7 +511,7 @@ console.log(this.data.outerRadius, this.data.center, '<<')
                 .append('textPath')
                 .attr('xlink:href', '#coxcomb-legend-text-path')
                 .text(legendData[i].name)
-                .attr('dominant-baseline', 'middle')
+                .attr('dominant-baseline', 'text-before-edge')
                 .attr('fill', data.legendFontColor)
                 .attr('font-size', data.legendFontSize)
                 .attr('font-weight', data.legendFontWeight)
@@ -509,7 +543,6 @@ console.log(this.data.outerRadius, this.data.center, '<<')
         else if (pos.indexOf('bottom') > -1) {
             res.y = data.height - data.paddingBottom - data.legendHeight;
         }
-        console.log(data.width,data.paddingRight, data.legendWidth, res)
         return res;
     },
 };
