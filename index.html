@@ -161,6 +161,7 @@
         <script type="text/javascript" src="./js/common.js"></script>
         <script type="text/javascript" src="./data.js"></script>
         <script type="text/javascript" src="./js/index.js"></script>
+        <script type="text/javascript" src="./js/stacked.js"></script>
         <script src="./assets/jquery.min.js"></script>
         <script type="text/javascript">
 
@@ -169,7 +170,7 @@
         		.attr('height', initData.height)
         		.style('background', '#333');
 
-        	var chart = new Chart(svg);
+        	var chart = new Chart('cluster', svg);
         	chart.init(initData)
 
         var params = {

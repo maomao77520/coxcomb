@@ -1,22 +1,3 @@
-
-function Chart(type, svg) {
-	return this.init(type, svg);
-}
-
-Chart.prototype = {
-	init: function (type, svg) {
-		var chart;
-		if (type === 'cluster') {
-		    chart = new Cluster(svg);
-		}
-		else {
-			chart = new Stacked(svg);
-		}
-	    return chart;
-	},
-};
-
-
 function Cluster(svg) {
     this.svg = svg;
     this.defaultOptions = {
@@ -323,4 +304,3 @@ Cluster.prototype = {
         }
     }
 };
-
