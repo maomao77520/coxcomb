@@ -26,11 +26,200 @@
         </text>
     </svg> -->
 
+        <script type="text/javascript" src="./js/common.js"></script>
         <script type="text/javascript" src="./js/index.js"></script>
         <script type="text/javascript">
         	var width = 800;
         	var height = 800;
-        	var svg = d3.select('body').append('svg')
+            var sectorBgColor = [
+                {start: '#522366', end: '#362c7d'},
+                {start: '#522366', end: '#362c7d'},
+                {start: '#522366', end: '#362c7d'},
+                {start: '#522366', end: '#362c7d'},
+                {start: '#376872', end: '#0f3763'},
+                {start: '#376872', end: '#0f3763'},
+                {start: '#376872', end: '#0f3763'},
+                {start: '#376872', end: '#0f3763'}
+            ];
+            var statistics = [
+                {
+                    name: '中间件',
+                    data: [{
+                        CPI: '中间件-cpi',
+                        instance: '中间件-1',
+                        kpi: '中间件-kpi',
+                        numberValue: 211
+                    }, {
+                        CPI: '中间件-cpi',
+                        instance: '中间件-1',
+                        kpi: '中间件-kpi',
+                        numberValue: 321
+                    }, {
+                        CPI: '中间件-cpi',
+                        instance: '中间件-1',
+                        kpi: '中间件-kpi',
+                        numberValue: 250
+                    },{
+                        numberValue: 0
+                    }],
+                }, {
+                    name: '基础设备',
+                    data: [{
+                        CPI: '基础设备-cpi',
+                        instance: '基础设备-1',
+                        kpi: '基础设备-kpi',
+                        numberValue: 119
+                    }, {
+                        CPI: '基础设备-cpi',
+                        instance: '基础设备-1',
+                        kpi: '基础设备-kpi',
+                        numberValue: 79
+                    }, {
+                        CPI: '基础设备-cpi',
+                        instance: '基础设备-1',
+                        kpi: '基础设备-kpi',
+                        numberValue: 230
+                    },{}]
+                }, {
+                    name: '应用',
+                    data: [{
+                        CPI: '应用-cpi',
+                        instance: '应用-1',
+                        kpi: '应用-kpi',
+                        numberValue: 403
+                    }, {
+                        CPI: '应用-cpi',
+                        instance: '应用-1',
+                        kpi: '应用-kpi',
+                        numberValue: 201
+                    }, {
+                        CPI: '应用-cpi',
+                        instance: '应用-1',
+                        kpi: '应用-kpi',
+                        numberValue: 356
+                    }, {
+                        CPI: '应用-cpi',
+                        instance: '应用-1',
+                        kpi: '应用-kpi',
+                        numberValue: 306
+                    }]
+                }, {
+                    name: '中间件',
+                    data: [{
+                        CPI: '中间件-cpi',
+                        instance: '中间件-1',
+                        kpi: '中间件-kpi',
+                        numberValue: 211
+                    }, {
+                        CPI: '中间件-cpi',
+                        instance: '中间件-1',
+                        kpi: '中间件-kpi',
+                        numberValue: 321
+                    }, {
+                        CPI: '中间件-cpi',
+                        instance: '中间件-1',
+                        kpi: '中间件-kpi',
+                        numberValue: 250
+                    }, {}],
+                }, {
+                    name: '基础设备',
+                    data: [{
+                        CPI: '基础设备-cpi',
+                        instance: '基础设备-1',
+                        kpi: '基础设备-kpi',
+                        numberValue: 119
+                    }, {
+                        CPI: '基础设备-cpi',
+                        instance: '基础设备-1',
+                        kpi: '基础设备-kpi',
+                        numberValue: 79
+                    }, {
+                        CPI: '基础设备-cpi',
+                        instance: '基础设备-1',
+                        kpi: '基础设备-kpi',
+                        numberValue: 230
+                    }, {
+                        CPI: '基础设备-cpi',
+                        instance: '基础设备-1',
+                        kpi: '基础设备-kpi',
+                        numberValue: 270
+                    }]
+                }, {
+                    name: '应用',
+                    data: [{
+                        CPI: '应用-cpi',
+                        instance: '应用-1',
+                        kpi: '应用-kpi',
+                        numberValue: 290
+                    }, {
+                        CPI: '应用-cpi',
+                        instance: '应用-1',
+                        kpi: '应用-kpi',
+                        numberValue: 201
+                    }, {
+                        CPI: '应用-cpi',
+                        instance: '应用-1',
+                        kpi: '应用-kpi',
+                        numberValue: 356
+                    }, {
+                        CPI: '应用-cpi',
+                        instance: '应用-1',
+                        kpi: '应用-kpi',
+                        numberValue: 286
+                    }]
+                }, {
+                    name: '基础设备',
+                    data: [{
+                        CPI: '基础设备-cpi',
+                        instance: '基础设备-1',
+                        kpi: '基础设备-kpi',
+                        numberValue: 119
+                    }, {
+                        CPI: '基础设备-cpi',
+                        instance: '基础设备-1',
+                        kpi: '基础设备-kpi',
+                        numberValue: 79
+                    }, {
+                        CPI: '基础设备-cpi',
+                        instance: '基础设备-1',
+                        kpi: '基础设备-kpi',
+                        numberValue: 230
+                    }, {
+                        CPI: '基础设备-cpi',
+                        instance: '基础设备-1',
+                        kpi: '基础设备-kpi',
+                        numberValue: 160
+                    }]
+                }, {
+                    name: '应用',
+                    data: [{
+                        CPI: '应用-cpi',
+                        instance: '应用-1',
+                        kpi: '应用-kpi',
+                        numberValue: 290
+                    }, {
+                        CPI: '应用-cpi',
+                        instance: '应用-1',
+                        kpi: '应用-kpi',
+                        numberValue: 201
+                    }, {
+                        CPI: '应用-cpi',
+                        instance: '应用-1',
+                        kpi: '应用-kpi',
+                        numberValue: 356
+                    }, {
+                        CPI: '应用-cpi',
+                        instance: '应用-1',
+                        kpi: '应用-kpi',
+                        numberValue: 330
+                    }]
+                }
+            ];
+
+            var legendData = ['测试测试测试测试测试测试','数据','series333','series4444'];
+            var legendColor = ['#ff0', '#f00', '#f0f', '#0f0', '#0ff'];
+        	
+            var svg = d3.select('body').append('svg')
         		.attr('width', width)
         		.attr('height', height)
         		.style('background', '#333');
@@ -39,7 +228,11 @@
         	chart.init({
         		width: width,
         		height: height,
-                innerCircleBg: 'red'
+                innerCircleBg: 'red',
+                statistics: statistics,
+                legendColor: legendColor,
+                legendData: legendData,
+                sectorBgColor: sectorBgColor
         	});
         </script>
     </body>
