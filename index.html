@@ -4,236 +4,235 @@
         <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
         <title></title>
         <script src="./assets/d3.v4.js"></script>
+
+        <style type="text/css">
+           input, select {
+               display: inline-block;
+               margin: 4px;
+               width: 80px;
+               height: 24px;
+               line-height: 24px;
+           }
+           .panel {
+               float: right;
+               margin-right: 10px;
+               width: 380px;
+           }
+           .block {
+               float: left;
+           }
+           #content-wrap  {
+               display: inline-block;
+           }
+           button {
+               display: block;
+           }
+           label {
+               font-size: 12px;
+           }
+       </style>
     </head>
     <body>
 
-    <!-- <svg style="background: #333" width="500" height="500">
-        <defs>
-			<linearGradient id="a" x1='0%' y1='0%' x2='0%' y2='100%' gradientTransform="rotate(0)"> 
-			    <stop offset="0%" style="stop-color: #fff"/>
-			    <stop offset="100%" style="stop-color: #000"/>
-			</linearGradient>
-		</defs>
-		<ellipse cx="200" cy="190" rx="55" ry="85" style="fill:url(#a)" transform="rotate(90)" transform-origin="50% 50%">/>
-		</rect>
-    </svg> -->
-   <!--  <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink">
-        <defs>
-            <path id="path1" d="M75,100 a1,1 0 0,0 100,0"/>
-        </defs>
-        <text x="10" y="100" style="fill:red;">
-            <textPath xlink:href="#path1">I love SVG I love SVG</textPath>
-        </text>
-    </svg> -->
+        <div class="panel">
+           <div class="block">
+               <label>内圆半径占比</label>
+               <input placeholder="内圆半径占比" name="innerRadiusRadio"></input>
+               <br/>
+               <label>坐标轴刻度区域</label>
+               <input placeholder="坐标轴刻度区域" name="scaleAngleRatio"></input>
+               <br/>
+               <label>坐标轴刻度数量</label>
+               <input placeholder="坐标轴刻度数量" name="scaleNum"></input>
+               <br/>
+               <label>网格线颜色</label>
+               <input placeholder="网格线颜色" name="scaleColor"></input>
+               <br/>
+               <label>坐标轴字体大小</label>
+               <input placeholder="坐标轴字体大小" name="scaleFontSize"></input>
+               <br/>
+               <label>坐标轴字体颜色</label>
+               <input placeholder="坐标轴字体颜色" name="scaleFontColor"></input>
+               <br/>
+               <label>坐标轴字体粗细</label>
+               <select name="scaleFontWeight">
+                   <option value="normal">正常</option>
+                   <option value="bold">加粗</option>
+               </select>
+               <br/>
+               <label>显示坐标轴X</label>
+               <select name="isShowXAsix">
+                   <option value='1'>是</option>
+                   <option value='0'>否</option>
+               </select>
+               <br/>
+               <label>显示坐标轴Y</label>
+               <select name="isShowYAsix">
+                   <option value='1'>是</option>
+                   <option value='0'>否</option>
+               </select>
+               <br/>
+               
+               <label>类间距</label>
+               <input placeholder="类间距" name="classIntervalRatio"></input>
+               <br/>
+               <label>系列间距</label>
+               <input placeholder="系列间距" name="barIntervalRatio"></input>
+               <br/>
+               
+               <label>是否显示数值</label>
+               <select name="isShowBarNum">
+                   <option value="1">是</option>
+                   <option value="0">否</option>
+               </select>
+               <br/>
+               <label>数值小数点</label>
+               <input placeholder="数值小数点" name="barFloatNum"></input>
+               <br/>
+               <label>数值字体颜色</label>
+               <input placeholder="数值字体颜色" name="barTextColor"></input>
+               <br/>
+               <label>数值字体大小</label>
+               <input placeholder="数值字体大小" name="barTextSize"></input>
+               <br/>
+                
+           </div>
+           <div class="block">
+               <label>上边距</label>
+               <input placeholder="上边距" name="paddingTop"></input> 
+               <br/>
+               <label>下边距</label>
+               <input placeholder="下边距" name="paddingBottom"></input> 
+               <br/>
+               <label>左边距</label>
+               <input placeholder="左边距" name="paddingLeft"></input> 
+               <br/>
+               <label>右边距</label>
+               <input placeholder="右边距" name="paddingRight"></input> 
+               <br/>
+               <label>分类字体颜色</label>
+               <input placeholder="分类标签字体颜色" name="labelTextColor"></input>
+               <br/>
+               <label>分类字体大小</label>
+               <input placeholder="分类标签字体大小" name="labelTextFontSize"></input>
+               <br/>
+               <label>是否显示图例</label>
+               <select name="isShowLegend">
+                   <option value="1">是</option>
+                   <option value="0">否</option>
+               </select>
+               <br/>
+               <label>图例位置</label>
+               <select name="legendPosition">
+                   <option value="">图例位置</option>
+                   <option value="topleft">左上</option>
+                   <option value="middleleft">左中</option>
+                   <option value="bottomleft">左下</option>
+                   <option value="topcenter">中上</option>
+                   <option value="bottomcenter">中下</option>
+                   <option value="topright">右上</option>
+                   <option value="middleright">右中</option>
+                   <option value="bottomright">右下</option>
+               </select>
+               <br/>
+
+               <label>图例字体颜色</label>
+               <input placeholder="图例字体颜色" name="legendFontColor"></input> 
+               <br/>
+               <label>图例字体大小</label>
+               <input placeholder="图例字体大小" name="legendFontSize"></input> 
+               <br/>
+               <label>图例字体加粗</label>
+               <select name="legendFontWeight">
+                   <option value="normal">正常</option>
+                   <option value="bold">加粗</option>
+               </select>
+               <br/>
+               <label>图例高度占比</label>
+               <input placeholder="图例高度占比" name="legendHeightRatio"></input> 
+               <br/>
+               <label>图例宽度占比</label>
+               <input placeholder="图例宽度占比" name="legendWidthRatio"></input> 
+               <br/>
+           </div>
+           <button id="submitBtn">确定</button>
+       </div>
 
         <script type="text/javascript" src="./js/common.js"></script>
+        <script type="text/javascript" src="./data.js"></script>
         <script type="text/javascript" src="./js/index.js"></script>
+        <script src="./assets/jquery.min.js"></script>
         <script type="text/javascript">
-        	var width = 800;
-        	var height = 800;
-            var sectorBgColor = [
-                {start: '#522366', end: '#362c7d'},
-                {start: '#522366', end: '#362c7d'},
-                {start: '#522366', end: '#362c7d'},
-                {start: '#522366', end: '#362c7d'},
-                {start: '#376872', end: '#0f3763'},
-                {start: '#376872', end: '#0f3763'},
-                {start: '#376872', end: '#0f3763'},
-                {start: '#376872', end: '#0f3763'}
-            ];
-            var statistics = [
-                {
-                    name: '中间件',
-                    data: [{
-                        CPI: '中间件-cpi',
-                        instance: '中间件-1',
-                        kpi: '中间件-kpi',
-                        numberValue: 211
-                    }, {
-                        CPI: '中间件-cpi',
-                        instance: '中间件-1',
-                        kpi: '中间件-kpi',
-                        numberValue: 321
-                    }, {
-                        CPI: '中间件-cpi',
-                        instance: '中间件-1',
-                        kpi: '中间件-kpi',
-                        numberValue: 250
-                    },{
-                        numberValue: 0
-                    }],
-                }, {
-                    name: '基础设备',
-                    data: [{
-                        CPI: '基础设备-cpi',
-                        instance: '基础设备-1',
-                        kpi: '基础设备-kpi',
-                        numberValue: 119
-                    }, {
-                        CPI: '基础设备-cpi',
-                        instance: '基础设备-1',
-                        kpi: '基础设备-kpi',
-                        numberValue: 79
-                    }, {
-                        CPI: '基础设备-cpi',
-                        instance: '基础设备-1',
-                        kpi: '基础设备-kpi',
-                        numberValue: 230
-                    },{}]
-                }, {
-                    name: '应用',
-                    data: [{
-                        CPI: '应用-cpi',
-                        instance: '应用-1',
-                        kpi: '应用-kpi',
-                        numberValue: 403
-                    }, {
-                        CPI: '应用-cpi',
-                        instance: '应用-1',
-                        kpi: '应用-kpi',
-                        numberValue: 201
-                    }, {
-                        CPI: '应用-cpi',
-                        instance: '应用-1',
-                        kpi: '应用-kpi',
-                        numberValue: 356
-                    }, {
-                        CPI: '应用-cpi',
-                        instance: '应用-1',
-                        kpi: '应用-kpi',
-                        numberValue: 306
-                    }]
-                }, {
-                    name: '中间件',
-                    data: [{
-                        CPI: '中间件-cpi',
-                        instance: '中间件-1',
-                        kpi: '中间件-kpi',
-                        numberValue: 211
-                    }, {
-                        CPI: '中间件-cpi',
-                        instance: '中间件-1',
-                        kpi: '中间件-kpi',
-                        numberValue: 321
-                    }, {
-                        CPI: '中间件-cpi',
-                        instance: '中间件-1',
-                        kpi: '中间件-kpi',
-                        numberValue: 250
-                    }, {}],
-                }, {
-                    name: '基础设备',
-                    data: [{
-                        CPI: '基础设备-cpi',
-                        instance: '基础设备-1',
-                        kpi: '基础设备-kpi',
-                        numberValue: 119
-                    }, {
-                        CPI: '基础设备-cpi',
-                        instance: '基础设备-1',
-                        kpi: '基础设备-kpi',
-                        numberValue: 79
-                    }, {
-                        CPI: '基础设备-cpi',
-                        instance: '基础设备-1',
-                        kpi: '基础设备-kpi',
-                        numberValue: 230
-                    }, {
-                        CPI: '基础设备-cpi',
-                        instance: '基础设备-1',
-                        kpi: '基础设备-kpi',
-                        numberValue: 270
-                    }]
-                }, {
-                    name: '应用',
-                    data: [{
-                        CPI: '应用-cpi',
-                        instance: '应用-1',
-                        kpi: '应用-kpi',
-                        numberValue: 290
-                    }, {
-                        CPI: '应用-cpi',
-                        instance: '应用-1',
-                        kpi: '应用-kpi',
-                        numberValue: 201
-                    }, {
-                        CPI: '应用-cpi',
-                        instance: '应用-1',
-                        kpi: '应用-kpi',
-                        numberValue: 356
-                    }, {
-                        CPI: '应用-cpi',
-                        instance: '应用-1',
-                        kpi: '应用-kpi',
-                        numberValue: 286
-                    }]
-                }, {
-                    name: '基础设备',
-                    data: [{
-                        CPI: '基础设备-cpi',
-                        instance: '基础设备-1',
-                        kpi: '基础设备-kpi',
-                        numberValue: 119
-                    }, {
-                        CPI: '基础设备-cpi',
-                        instance: '基础设备-1',
-                        kpi: '基础设备-kpi',
-                        numberValue: 79
-                    }, {
-                        CPI: '基础设备-cpi',
-                        instance: '基础设备-1',
-                        kpi: '基础设备-kpi',
-                        numberValue: 230
-                    }, {
-                        CPI: '基础设备-cpi',
-                        instance: '基础设备-1',
-                        kpi: '基础设备-kpi',
-                        numberValue: 160
-                    }]
-                }, {
-                    name: '应用',
-                    data: [{
-                        CPI: '应用-cpi',
-                        instance: '应用-1',
-                        kpi: '应用-kpi',
-                        numberValue: 290
-                    }, {
-                        CPI: '应用-cpi',
-                        instance: '应用-1',
-                        kpi: '应用-kpi',
-                        numberValue: 201
-                    }, {
-                        CPI: '应用-cpi',
-                        instance: '应用-1',
-                        kpi: '应用-kpi',
-                        numberValue: 356
-                    }, {
-                        CPI: '应用-cpi',
-                        instance: '应用-1',
-                        kpi: '应用-kpi',
-                        numberValue: 330
-                    }]
-                }
-            ];
 
-            var legendData = ['测试测试测试测试测试测试','数据','series333','series4444'];
-            var legendColor = ['#ff0', '#f00', '#f0f', '#0f0', '#0ff'];
-        	
             var svg = d3.select('body').append('svg')
-        		.attr('width', width)
-        		.attr('height', height)
+        		.attr('width', initData.width)
+        		.attr('height', initData.height)
         		.style('background', '#333');
 
         	var chart = new Chart(svg);
-        	chart.init({
-        		width: width,
-        		height: height,
-                innerCircleBg: 'red',
-                statistics: statistics,
-                legendColor: legendColor,
-                legendData: legendData,
-                sectorBgColor: sectorBgColor
-        	});
+        	chart.init(initData)
+
+        var params = {
+            statistics: initData.statistics,
+            legendData: initData.legendData,
+            legendColor: initData.legendColor,
+            sectorBgColor: initData.sectorBgColor,
+            width: 600,
+            height: 600
+        };
+         $('#submitBtn').on('click', function (e) {
+            $('input').each(function (index, item) {
+                if($(item).val() !== '') {
+                  params[$(item).attr('name')] = $(item).val()
+                }
+                
+            });
+            $('select').each(function (index, item) {
+               if ($(item).val() !== '') {
+                   params[$(item).attr('name')] = $(item).val()
+               }
+            });
+
+           svg.attr('width', params.width).attr('height', params.height)  
+           chart.init(params);
+
+         });
+
+
+
+         // 这里是我自己模拟的拖拽缩放，应该是在平台层实现的
+         svg.on('mousedown', function () {
+             startX = d3.event.pageX;
+             startY = d3.event.pageY;
+             var diffW;
+              var diffH;
+              var bgWidth = initData.width;
+              var bgHeight = initData.height;
+              svg.on('mousemove', function () {
+                  diff = d3.event.pageX - startX > d3.event.pageY - startY
+                       ? d3.event.pageX - startX
+                       : d3.event.pageY - startY;
+                  diffW = d3.event.pageX - startX;
+                  diffH = d3.event.pageY - startY;
+                  d3.select(this)
+                       .attr('width', bgWidth + diffW)
+                       .attr('height', bgHeight + diffH)
+
+                  chart.data.width = bgWidth + diffW > 0 ? bgWidth + diffW : 0;
+                  chart.data.height = bgHeight + diffH > 0 ? bgHeight + diffH : 0;
+       
+                  // 拖拽改变属性，重新渲染
+                  chart.update(chart.data)
+
+              })
+          })
+
+          svg.on('mouseup', function () {
+              svg.on('mousemove', null);
+          });
+          $('html').on('mouseup', function () {
+              svg.on('mousemove', null);
+          })
         </script>
     </body>
 </html>

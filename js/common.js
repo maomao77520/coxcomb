@@ -23,7 +23,7 @@ var Common = {
 	getSectorAngle: function (data) {
         // totalSector*x+(totalSector-1)*classIntervalRatio*x + scaleAngleRatio * x = 360;
         var temp = data.totalSector + data.totalSector * data.classIntervalRatio
-        - data.classIntervalRatio + data.scaleAngleRatio;
+        - data.classIntervalRatio + Number(data.scaleAngleRatio);
         return 360 / temp;
     },
 
@@ -77,7 +77,9 @@ var Common = {
             startV1.y = data.center.y - data.innerRadius * Math.cos(vAngle1 / 180 * Math.PI);
             startV2.x = data.center.x + (data.outerRadius + data.labelTextPos) * Math.sin(vAngle1 / 180 * Math.PI);
             startV2.y = data.center.y - (data.outerRadius + data.labelTextPos) * Math.cos(vAngle1 / 180 * Math.PI);
-            this.renderYAsix(contentWrap, data, startV1, startV2);
+            if (~~data.isShowYAsix == 1) {
+                this.renderYAsix(contentWrap, data, startV1, startV2);
+            }
 
             if (data.classIntervalRatio > 0) {
                 vAngle2 = data.scaleAngle / 2 + data.sectorAngle * (i + 1) + i * data.classIntervalAngle;
@@ -85,7 +87,9 @@ var Common = {
                 endV1.y = data.center.y - data.innerRadius * Math.cos(vAngle2 / 180 * Math.PI);
                 endV2.x = data.center.x + (data.outerRadius  + data.labelTextPos) * Math.sin(vAngle2 / 180 * Math.PI);
                 endV2.y = data.center.y - (data.outerRadius + data.labelTextPos) * Math.cos(vAngle2 / 180 * Math.PI);
-                this.renderYAsix(contentWrap, data, endV1, endV2);
+                if (~~data.isShowYAsix == 1) {
+                    this.renderYAsix(contentWrap, data, endV1, endV2);
+                }
 
                 this.renderLabelText(contentWrap, data, startV2, endV2, i);
             }
@@ -104,7 +108,7 @@ var Common = {
 	        .attr('fill', 'none')
     },
 
-     renderLabelText: function (contentWrap, data, v1, v2, i) {
+    renderLabelText: function (contentWrap, data, v1, v2, i) {
         var direction = 1;
         var d = 'M' + v1.x + ' ' + v1.y + ' A ' + data.outerRadius + ' ' + data.outerRadius
             + ',0,0,1,' + v2.x + ',' + v2.y;

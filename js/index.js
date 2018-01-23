@@ -5,9 +5,9 @@ function Chart(svg) {
         height: 600,
         scaleAngleRatio: 1.5,
         scaleNum: 4,
-        outerRadius: 250,
         borderColor: '#f00',
         innerRadiusRadio: 0.2,
+        innerRadiusMargin: 4,
         scaleColor: 'rgba(25,25,25,0.5)',
         scaleFontSize: 14,
         scaleFontColor: 'rgba(255,255,255,0.3)',
@@ -19,7 +19,7 @@ function Chart(svg) {
         labelTextFontSize: 16,
         labelTextFontWeight: 'normal',
         classIntervalRatio: 0,
-        barIntervalRatio: 0.05,
+        barIntervalRatio: 0,
         isShowBarNum: true,
         barFloatNum: 0,
         barTextColor: '#aaa',
@@ -43,19 +43,37 @@ function Chart(svg) {
         innerText: 88,
         innerTextColor: '#fff',
         innerTextSize: 30,
-        innerTextWeight: 'bold',
-        
+        innerTextWeight: 'bold'
     }
 }
 
 Chart.prototype = {
     init: function (params) {
         this.data = Common.mix(params || {}, this.defaultOptions);
-        this.contentWrap = this.svg.append('svg:g');
+        this.initData();
 
         this.data.totalSector = this.data.statistics.length;
         this.data.barNum = this.data.legendData.length;
-        if (this.data.isShowLegend) {
+        this.data.sectorAngle = Common.getSectorAngle(this.data);
+        this.data.scaleAngle = this.data.sectorAngle * this.data.scaleAngleRatio;
+        this.data.barIntervalAngle = this.data.sectorAngle * this.data.barIntervalRatio;
+        this.data.classIntervalAngle = this.data.sectorAngle * this.data.classIntervalRatio;
+        this.data.barAngle = (this.data.sectorAngle - this.data.barIntervalAngle * (this.data.barNum + 1)) / this.data.barNum;
+
+        this.data.maxY = Common.getMaxY(this.data.statistics);
+        this.data.minY = 0;
+
+        this.data.oriOuterRadius = this.data.outerRadius;
+        this.data.oriWidth = this.data.width;
+        this.data.oriHeight = this.data.height;
+
+        this.render();
+        
+
+    },
+
+    initData: function () {
+        if (~~this.data.isShowLegend == 1) {
             this.data.legendWidth = this.data.legendWidthRatio * this.data.width;
             this.data.legendHeight = this.data.legendHeightRatio * this.data.height;
         }
@@ -71,7 +89,7 @@ Chart.prototype = {
 
         var r = w > h ? h / 2 : w / 2;
         this.data.outerRadius = r - this.data.labelTextPos - 3 / 2 * this.data.labelTextFontSize;
-        this.data.innerRadius = this.data.outerRadius * this.data.innerRadiusRadio;
+        this.data.innerRadius = this.data.outerRadius * this.data.innerRadiusRadio - this.data.innerRadiusMargin;
         this.data.center = {
             x: this.data.width / 2, 
             y: this.data.height / 2
@@ -88,34 +106,31 @@ Chart.prototype = {
         else if (this.data.legendPosition.indexOf('right') > -1) {
             this.data.center.x -= this.data.legendWidth / 2;
         }
-   
-   console.log(this.data.legendHeight, this.data.center, this.data.outerRadius)  
-        this.data.sectorAngle = Common.getSectorAngle(this.data);
-        this.data.scaleAngle = this.data.sectorAngle * this.data.scaleAngleRatio;
-        this.data.barIntervalAngle = this.data.sectorAngle * this.data.barIntervalRatio;
-        this.data.classIntervalAngle = this.data.sectorAngle * this.data.classIntervalRatio;
-        this.data.barAngle = (this.data.sectorAngle - this.data.barIntervalAngle * (this.data.barNum + 1)) / this.data.barNum;
+    },
 
-        this.data.maxY = Common.getMaxY(this.data.statistics);
-        this.data.minY = 0;
-
+    render: function () {
+        this.svg.select('g').remove();
+        this.contentWrap = this.svg.append('svg:g');
         // this.renderCircleBorder();
+        // this.renderInnerCircle();
         this.renderSectors();
-        this.renderInnerCircle();
         Common.renderYText(this.contentWrap, this.data);
-        if (this.data.isShowXAsix) {
+        Common.getYAsix(this.contentWrap, this.data);
+        if (~~this.data.isShowXAsix == 1) {
             Common.renderXAsix(this.contentWrap, this.data);
         }
-        if (this.data.isShowYAsix) {
-            Common.getYAsix(this.contentWrap, this.data);
-        }
-        if (this.data.isShowLegend) {
+        
+        if (~~this.data.isShowLegend == 1) {
             Common.renderLegend(this);
         }
         this.renderBar();
-
     },
 
+    update: function (params) {
+        this.data = params;
+        this.initData();
+        this.render();
+    },
     // 渲染最外层边框
     renderCircleBorder: function () {
         this.circleBorder = this.contentWrap.append('circle')
@@ -230,18 +245,20 @@ Chart.prototype = {
      
             var avg = (data.outerRadius - data.innerRadius) / data.maxY;
             for (var n = 1; n <= data.barNum; n++) {
-                if (!data.statistics[i].data[n-1].numberValue) {
+                if (data.statistics[i].data[n-1].numberValue == undefined) {
                     continue;
                 }
                 s = lineScale(n);
                 e = s + data.barAngle;
-                barOuterR = data.statistics[i].data[n-1].numberValue * avg + data.innerRadius;
+                barOuterR = data.statistics[i].data[n-1].numberValue > 0 
+                    ? data.statistics[i].data[n-1].numberValue * avg + data.innerRadius
+                    : data.innerRadius + data.innerRadiusMargin;
                 arcLength = 2 * Math.PI * barOuterR * data.barAngle / 360;
                 var arcD = arc({
-                    innerRadius: data.innerRadius + 4,
+                    innerRadius: data.innerRadius + data.innerRadiusMargin,
                     outerRadius: barOuterR,
-                    startAngle: s/180*Math.PI,
-                    endAngle: e/180*Math.PI
+                    startAngle: s / 180 * Math.PI,
+                    endAngle: e / 180 * Math.PI
                 });
                 this.contentWrap.select('#barwrap').append('path')
                     .attr('d', arcD)
@@ -255,8 +272,7 @@ Chart.prototype = {
                 if (s > 90 && s < 270) {
                     direction =2;
                 }
-                console.log(s)
-                if (this.data.isShowBarNum) {
+                if (~~this.data.isShowBarNum == 1) {
                     this.contentWrap.select('#bartextwrap').append('g')
                         .attr('transform', function () {
                             var rotateAngle = data.scaleAngle / 2 + i * data.sectorAngle
