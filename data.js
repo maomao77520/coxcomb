@@ -18,7 +18,7 @@ var initData = {
                 CPI: '中间件-cpi',
                 instance: '中间件-1',
                 kpi: '中间件-kpi',
-                numberValue: 0   // 柱状图数值
+                numberValue: 100   // 柱状图数值
             }, {
                 CPI: '中间件-cpi',
                 instance: '中间件-1',
@@ -30,7 +30,7 @@ var initData = {
                 kpi: '中间件-kpi',
                 numberValue: 250
             },{
-                numberValue: 0
+                numberValue: 150
             }],
         }, {
             name: '基础设备',
