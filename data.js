@@ -190,9 +190,9 @@ var initData = {
     legendColor: ['#ff0', '#f00', '#f0f', '#0f0', '#0ff'], // 图例颜色，对应柱状图颜色
     
     scaleAngleRatio: 1.2,  // 坐标轴刻度区域
-    scaleNum: 4,  // 坐标轴刻度数量
+    scaleNum: 4, // 坐标轴刻度数量
     borderColor: '#f00', // 外圆边框颜色 
-    innerRadiusRadio: 0.2,  // 内圆半径占比
+    innerRadiusRatio: 0.2,  // 内圆半径占比
     innerRadiusMargin: 4,   // 柱状图距离内圆边界的距离
     scaleColor: 'rgba(25,25,25,0.5)',  // 坐标轴线（网格线）颜色
     scaleFontSize: 14, //坐标轴字体大小

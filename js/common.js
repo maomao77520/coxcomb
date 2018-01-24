@@ -90,10 +90,12 @@ var Common = {
                 if (~~data.isShowYAsix == 1) {
                     this.renderYAsix(contentWrap, data, endV1, endV2);
                 }
-
-                this.renderLabelText(contentWrap, data, startV2, endV2, i);
+                if (~~data.isShowLabel == 1) {
+                    this.renderLabelText(contentWrap, data, startV2, endV2, i);
+                }
+                
             }
-            else if (i > 0) {
+            else if (i > 0 && ~~data.isShowLabel == 1) {
                 this.renderLabelText(contentWrap, data, preV, startV2, i-1);
             }
         }

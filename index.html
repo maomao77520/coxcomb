@@ -37,7 +37,7 @@
         <div class="panel">
            <div class="block">
                <label>内圆半径占比</label>
-               <input placeholder="内圆半径占比" name="innerRadiusRadio"></input>
+               <input placeholder="内圆半径占比" name="innerRadiusRatio"></input>
                <br/>
                <label>坐标轴刻度区域</label>
                <input placeholder="坐标轴刻度区域" name="scaleAngleRatio"></input>
@@ -68,6 +68,12 @@
                <br/>
                <label>显示坐标轴Y</label>
                <select name="isShowYAsix">
+                   <option value='1'>是</option>
+                   <option value='0'>否</option>
+               </select>
+               <br/>
+               <label>显示分类标签</label>
+               <select name="isShowLabel">
                    <option value='1'>是</option>
                    <option value='0'>否</option>
                </select>
@@ -178,8 +184,8 @@
             legendData: initData.legendData,
             legendColor: initData.legendColor,
             sectorBgColor: initData.sectorBgColor,
-            width: 600,
-            height: 600
+            width: initData.width,
+            height: initData.height
         };
          $('#submitBtn').on('click', function (e) {
             $('input').each(function (index, item) {
@@ -196,8 +202,10 @@
 
            svg.attr('width', params.width).attr('height', params.height)  
            chart.init(params);
-
          });
+         for (var o in chart.data) {
+            $('input[name=' + o + ']').val(chart.data[o])
+         } 
 
 
 

@@ -23,9 +23,9 @@ function Cluster(svg) {
         width: 600,
         height: 600,
         scaleAngleRatio: 1.5,
-        scaleNum: 4,
+        scaleNum: 5,
         borderColor: '#f00',
-        innerRadiusRadio: 0.2,
+        innerRadiusRatio: 0.2,
         innerRadiusMargin: 4,
         scaleColor: 'rgba(25,25,25,0.5)',
         scaleFontSize: 14,
@@ -33,12 +33,13 @@ function Cluster(svg) {
         scaleFontWeight: 'normal',
         isShowXAsix: true,
         isShowYAsix: true,
+        isShowLabel: true,
         labelTextColor: 'rgba(255,255,255,0.3)',
         labelTextPos: 20,
         labelTextFontSize: 16,
         labelTextFontWeight: 'normal',
         classIntervalRatio: 0,
-        barIntervalRatio: 0,
+        barIntervalRatio: 0.05,
         isShowBarNum: true,
         barFloatNum: 0,
         barTextColor: '#aaa',
@@ -82,10 +83,6 @@ Cluster.prototype = {
         this.data.maxY = Common.getMaxY(this.data.statistics);
         this.data.minY = 0;
 
-        this.data.oriOuterRadius = this.data.outerRadius;
-        this.data.oriWidth = this.data.width;
-        this.data.oriHeight = this.data.height;
-
         this.render();
         
 
@@ -108,7 +105,7 @@ Cluster.prototype = {
 
         var r = w > h ? h / 2 : w / 2;
         this.data.outerRadius = r - this.data.labelTextPos - 3 / 2 * this.data.labelTextFontSize;
-        this.data.innerRadius = this.data.outerRadius * this.data.innerRadiusRadio - this.data.innerRadiusMargin;
+        this.data.innerRadius = this.data.outerRadius * this.data.innerRadiusRatio - this.data.innerRadiusMargin;
         this.data.center = {
             x: this.data.width / 2, 
             y: this.data.height / 2
