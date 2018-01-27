@@ -36,6 +36,9 @@
 
         <div class="panel">
            <div class="block">
+               <label>外圆半径</label>
+               <input placeholder="外圆半径" name="outerRadius"></input>
+               <br/>
                <label>内圆半径占比</label>
                <input placeholder="内圆半径占比" name="innerRadiusRatio"></input>
                <br/>
@@ -44,6 +47,9 @@
                <br/>
                <label>坐标轴刻度数量</label>
                <input placeholder="坐标轴刻度数量" name="scaleNum"></input>
+               <br/>
+               <label>坐标轴刻度最大值</label>
+               <input placeholder="坐标轴刻度最大值" name="maxY"></input>
                <br/>
                <label>网格线颜色</label>
                <input placeholder="网格线颜色" name="scaleColor"></input>
@@ -60,14 +66,20 @@
                    <option value="bold">加粗</option>
                </select>
                <br/>
-               <label>显示坐标轴X</label>
+               <label>显示水平网格线</label>
                <select name="isShowXAsix">
                    <option value='1'>是</option>
                    <option value='0'>否</option>
                </select>
                <br/>
-               <label>显示坐标轴Y</label>
+               <label>显示垂直网格线</label>
                <select name="isShowYAsix">
+                   <option value='1'>是</option>
+                   <option value='0'>否</option>
+               </select>
+               <br/>
+               <label>显示刻度值</label>
+               <select name="isShowYText">
                    <option value='1'>是</option>
                    <option value='0'>否</option>
                </select>
@@ -78,14 +90,26 @@
                    <option value='0'>否</option>
                </select>
                <br/>
-               
+               <label>分类字体颜色</label>
+               <input placeholder="分类标签字体颜色" name="labelTextColor"></input>
+               <br/>
+               <label>分类字体大小</label>
+               <input placeholder="分类标签字体大小" name="labelTextFontSize"></input>
+               <br/>
+               <label>分类字体粗细</label>
+               <select name="labelTextFontWeight">
+                   <option value="normal">正常</option>
+                   <option value="bold">加粗</option>
+               </select>
+               <br/>               
+           </div>
+           <div class="block">
                <label>类间距</label>
                <input placeholder="类间距" name="classIntervalRatio"></input>
                <br/>
                <label>系列间距</label>
                <input placeholder="系列间距" name="barIntervalRatio"></input>
                <br/>
-               
                <label>是否显示数值</label>
                <select name="isShowBarNum">
                    <option value="1">是</option>
@@ -101,9 +125,6 @@
                <label>数值字体大小</label>
                <input placeholder="数值字体大小" name="barTextSize"></input>
                <br/>
-                
-           </div>
-           <div class="block">
                <label>上边距</label>
                <input placeholder="上边距" name="paddingTop"></input> 
                <br/>
@@ -116,12 +137,7 @@
                <label>右边距</label>
                <input placeholder="右边距" name="paddingRight"></input> 
                <br/>
-               <label>分类字体颜色</label>
-               <input placeholder="分类标签字体颜色" name="labelTextColor"></input>
-               <br/>
-               <label>分类字体大小</label>
-               <input placeholder="分类标签字体大小" name="labelTextFontSize"></input>
-               <br/>
+               
                <label>是否显示图例</label>
                <select name="isShowLegend">
                    <option value="1">是</option>
@@ -155,10 +171,7 @@
                </select>
                <br/>
                <label>图例高度占比</label>
-               <input placeholder="图例高度占比" name="legendHeightRatio"></input> 
-               <br/>
-               <label>图例宽度占比</label>
-               <input placeholder="图例宽度占比" name="legendWidthRatio"></input> 
+               <input placeholder="图例高度占比" name="legendRatio"></input> 
                <br/>
            </div>
            <button id="submitBtn">确定</button>

@@ -55,8 +55,8 @@ function Cluster(svg) {
         legendWidth: 0,
         legendHeight: 0,
         legendPosition: 'topcenter',
-        legendHeightRatio: 0.02,
-        legendWidthRatio: 0.15,
+        legendRatio: 0.02,
+        legendItemSize: 15,
         legendMargin: 4,
         legendTextPaddingLeft: 4,
         legendItemMargin: 20,
@@ -76,12 +76,16 @@ Cluster.prototype = {
         this.data.barNum = this.data.legendData.length;
         this.data.sectorAngle = Common.getSectorAngle(this.data);
         this.data.scaleAngle = this.data.sectorAngle * this.data.scaleAngleRatio;
-        this.data.barIntervalAngle = this.data.sectorAngle * this.data.barIntervalRatio;
-        this.data.classIntervalAngle = this.data.sectorAngle * this.data.classIntervalRatio;
-        this.data.barAngle = (this.data.sectorAngle - this.data.barIntervalAngle * (this.data.barNum + 1)) / this.data.barNum;
+        this.data.barAngle = this.getBarAngle();
+        this.data.barIntervalAngle = this.data.barAngle * this.data.barIntervalRatio;
+        this.data.classIntervalAngle = this.data.barAngle * this.data.classIntervalRatio;
 
-        this.data.maxY = Common.getMaxY(this.data.statistics);
+        this.data.maxY = this.data.maxY || Common.getMaxY(this.data.statistics);
         this.data.minY = 0;
+
+        this.data.oriOuterRadius = this.data.outerRadius;
+        this.data.oriWidth = this.data.width;
+        this.data.oriHeight = this.data.height;
 
         this.render();
         
@@ -90,26 +94,22 @@ Cluster.prototype = {
 
     initData: function () {
         if (~~this.data.isShowLegend == 1) {
-            this.data.legendWidth = this.data.legendWidthRatio * this.data.width;
-            this.data.legendHeight = this.data.legendHeightRatio * this.data.height;
+            this.getLegendSize();
+            // this.data.legendWidth = this.data.legendWidthRatio * this.data.width;
+            // this.data.legendHeight = this.data.legendHeightRatio * this.data.height;
         }
-        var w = this.data.width - this.data.paddingLeft - this.data.paddingRight;
-        var h = this.data.height - this.data.paddingTop -this.data.paddingBottom;
-
-        if (this.data.legendPosition.indexOf('center') > -1) {
-            h = h - this.data.legendHeight;
+        if (this.data.outerRadius == undefined) {
+            this.data.outerRadius = this.getOuterRadius();
         }
-        else if (this.data.legendPosition.indexOf('left') > -1 || this.data.legendPosition.indexOf('right') > -1) {
-            w = w - this.data.legendWidth;
-        }
-
-        var r = w > h ? h / 2 : w / 2;
-        this.data.outerRadius = r - this.data.labelTextPos - 3 / 2 * this.data.labelTextFontSize;
+        else {
+            this.data.outerRadius = Number(this.data.outerRadius);
+        } 
         this.data.innerRadius = this.data.outerRadius * this.data.innerRadiusRatio - this.data.innerRadiusMargin;
         this.data.center = {
-            x: this.data.width / 2, 
-            y: this.data.height / 2
+            x: this.data.width / 2 + Number(this.data.paddingLeft) - this.data.paddingRight, 
+            y: this.data.height / 2 + Number(this.data.paddingTop) - this.data.paddingBottom
         };
+
         if (this.data.legendPosition == 'topcenter') {
             this.data.center.y += this.data.legendHeight / 2;
         }
@@ -122,6 +122,38 @@ Cluster.prototype = {
         else if (this.data.legendPosition.indexOf('right') > -1) {
             this.data.center.x -= this.data.legendWidth / 2;
         }
+        this.data.oriCenterX = this.data.center.x;
+        this.data.oriCenterY = this.data.center.y;
+    },
+
+    getLegendSize: function () {
+        if (this.data.legendPosition.indexOf('center') > -1) {
+            this.data.legendHeight = this.data.height * this.data.legendRatio;
+        }
+        else {
+            this.data.legendWidth = this.data.width * this.data.legendRatio;
+        }
+    },
+
+    getOuterRadius: function () {
+        var w = this.data.width - this.data.paddingLeft - this.data.paddingRight;
+        var h = this.data.height - this.data.paddingTop -this.data.paddingBottom;
+
+        if (this.data.legendPosition.indexOf('center') > -1) {
+            h = h - this.data.legendHeight;
+        }
+        else {
+            w = w - this.data.legendWidth;
+        }
+
+        var r = w > h ? h / 2 : w / 2;
+        return r - this.data.labelTextPos - 3 / 2 * this.data.labelTextFontSize;
+    },
+
+    getBarAngle: function () {
+        var data = this.data;
+        //2*classIntervalRatio*barAngle + barNum*barAngle + (barNum-1)*barIntervalRatio*barAngle = sectorAngle
+        return data.sectorAngle / (2 * data.classIntervalRatio + data.barNum + (data.barNum - 1) * data.barIntervalRatio);
     },
 
     render: function () {
@@ -130,12 +162,14 @@ Cluster.prototype = {
         // this.renderCircleBorder();
         // this.renderInnerCircle();
         this.renderSectors();
-        Common.renderYText(this.contentWrap, this.data);
         Common.getYAsix(this.contentWrap, this.data);
         if (~~this.data.isShowXAsix == 1) {
             Common.renderXAsix(this.contentWrap, this.data);
         }
-        
+        if (~~this.data.isShowYText == 1) {
+            Common.renderYText(this.contentWrap, this.data);
+        }
+
         if (~~this.data.isShowLegend == 1) {
             Common.renderLegend(this);
         }
@@ -143,14 +177,25 @@ Cluster.prototype = {
     },
 
     update: function (params) {
-        this.data = params;
-        this.initData();
+        var d = this.data;
+        var diffW = params.width - d.oriWidth;
+        var diffH = params.height - d.oriHeight;
+        if (diffW < 0 && diffH < 0) {
+            var diff = Math.abs(diffW) < Math.abs(diffH) ? diffH : diffW;
+        }
+        else {
+            var diff = diffW > diffH ? diffH : diffW;
+        }
+        this.data.outerRadius = (+d.oriOuterRadius + diff/2) > 0 ? (+d.oriOuterRadius + diff/2) : 0;
+        this.data.innerRadius = this.data.outerRadius * this.data.innerRadiusRatio;
+        this.data.center.x = this.data.oriCenterX + diffW / 2;
+        this.data.center.y = this.data.oriCenterY + diffH / 2;
+
         this.render();
     },
     // 渲染最外层边框
     renderCircleBorder: function () {
         this.circleBorder = this.contentWrap.append('circle')
-            // .attr('class', 'coxcomb-circle-wrap')
             .attr('cx', this.data.center.x)
             .attr('cy', this.data.center.y)
             .attr('r', this.data.outerRadius)
@@ -186,8 +231,7 @@ Cluster.prototype = {
     // 渲染每个类区域，填充渐变色
     renderSectors: function () {
         var data = this.data;
-        var start = 360-data.sectorAngle / 2;
-        var intervalStart = 360 - data.classIntervalAngle / 2;
+        var start = 360 - data.sectorAngle / 2;
         this.contentWrap.append('g').attr('id', 'sectorwrap');
         var arc = d3.arc();
         var d = arc({
@@ -195,12 +239,6 @@ Cluster.prototype = {
             outerRadius: data.outerRadius,
             startAngle: start / 180 * Math.PI,
             endAngle: (start + data.sectorAngle) / 180 * Math.PI
-        });
-        var dInterval = arc({
-            innerRadius: data.innerRadius,
-            outerRadius: data.outerRadius,
-            startAngle: intervalStart / 180 * Math.PI,
-            endAngle: (intervalStart + data.classIntervalAngle) / 180 * Math.PI
         });
         for (var i = 0; i < data.totalSector; i++) {
             var gradientData = [
@@ -231,16 +269,8 @@ Cluster.prototype = {
                 .attr('d', d)
                 .attr('transform', 'translate(' + data.center.x + ',' + data.center.y
                     + ') rotate(' + (data.scaleAngle + (data.sectorAngle - data.scaleAngle) / 2
-                    + i * data.sectorAngle + i * data.classIntervalAngle) + ')')
+                    + i * data.sectorAngle) + ')')
                 .attr('fill', 'url(#sector-lineGradient-'+ i + ')')
-
-            // this.contentWrap.select('#sectorwrap').append('path')
-            //     .attr('d', dInterval)
-            //     .attr('transform', 'translate(' + data.center.x + ',' + data.center.y
-            //         + ') rotate(' + ((data.scaleAngle - data.classIntervalAngle)/2
-            //         + data.classIntervalAngle + (i+1) * data.sectorAngle
-            //         + i * data.classIntervalAngle) + ')')
-            //     .attr('fill', 'red')
         }
     },
 
@@ -253,18 +283,19 @@ Cluster.prototype = {
         var startV = {};
         var s, e, barOuterR, arcLength;
         for (var i = 0; i < data.totalSector; i++) {
-            var startAngle = data.scaleAngle / 2 + i * data.sectorAngle + i * data.classIntervalAngle;
+            var startAngle = data.scaleAngle / 2 + i * data.sectorAngle;
             var endAngle = startAngle + data.sectorAngle;
-            var lineScale = d3.scaleLinear()
-                .domain([1, data.barNum])
-                .range([startAngle + data.barIntervalAngle, endAngle - data.barAngle - data.barIntervalAngle]);
+            // var lineScale = d3.scaleLinear()
+            //     .domain([1, data.barNum])
+            //     .range([startAngle + data.barIntervalAngle, endAngle - data.barAngle - data.barIntervalAngle]);
      
             var avg = (data.outerRadius - data.innerRadius) / data.maxY;
             for (var n = 1; n <= data.barNum; n++) {
                 if (data.statistics[i].data[n-1].numberValue == undefined) {
                     continue;
                 }
-                s = lineScale(n);
+                // s = lineScale(n);
+                s = startAngle + data.classIntervalAngle + (n-1) * data.barAngle + (n-1) * data.barIntervalAngle;
                 e = s + data.barAngle;
                 barOuterR = data.statistics[i].data[n-1].numberValue > 0 
                     ? data.statistics[i].data[n-1].numberValue * avg + data.innerRadius

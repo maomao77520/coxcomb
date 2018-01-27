@@ -21,10 +21,9 @@ var Common = {
 
 	// 计算每个扇形的角度
 	getSectorAngle: function (data) {
-        // totalSector*x+(totalSector-1)*classIntervalRatio*x + scaleAngleRatio * x = 360;
-        var temp = data.totalSector + data.totalSector * data.classIntervalRatio
-        - data.classIntervalRatio + Number(data.scaleAngleRatio);
-        return 360 / temp;
+        // totalSector*x + scaleAngleRatio * x = 360;
+        var temp = 360 / (data.totalSector + Number(data.scaleAngleRatio));
+        return temp;
     },
 
     // 计算x轴（圆环轴）刻度（半径）
@@ -67,12 +66,12 @@ var Common = {
         var endV1 = {};
         var endV2 = {};
         var preV = {};
-        var len = data.classIntervalRatio ? data.totalSector-1 : data.totalSector;
+        // var len = data.classIntervalRatio > 0 ? data.totalSector-1 : data.totalSector;
         contentWrap.append('g').attr('id', 'yasix')
-        for (var i = 0; i <= len; i++) {
+        for (var i = 0; i <= data.totalSector; i++) {
             preV.x = startV2.x;
             preV.y = startV2.y;
-            vAngle1 = data.scaleAngle / 2 + data.sectorAngle * i + i * data.classIntervalAngle;
+            vAngle1 = data.scaleAngle / 2 + data.sectorAngle * i;
             startV1.x = data.center.x + data.innerRadius * Math.sin(vAngle1 / 180 * Math.PI);
             startV1.y = data.center.y - data.innerRadius * Math.cos(vAngle1 / 180 * Math.PI);
             startV2.x = data.center.x + (data.outerRadius + data.labelTextPos) * Math.sin(vAngle1 / 180 * Math.PI);
@@ -81,21 +80,7 @@ var Common = {
                 this.renderYAsix(contentWrap, data, startV1, startV2);
             }
 
-            if (data.classIntervalRatio > 0) {
-                vAngle2 = data.scaleAngle / 2 + data.sectorAngle * (i + 1) + i * data.classIntervalAngle;
-                endV1.x = data.center.x + data.innerRadius * Math.sin(vAngle2 / 180 * Math.PI);
-                endV1.y = data.center.y - data.innerRadius * Math.cos(vAngle2 / 180 * Math.PI);
-                endV2.x = data.center.x + (data.outerRadius  + data.labelTextPos) * Math.sin(vAngle2 / 180 * Math.PI);
-                endV2.y = data.center.y - (data.outerRadius + data.labelTextPos) * Math.cos(vAngle2 / 180 * Math.PI);
-                if (~~data.isShowYAsix == 1) {
-                    this.renderYAsix(contentWrap, data, endV1, endV2);
-                }
-                if (~~data.isShowLabel == 1) {
-                    this.renderLabelText(contentWrap, data, startV2, endV2, i);
-                }
-                
-            }
-            else if (i > 0 && ~~data.isShowLabel == 1) {
+            if (i > 0 && ~~data.isShowLabel == 1) {
                 this.renderLabelText(contentWrap, data, preV, startV2, i-1);
             }
         }
@@ -114,7 +99,7 @@ var Common = {
         var direction = 1;
         var d = 'M' + v1.x + ' ' + v1.y + ' A ' + data.outerRadius + ' ' + data.outerRadius
             + ',0,0,1,' + v2.x + ',' + v2.y;
-        
+    
         if (v1.y >= data.center.y) {
             d = 'M' + v2.x + ' ' + v2.y + ' A ' + data.outerRadius + ' ' + data.outerRadius
                 + ',0,0,0,' + v1.x + ',' + v1.y;
@@ -175,7 +160,7 @@ var Common = {
 
     renderLegend: function (that) {
     	var data = that.data;
-        var item, itemSize;
+        var item;
         var me = this;
         var box;
         var pos = this.getLegendPosition(that.data);
@@ -185,17 +170,16 @@ var Common = {
         if (data.legendPosition.indexOf('center') > -1) {
             var len = 0, b, textPos;
             var y = 0;
-            itemSize = data.legendHeight;
             for (var i = 0; i < data.legendData.length; i++) {
-                if (len > data.width * 0.8) {
+                if (len > data.outerRadius) {
                     len = 0;
-                    y = y + itemSize + data.legendMargin;
+                    y = y + data.legendItemSize + data.legendMargin;
                 }
                 var item = that.legend.append('g')
 
                 item.append('rect')
-                    .attr('width', itemSize)
-                    .attr('height', itemSize)
+                    .attr('width', data.legendItemSize)
+                    .attr('height', data.legendItemSize)
                     .attr('fill', data.legendColor[i % data.legendColor.length])
                     .attr('x', len)
                     .attr('y', y)
@@ -208,10 +192,10 @@ var Common = {
                     .attr('font-weight', data.legendFontWeight)
                     .attr('y', function () {
                         b = d3.select(this).node().getBBox();
-                        return y + b.height/ 2 + (itemSize - b.height) / 2
+                        return y + b.height/ 2 + (data.legendItemSize - b.height) / 2
                     })
                     .attr('x', function () {
-                        textPos = len + itemSize + data.legendTextPaddingLeft;
+                        textPos = len + data.legendItemSize + data.legendTextPaddingLeft;
                         len = textPos + b.width + data.legendItemMargin;
                         return textPos;
                     });
@@ -226,19 +210,18 @@ var Common = {
         }
         else {
             
-            itemSize = data.legendHeight / data.legendData.length - data.legendMargin;
+            // itemSize = data.legendHeight / data.legendData.length - data.legendMargin;
             that.legend
                 .append('def')
                 .append('path')
-                // .attr('stroke', 'red')
-                .attr('d', 'M ' + (itemSize + data.legendTextPaddingLeft) + ' ' + itemSize / 2
-                    + ' L ' + (data.legendWidth) + ' ' + itemSize / 2)
+                .attr('d', 'M ' + (data.legendItemSize + data.legendTextPaddingLeft) + ' ' + data.legendItemSize / 2
+                    + ' L ' + (data.legendWidth) + ' ' + data.legendItemSize / 2)
                 .attr('id', 'coxcomb-legend-text-path');
 
             for (var i = 0; i < data.legendData.length; i++) {
                 item = that.legend.append('g')
                     .attr('text-anchor', 'start')
-                    .attr('transform', 'translate(0, ' + (itemSize + data.legendMargin) * i + ')');
+                    .attr('transform', 'translate(0, ' + (data.legendItemSize + data.legendMargin) * i + ')');
 
                 item.append('text')
                     .append('textPath')
@@ -250,10 +233,28 @@ var Common = {
                     .attr('font-weight', data.legendFontWeight)
 
                 item.append('rect')
-                    .attr('width', itemSize)
-                    .attr('height', itemSize)
+                    .attr('width', data.legendItemSize)
+                    .attr('height', data.legendItemSize)
                     .attr('fill', data.legendColor[i % data.legendColor.length])
             }
+            if (data.legendPosition.indexOf('middle') > -1) {
+                that.contentWrap.select('#coxcomb-legend-wrap')
+                    .attr('transform', function () {
+                        var b = d3.select(this).node().getBBox();
+                        var y = (data.height - b.height) / 2;
+                        return 'translate(' + pos.x + ',' + y + ')';
+                    });
+            }
+            else if (data.legendPosition.indexOf('bottom') > -1) {
+                that.contentWrap.select('#coxcomb-legend-wrap')
+                    .attr('transform', function () {
+                        var b = d3.select(this).node().getBBox();
+                        var y = data.height - b.height;
+                        return 'translate(' + pos.x + ',' + y + ')';
+                    });
+            }
+
+            
         }
         
     },
@@ -270,7 +271,6 @@ var Common = {
         else if (pos.indexOf('right') > -1) {
             res.x = data.width - data.paddingRight - data.legendWidth;
         }
-
         if (pos.indexOf('middle') > -1) {
             res.y = data.height / 2 - data.legendHeight / 2;
         }

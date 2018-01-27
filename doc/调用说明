@@ -1,0 +1,4 @@
+1. chart = new Chart('cluster', svg)，创建对象	
+2. 调用 chart.init(initData)，初始化，initData参数详见接口说明
+3. 控制面板参数修改后，调用chart.init()重新渲染
+4. 拖拽处理函数里，需要调用chart.update(chart.data)，chart对象的data作为入参
