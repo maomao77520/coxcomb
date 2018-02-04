@@ -22,7 +22,7 @@ var Common = {
 	// 计算每个扇形的角度
 	getSectorAngle: function (data) {
         // totalSector*x + scaleAngleRatio * x = 360;
-        var temp = 360 / (data.totalSector + Number(data.scaleAngleRatio));
+        var temp = data.totalAngle / (data.totalSector + Number(data.scaleAngleRatio));
         return temp;
     },
 
@@ -162,7 +162,7 @@ var Common = {
     	var data = that.data;
         var item;
         var me = this;
-        var box;
+        var box, item;
         var pos = this.getLegendPosition(that.data);
         that.legend = that.contentWrap.append('g').attr('id', 'coxcomb-legend-wrap')
             .attr('transform', 'translate(' + pos.x + ',' + pos.y +')');
@@ -171,15 +171,15 @@ var Common = {
             var len = 0, b, textPos;
             var y = 0;
             for (var i = 0; i < data.legendData.length; i++) {
-                if (len > data.outerRadius) {
+                if (len > data.width * 0.5) {
                     len = 0;
-                    y = y + data.legendItemSize + data.legendMargin;
+                    y = y + item.node().getBBox().height + data.legendMargin;
                 }
-                var item = that.legend.append('g')
+                item = that.legend.append('g')
 
                 item.append('rect')
-                    .attr('width', data.legendItemSize)
-                    .attr('height', data.legendItemSize)
+                    .attr('width', data.legendItemWidth)
+                    .attr('height', data.legendItemHeight)
                     .attr('fill', data.legendColor[i % data.legendColor.length])
                     .attr('x', len)
                     .attr('y', y)
@@ -192,18 +192,22 @@ var Common = {
                     .attr('font-weight', data.legendFontWeight)
                     .attr('y', function () {
                         b = d3.select(this).node().getBBox();
-                        return y + b.height/ 2 + (data.legendItemSize - b.height) / 2
+                        return y + b.height/ 2 + (data.legendItemHeight - b.height) / 2
                     })
                     .attr('x', function () {
-                        textPos = len + data.legendItemSize + data.legendTextPaddingLeft;
+                        textPos = len + data.legendItemWidth + data.legendTextPaddingLeft;
                         len = textPos + b.width + data.legendItemMargin;
                         return textPos;
                     });
+                // console.log(item.node().getBBox())
             }
+
+            var  wrapSize = d3.select('#coxcomb-legend-wrap').node().getBBox();
+            that.data.legendHeight = wrapSize.height;
+
             that.contentWrap.select('#coxcomb-legend-wrap')
                 .attr('transform', function () {
-                    var b = d3.select(this).node().getBBox();
-                    var x = (data.width - b.width) / 2;
+                    var x = (data.width - wrapSize.width) / 2;
                     return 'translate(' + x + ',' + pos.y + ')';
                 });
 
@@ -214,14 +218,14 @@ var Common = {
             that.legend
                 .append('def')
                 .append('path')
-                .attr('d', 'M ' + (data.legendItemSize + data.legendTextPaddingLeft) + ' ' + data.legendItemSize / 2
-                    + ' L ' + (data.legendWidth) + ' ' + data.legendItemSize / 2)
+                .attr('d', 'M ' + (data.legendItemWidth + data.legendTextPaddingLeft) + ' ' + data.legendItemHeight / 2
+                    + ' L ' + (data.legendWidth) + ' ' + data.legendItemHeight / 2)
                 .attr('id', 'coxcomb-legend-text-path');
 
             for (var i = 0; i < data.legendData.length; i++) {
                 item = that.legend.append('g')
                     .attr('text-anchor', 'start')
-                    .attr('transform', 'translate(0, ' + (data.legendItemSize + data.legendMargin) * i + ')');
+                    .attr('transform', 'translate(0, ' + (data.legendItemWidth + data.legendMargin) * i + ')');
 
                 item.append('text')
                     .append('textPath')
@@ -233,8 +237,8 @@ var Common = {
                     .attr('font-weight', data.legendFontWeight)
 
                 item.append('rect')
-                    .attr('width', data.legendItemSize)
-                    .attr('height', data.legendItemSize)
+                    .attr('width', data.legendItemWidth)
+                    .attr('height', data.legendItemHeight)
                     .attr('fill', data.legendColor[i % data.legendColor.length])
             }
             if (data.legendPosition.indexOf('middle') > -1) {
@@ -263,7 +267,7 @@ var Common = {
         var pos = data.legendPosition;
         var res = {
             x: data.paddingLeft,
-            y: data.paddingTop
+            y: ++data.paddingTop + Number(data.titleHeight)
         };
         if (pos.indexOf('center') > -1) {
             res.x = data.width / 2 - data.legendWidth / 2;
@@ -278,5 +282,149 @@ var Common = {
             res.y = data.height - data.paddingBottom - data.legendHeight;
         }
         return res;
+    },
+
+    // 渲染每个类区域，填充渐变色
+    renderSectors: function (contentWrap, data) {
+        var start = 360 - data.sectorAngle / 2;
+        contentWrap.append('g').attr('id', 'coxcomb-sector-wrap');
+        var arc = d3.arc();
+        var d = arc({
+            innerRadius: data.innerRadius,
+            outerRadius: data.outerRadius,
+            startAngle: start / 180 * Math.PI,
+            endAngle: (start + data.sectorAngle) / 180 * Math.PI
+        });
+
+        for (var i = 0; i < data.totalSector; i++) {
+            var gradientData = [
+                {
+                    offset: '0%',
+                    stopColor: data.sectorBgColor[i % data.sectorBgColor.length].start
+                },
+                {
+                    offset: '100%',
+                    stopColor: data.sectorBgColor[i % data.sectorBgColor.length].end
+                }
+            ];
+            var defs = contentWrap.select('#coxcomb-sector-wrap').append('defs').append('radialGradient')
+                .attr('id', 'sector-lineGradient-' + i)
+                .attr('cx', '50%')
+                .attr('cy', '100%')
+                .attr('fx', '50%')
+                .attr('fy', '100%')
+                .attr('r', '100%')
+                .selectAll('stop')
+                .data(gradientData)
+                .enter()
+                .append('stop')
+                .attr('offset', function (d) {return d.offset})
+                .attr('stop-color', function (d) {return d.stopColor})
+
+            contentWrap.select('#coxcomb-sector-wrap').append('path')
+                .attr('d', d)
+                .attr('transform', 'translate(' + data.center.x + ',' + data.center.y
+                    + ') rotate(' + (data.scaleAngle + (data.sectorAngle - data.scaleAngle) / 2
+                    + i * data.sectorAngle) + ')')
+                .attr('fill', 'url(#sector-lineGradient-'+ i + ')')
+        }
+
+        contentWrap.select('#coxcomb-sector-wrap').append('path')
+            .attr('d', arc({
+                innerRadius: data.innerRadius,
+                outerRadius: data.outerRadius,
+                startAngle: (360-data.scaleAngle/2) / 180 * Math.PI,
+                endAngle: (360+data.scaleAngle / 2) / 180 * Math.PI
+            }))
+            .attr('transform', 'translate(' + data.center.x + ',' + data.center.y
+                + ')')
+            .attr('fill', data.backgroundColor)
+    },
+
+    renderInnerCircle: function (me) {
+        var data = me.data;
+        me.innerCircle = me.contentWrap.append('g')
+            .attr('id', 'coxcomb-inner-circle');
+        me.innerCircle.append('circle')
+            .attr('cx', data.center.x)
+            .attr('cy', data.center.y)
+            .attr('r', data.innerRadius)
+            .attr('fill', function () {
+                return data.innerBackgound || 'none';
+            });
+        me.innerCircle.append('text')
+            .attr('fill', data.innerTextColor)
+            .attr('font-size', data.innerTextSize)
+            .attr('font-weight', data.innerTextWeight)
+            .text(data.innerText)
+            .attr('dominant-baseline', 'text-after-edge')
+            .attr('text-anchor', 'middle')
+            .attr('x', data.center.x)
+            .attr('y', function () {
+                var b = d3.select(this).node().getBBox();
+                return data.center.y + b.height / 2;
+            });
+    },
+
+    // 渲染最外层边框
+    renderCircleBorder: function (contentWrap, data) {
+        contentWrap.append('circle')
+            .attr('cx', data.center.x)
+            .attr('cy', data.center.y)
+            .attr('r', data.outerRadius)
+            .attr('stroke', data.borderColor)
+            .attr('stroke-width', data.borderWidth)
+            .attr('fill', 'none')
+            .attr('stroke-dasharray', function () {
+                if (data.borderType === 'dash') {
+                    return data.dasharray
+                }
+            })
+    },
+
+    renderTitle: function (contentWrap, data) {
+        contentWrap.append('rect')
+            .attr('width', data.width)
+            .attr('height', data.titleHeight)
+            .attr('fill', data.titleBackground)
+            .attr('stroke', data.titleBorder)
+        contentWrap.append('text')
+            .text(data.titleContent)
+            .attr('x', function () {
+                if (data.titlePosition === 'left') {
+                    return 0;
+                }
+                if (data.titlePosition === 'right') {
+                    return data.width;
+                }
+                return data.width / 2;
+            })
+            .attr('fill', data.titleFontColor)
+            .attr('font-size', data.titleFontSize)
+            .attr('font-weight', data.titleFontWeight)
+            .attr('y', function () {
+                return data.titleHeight / 2 - d3.select(this).node().getBBox().height/2;
+            })
+            .attr('dominant-baseline', 'text-before-edge')
+            .attr('text-anchor', function () {
+                if (data.titlePosition === 'left') {
+                    return 'start';
+                }
+                if (data.titlePosition === 'right') {
+                    return 'end';
+                }
+                return 'middle';
+            })
+    },
+
+    resetCenter: function (d) {
+        var temp = Math.PI / 2 - d.rotate*Math.PI/180 - Math.atan(d.height/d.width);
+        var r = Math.sqrt(d.width/2 * d.width/2 + d.height/2 * d.height/2);
+        var tempL = Math.sin(temp) * r;
+        var tempT = Math.cos(temp) * r;
+
+        d.translateX = d.width/2 - tempL;
+        d.translateY = d.height / 2 -tempT;
+
     },
 };

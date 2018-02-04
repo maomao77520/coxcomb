@@ -36,6 +36,36 @@
 
         <div class="panel">
            <div class="block">
+               <label>组件背景色</label>
+               <input placeholder="组件背景色" name="backgroundColor"></input>
+               <br/>
+               <label>显示标题</label>
+               <select name="isShowTitle">
+                   <option value='1'>是</option>
+                   <option value='0'>否</option>
+               </select>
+               <br/>
+               <label>标题内容</label>
+               <input placeholder="标题内容" name="titleContent"></input>
+               <br/>
+               <label>标题高度</label>
+               <input placeholder="标题高度" name="titleHeight"></input>
+               <br/>
+               <label>标题背景色</label>
+               <input placeholder="标题背景色" name="titleBackground"></input>
+               <br/>
+               <label>标题字体大小</label>
+               <input placeholder="标题字体大小" name="titleFontSize"></input>
+               <br/>
+               <label>标题字体颜色</label>
+               <input placeholder="标题字体颜色" name="titleFontColor"></input>
+               <br/>
+              <label>标题字体粗细</label>
+               <select name="titleFontWeight">
+                   <option value="normal">正常</option>
+                   <option value="bold">加粗</option>
+               </select>
+               <br/>
                <label>外圆半径</label>
                <input placeholder="外圆半径" name="outerRadius"></input>
                <br/>
@@ -101,7 +131,21 @@
                    <option value="normal">正常</option>
                    <option value="bold">加粗</option>
                </select>
-               <br/>               
+               <br/>
+               <label>图形边框类型</label>
+               <select name="borderType">
+                   <option value="none">无</option>
+                   <option value="solid">实线</option>
+                   <option value="dash">虚线</option>
+               </select>
+               <br/>
+               <label>边框颜色</label>
+               <input placeholder="边框颜色" name="borderColor"></input>
+               <br/>
+               <label>边框宽度</label>
+               <input placeholder="边框宽度" name="borderWidth"></input>
+               <br/>
+
            </div>
            <div class="block">
                <label>类间距</label>
@@ -144,6 +188,12 @@
                    <option value="0">否</option>
                </select>
                <br/>
+               <label>图例key</label>
+               <select name="legendType">
+                   <option value="kpi">kpi</option>
+                   <option value="CPI">CPI</option>
+               </select>
+               <br/>
                <label>图例位置</label>
                <select name="legendPosition">
                    <option value="">图例位置</option>
@@ -173,6 +223,29 @@
                <label>图例高度占比</label>
                <input placeholder="图例高度占比" name="legendRatio"></input> 
                <br/>
+
+               <label>圆心内容</label>
+               <input placeholder="圆心内容" name="innerText"></input> 
+               <br/>
+               <label>圆心背景色</label>
+               <input placeholder="圆心背景色" name="innerBackgound"></input> 
+               <br/>
+               <label>圆心字体大小</label>
+               <input placeholder="圆心字体大小" name="innerTextSize"></input> 
+               <br/>
+               <label>圆心字体颜色</label>
+               <input placeholder="圆心字体颜色" name="innerTextColor"></input> 
+               <br/>
+               <label>圆心字体粗细</label>
+               <select name="innerTextWeight">
+                   <option value="normal">正常</option>
+                   <option value="bold">加粗</option>
+               </select>
+               <br/>
+
+              <label>旋转角度</label>
+               <input placeholder="旋转角度" name="rotate"></input>
+               <br/>
            </div>
            <button id="submitBtn">确定</button>
        </div>
@@ -180,16 +253,18 @@
         <script type="text/javascript" src="./js/common.js"></script>
         <script type="text/javascript" src="./data.js"></script>
         <script type="text/javascript" src="./js/index.js"></script>
-        <script type="text/javascript" src="./js/stacked.js"></script>
         <script src="./assets/jquery.min.js"></script>
         <script type="text/javascript">
 
             var svg = d3.select('body').append('svg')
         		.attr('width', initData.width)
         		.attr('height', initData.height)
+            .attr('x', 30)
+            .attr('y', 30)
         		.style('background', '#333');
 
-        	var chart = new Chart('cluster', svg);
+          // var chart = new Chart('cluster', svg);
+        	var chart = new Chart('stacked', svg);
         	chart.init(initData)
 
         var params = {
@@ -202,9 +277,7 @@
         };
          $('#submitBtn').on('click', function (e) {
             $('input').each(function (index, item) {
-                if($(item).val() !== '') {
                   params[$(item).attr('name')] = $(item).val()
-                }
                 
             });
             $('select').each(function (index, item) {

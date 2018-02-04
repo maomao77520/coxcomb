@@ -15,192 +15,211 @@ var initData = {
         {
             name: '中间件',  // 类名称（类标签）
             data: [{
-                CPI: '中间件-cpi',
-                instance: '中间件-1',
-                kpi: '中间件-kpi',
+                CPI: '新版网站测试服务器2_内存_内存总量MB_系列1',
+                instance: '新版网站测试服务器2_内存_内存总量MB_系列1',
+                kpi: '新版网站测试服务器2_内存_内存总量MB_系列1',
                 numberValue: 100   // 柱状图数值
             }, {
-                CPI: '中间件-cpi',
-                instance: '中间件-1',
-                kpi: '中间件-kpi',
-                numberValue: 450
+                CPI: '新版网站测试服务器2_内存_内存总量MB_系列2',
+                instance: '新版网站测试服务器2_内存_内存总量MB_系列2',
+                kpi: '新版网站测试服务器2_内存_内存总量MB_系列2',
+                numberValue: 500
             }, {
-                CPI: '中间件-cpi',
-                instance: '中间件-1',
-                kpi: '中间件-kpi',
-                numberValue: 250
+                CPI: '新版网站测试服务器2_内存_内存总量MB_系列3',
+                instance: '新版网站测试服务器2_内存_内存总量MB_系列3',
+                kpi: '新版网站测试服务器2_内存_内存总量MB_系列3',
+                numberValue: 200
             },{
-                numberValue: 150
+                CPI: '新版网站测试服务器2_内存_内存总量MB_系列4',
+                instance: '新版网站测试服务器2_内存_内存总量MB_系列4',
+                kpi: '新版网站测试服务器2_内存_内存总量MB_系列4',
+                numberValue: 300
             }],
         }, {
             name: '基础设备',
             data: [{
-                CPI: '基础设备-cpi',
-                instance: '基础设备-1',
-                kpi: '基础设备-kpi',
-                numberValue: 119
+                CPI: '新版网站测试服务器2_内存_内存总量MB_系列1',
+                instance: '新版网站测试服务器2_内存_内存总量MB_系列1',
+                kpi: '新版网站测试服务器2_内存_内存总量MB_系列1',
+                numberValue: 119   // 柱状图数值
             }, {
-                CPI: '基础设备-cpi',
-                instance: '基础设备-1',
-                kpi: '基础设备-kpi',
+                CPI: '新版网站测试服务器2_内存_内存总量MB_系列2',
+                instance: '新版网站测试服务器2_内存_内存总量MB_系列2',
+                kpi: '新版网站测试服务器2_内存_内存总量MB_系列2',
                 numberValue: 79
             }, {
-                CPI: '基础设备-cpi',
-                instance: '基础设备-1',
-                kpi: '基础设备-kpi',
+                CPI: '新版网站测试服务器2_内存_内存总量MB_系列3',
+                instance: '新版网站测试服务器2_内存_内存总量MB_系列3',
+                kpi: '新版网站测试服务器2_内存_内存总量MB_系列3',
                 numberValue: 230
             },{
-                CPI: '中间件-cpi',
-                instance: '中间件-1',
-                kpi: '中间件-kpi',
+                CPI: '新版网站测试服务器2_内存_内存总量MB_系列4',
+                instance: '新版网站测试服务器2_内存_内存总量MB_系列4',
+                kpi: '新版网站测试服务器2_内存_内存总量MB_系列4',
                 numberValue: 200
             }]
         }, {
             name: '应用',
             data: [{
-                CPI: '应用-cpi',
-                instance: '应用-1',
-                kpi: '应用-kpi',
-                numberValue: 403
+                CPI: '新版网站测试服务器2_内存_内存总量MB_系列1',
+                instance: '新版网站测试服务器2_内存_内存总量MB_系列1',
+                kpi: '新版网站测试服务器2_内存_内存总量MB_系列1',
+                numberValue: 403   // 柱状图数值
             }, {
-                CPI: '应用-cpi',
-                instance: '应用-1',
-                kpi: '应用-kpi',
+                CPI: '新版网站测试服务器2_内存_内存总量MB_系列2',
+                instance: '新版网站测试服务器2_内存_内存总量MB_系列2',
+                kpi: '新版网站测试服务器2_内存_内存总量MB_系列2',
                 numberValue: 201
             }, {
-                CPI: '应用-cpi',
-                instance: '应用-1',
-                kpi: '应用-kpi',
-                numberValue: 356
-            }, {
-                CPI: '应用-cpi',
-                instance: '应用-1',
-                kpi: '应用-kpi',
+                CPI: '新版网站测试服务器2_内存_内存总量MB_系列3',
+                instance: '新版网站测试服务器2_内存_内存总量MB_系列3',
+                kpi: '新版网站测试服务器2_内存_内存总量MB_系列3',
+                numberValue: 350
+            },{
+                CPI: '新版网站测试服务器2_内存_内存总量MB_系列4',
+                instance: '新版网站测试服务器2_内存_内存总量MB_系列4',
+                kpi: '新版网站测试服务器2_内存_内存总量MB_系列4',
                 numberValue: 306
             }]
         }, {
             name: '中间件',
             data: [{
-                CPI: '中间件-cpi',
-                instance: '中间件-1',
-                kpi: '中间件-kpi',
-                numberValue: 211
+                CPI: '新版网站测试服务器2_内存_内存总量MB_系列1',
+                instance: '新版网站测试服务器2_内存_内存总量MB_系列1',
+                kpi: '新版网站测试服务器2_内存_内存总量MB_系列1',
+                numberValue: 211   // 柱状图数值
             }, {
-                CPI: '中间件-cpi',
-                instance: '中间件-1',
-                kpi: '中间件-kpi',
+                CPI: '新版网站测试服务器2_内存_内存总量MB_系列2',
+                instance: '新版网站测试服务器2_内存_内存总量MB_系列2',
+                kpi: '新版网站测试服务器2_内存_内存总量MB_系列2',
                 numberValue: 321
             }, {
-                CPI: '中间件-cpi',
-                instance: '中间件-1',
-                kpi: '中间件-kpi',
+                CPI: '新版网站测试服务器2_内存_内存总量MB_系列3',
+                instance: '新版网站测试服务器2_内存_内存总量MB_系列3',
+                kpi: '新版网站测试服务器2_内存_内存总量MB_系列3',
                 numberValue: 250
-            }, {
-                CPI: '中间件-cpi',
-                instance: '中间件-1',
-                kpi: '中间件-kpi',
-                numberValue: 150}],
+            },{
+                CPI: '新版网站测试服务器2_内存_内存总量MB_系列4',
+                instance: '新版网站测试服务器2_内存_内存总量MB_系列4',
+                kpi: '新版网站测试服务器2_内存_内存总量MB_系列4',
+                numberValue: 120
+            }],
         }, {
             name: '基础设备',
             data: [{
-                CPI: '基础设备-cpi',
-                instance: '基础设备-1',
-                kpi: '基础设备-kpi',
+                CPI: '新版网站测试服务器2_内存_内存总量MB_系列1',
+                instance: '新版网站测试服务器2_内存_内存总量MB_系列1',
+                kpi: '新版网站测试服务器2_内存_内存总量MB_系列1',
+                numberValue: 130   // 柱状图数值
+            }, {
+                CPI: '新版网站测试服务器2_内存_内存总量MB_系列2',
+                instance: '新版网站测试服务器2_内存_内存总量MB_系列2',
+                kpi: '新版网站测试服务器2_内存_内存总量MB_系列2',
+                numberValue: 420
+            }, {
+                CPI: '新版网站测试服务器2_内存_内存总量MB_系列3',
+                instance: '新版网站测试服务器2_内存_内存总量MB_系列3',
+                kpi: '新版网站测试服务器2_内存_内存总量MB_系列3',
+                numberValue: 235
+            },{
+                CPI: '新版网站测试服务器2_内存_内存总量MB_系列4',
+                instance: '新版网站测试服务器2_内存_内存总量MB_系列4',
+                kpi: '新版网站测试服务器2_内存_内存总量MB_系列4',
                 numberValue: 119
-            }, {
-                CPI: '基础设备-cpi',
-                instance: '基础设备-1',
-                kpi: '基础设备-kpi',
-                numberValue: 79
-            }, {
-                CPI: '基础设备-cpi',
-                instance: '基础设备-1',
-                kpi: '基础设备-kpi',
-                numberValue: 230
-            }, {
-                CPI: '基础设备-cpi',
-                instance: '基础设备-1',
-                kpi: '基础设备-kpi',
-                numberValue: 270
             }]
         }, {
             name: '应用',
             data: [{
-                CPI: '应用-cpi',
-                instance: '应用-1',
-                kpi: '应用-kpi',
-                numberValue: 290
+                CPI: '新版网站测试服务器2_内存_内存总量MB_系列1',
+                instance: '新版网站测试服务器2_内存_内存总量MB_系列1',
+                kpi: '新版网站测试服务器2_内存_内存总量MB_系列1',
+                numberValue: 100   // 柱状图数值
             }, {
-                CPI: '应用-cpi',
-                instance: '应用-1',
-                kpi: '应用-kpi',
-                numberValue: 201
+                CPI: '新版网站测试服务器2_内存_内存总量MB_系列2',
+                instance: '新版网站测试服务器2_内存_内存总量MB_系列2',
+                kpi: '新版网站测试服务器2_内存_内存总量MB_系列2',
+                numberValue: 450
             }, {
-                CPI: '应用-cpi',
-                instance: '应用-1',
-                kpi: '应用-kpi',
-                numberValue: 356
-            }, {
-                CPI: '应用-cpi',
-                instance: '应用-1',
-                kpi: '应用-kpi',
-                numberValue: 286
+                CPI: '新版网站测试服务器2_内存_内存总量MB_系列3',
+                instance: '新版网站测试服务器2_内存_内存总量MB_系列3',
+                kpi: '新版网站测试服务器2_内存_内存总量MB_系列3',
+                numberValue: 250
+            },{
+                CPI: '新版网站测试服务器2_内存_内存总量MB_系列4',
+                instance: '新版网站测试服务器2_内存_内存总量MB_系列4',
+                kpi: '新版网站测试服务器2_内存_内存总量MB_系列4',
+                numberValue: 150
             }]
         }, {
             name: '基础设备',
             data: [{
-                CPI: '基础设备-cpi',
-                instance: '基础设备-1',
-                kpi: '基础设备-kpi',
-                numberValue: 119
+                CPI: '新版网站测试服务器2_内存_内存总量MB_系列1',
+                instance: '新版网站测试服务器2_内存_内存总量MB_系列1',
+                kpi: '新版网站测试服务器2_内存_内存总量MB_系列1',
+                numberValue: 210   // 柱状图数值
             }, {
-                CPI: '基础设备-cpi',
-                instance: '基础设备-1',
-                kpi: '基础设备-kpi',
-                numberValue: 79
+                CPI: '新版网站测试服务器2_内存_内存总量MB_系列2',
+                instance: '新版网站测试服务器2_内存_内存总量MB_系列2',
+                kpi: '新版网站测试服务器2_内存_内存总量MB_系列2',
+                numberValue: 345
             }, {
-                CPI: '基础设备-cpi',
-                instance: '基础设备-1',
-                kpi: '基础设备-kpi',
-                numberValue: 230
-            }, {
-                CPI: '基础设备-cpi',
-                instance: '基础设备-1',
-                kpi: '基础设备-kpi',
+                CPI: '新版网站测试服务器2_内存_内存总量MB_系列3',
+                instance: '新版网站测试服务器2_内存_内存总量MB_系列3',
+                kpi: '新版网站测试服务器2_内存_内存总量MB_系列3',
+                numberValue: 292
+            },{
+                CPI: '新版网站测试服务器2_内存_内存总量MB_系列4',
+                instance: '新版网站测试服务器2_内存_内存总量MB_系列4',
+                kpi: '新版网站测试服务器2_内存_内存总量MB_系列4',
                 numberValue: 150
             }]
         }, {
             name: '应用',
             data: [{
-                CPI: '应用-cpi',
-                instance: '应用-1',
-                kpi: '应用-kpi',
-                numberValue: 290
+                CPI: '新版网站测试服务器2_内存_内存总量MB_系列1',
+                instance: '新版网站测试服务器2_内存_内存总量MB_系列1',
+                kpi: '新版网站测试服务器2_内存_内存总量MB_系列1',
+                numberValue: 192   // 柱状图数值
             }, {
-                CPI: '应用-cpi',
-                instance: '应用-1',
-                kpi: '应用-kpi',
-                numberValue: 201
+                CPI: '新版网站测试服务器2_内存_内存总量MB_系列2',
+                instance: '新版网站测试服务器2_内存_内存总量MB_系列2',
+                kpi: '新版网站测试服务器2_内存_内存总量MB_系列2',
+                numberValue: 406
             }, {
-                CPI: '应用-cpi',
-                instance: '应用-1',
-                kpi: '应用-kpi',
-                numberValue: 356
-            }, {
-                CPI: '应用-cpi',
-                instance: '应用-1',
-                kpi: '应用-kpi',
-                numberValue: 300
+                CPI: '新版网站测试服务器2_内存_内存总量MB_系列3',
+                instance: '新版网站测试服务器2_内存_内存总量MB_系列3',
+                kpi: '新版网站测试服务器2_内存_内存总量MB_系列3',
+                numberValue: 235
+            },{
+                CPI: '新版网站测试服务器2_内存_内存总量MB_系列4',
+                instance: '新版网站测试服务器2_内存_内存总量MB_系列4',
+                kpi: '新版网站测试服务器2_内存_内存总量MB_系列4',
+                numberValue: 200
             }]
         }
     ],  
 
-    legendData: ['测试测试测试测试测试','数据','series333测试测试测试测试测试','series4444'],  // 图例内容
+    legendData: ['新版网站测试服务器2_内存_内存总量MB_系列1','新版网站测试服务器2_内存_内存总量MB_系列2','新版网站测试服务器2_内存_内存总量MB_系列3','新版网站测试服务器2_内存_内存总量MB_系列4'],  // 图例内容
     legendColor: ['#ff0', '#f00', '#f0f', '#0f0', '#0ff'], // 图例颜色，对应柱状图颜色
+    legendType: 'kpi',  
     
+    backgroundColor: '#333',
+    rotate: 0,
+    isShowTitle: true,
+    titleContent: '南丁格尔组件标题',
+    titleHeight: 30,
+    titlePosition: 'center',
+    titleFontSize: 20,
+    titleFontColor: '#f00',
+    titleFontWeight: 'bold',
+    titleBackground: '#fff',
+    titleBorder: '#999',
     scaleAngleRatio: 1.2,  // 坐标轴刻度区域
     scaleNum: 4, // 坐标轴刻度数量
     borderColor: '#f00', // 外圆边框颜色 
+    borderWidth: 2,
+    borderType: 'none',
+    dasharray: 10,
     innerRadiusRatio: 0.2,  // 内圆半径占比
     innerRadiusMargin: 4,   // 柱状图距离内圆边界的距离
     scaleColor: 'rgba(25,25,25,0.5)',  // 坐标轴线（网格线）颜色
@@ -234,8 +253,9 @@ var initData = {
     legendMargin: 4,   // 图例上下间距
     legendTextPaddingLeft: 4,   // 图例文字
     legendItemMargin: 20, // 横向排列时 图例左右间距 
-    innerText: 88,  // 圆心数值
-    innerTextColor: '#fff',  // 圆心数值颜色
+    innerBackgound:'',
+    innerText: '',  // 圆心数值
+    innerTextColor: '#f00',  // 圆心数值颜色
     innerTextSize: 30,   // 圆心数值大小
     innerTextWeight: 'bold'  // 圆心数值加粗
 
