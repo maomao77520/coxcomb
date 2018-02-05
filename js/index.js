@@ -169,7 +169,7 @@ Stacked.prototype = {
         }
 
         var r = w > h ? h / 2 : w / 2;
-        if (this.data.outerRadius === undefined) {
+        if (this.data.outerRadius === undefined || this.data.outerRadius === '') {
             this.data.outerRadius = r - this.data.labelTextPos - 3 / 2 * this.data.labelTextFontSize;
         }
         else {
@@ -392,7 +392,7 @@ Cluster.prototype = {
         }
 
         var r = w > h ? h / 2 : w / 2;
-        if (this.data.outerRadius === undefined) {
+        if (this.data.outerRadius === undefined || this.data.outerRadius === '') {
             this.data.outerRadius = r - this.data.labelTextPos - 3 / 2 * this.data.labelTextFontSize;
         }
         else {
