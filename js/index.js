@@ -1,6 +1,6 @@
 
-function Chart(type, svg) {
-	return this.init(type, svg);
+function Chart(params, svg) {
+	return this.init(params.type, svg);
 }
 
 Chart.prototype = {
@@ -62,6 +62,8 @@ function Stacked(svg) {
         legendMargin: 4,
         legendTextPaddingLeft: 4,
         legendItemMargin: 30,
+        legendX:0,
+        legendY:0,
         innerText: 88,
         innerTextColor: '#fff',
         innerTextSize: 30,
@@ -73,7 +75,108 @@ function Stacked(svg) {
 Stacked.prototype = {
     init: function (params) {
         this.data = Common.mix(params || {}, this.defaultOptions);
+
+        this.render();
+        
+    },
+
+    render: function () {
+        var data = this.data;
+        this.svg.select('g').remove();
+        this.contentWrap = this.svg.append('svg:g')
+            // .attr('transform', function () {
+            //     return 'translate(' + data.translateX + ',' + data.translateY
+            //       + ') rotate(' + data.rotate + ')';
+            // });
+        this.contentWrap.append('rect')
+            .attr('width', data.width)
+            .attr('height', data.height)
+            .attr('fill', data.backgroundColor);
+
+        this.rotateWrap = this.contentWrap.append('g')
+            .attr('id', 'my-coxcomb-component-rotate-wrap')
+
+        if (~~this.data.isShowTitle == 1) {
+            Common.renderTitle(this.contentWrap, this.data);
+        }
+        
+        if (~~this.data.isShowLegend == 1) {
+            this.data.legendSize = Common.renderLegend(this);
+            this.data.legendHeight = this.data.legendSize.height;
+            this.data.legendWidth = this.data.legendSize.width;
+        }
+
         this.initData();
+
+        Common.getYAsix(this.rotateWrap, this.data);
+        if (this.data.borderType !== 'none') {
+            Common.renderCircleBorder(this.rotateWrap, this.data);
+        }
+        Common.renderInnerCircle(this);
+        Common.renderSectors(this.rotateWrap, this.data);
+        if (~~this.data.isShowXAsix == 1) {
+            Common.renderXAsix(this.rotateWrap, this.data);
+        }
+        if (~~this.data.isShowYText == 1) {
+            Common.renderYText(this.rotateWrap, this.data);
+        }
+
+        this.renderBar();
+        
+        this.rotateWrap.attr('transform', function () {
+            var box = d3.select(this).node().getBBox();
+            var params = Common.resetCenter(data, box)
+
+            var temp = Math.PI / 2 - data.rotate*Math.PI/180 - Math.atan(box.height/box.width);
+            var r = Math.sqrt(box.width/2 * box.width/2 + box.height/2 * box.height/2);
+            var tempL = Math.sin(temp) * r;
+            var tempT = Math.cos(temp) * r;
+            return 'translate(' + params.x + ',' + params.y
+              + ') rotate(' + data.rotate + ')';
+        });
+    },
+
+    initData: function () {
+
+        var w = this.data.width - this.data.paddingLeft - this.data.paddingRight;
+        var h = this.data.height - this.data.paddingTop -this.data.paddingBottom;
+
+        this.data.center = {
+            x: this.data.width / 2 + Number(this.data.paddingLeft) - this.data.paddingRight, 
+            y: this.data.height / 2 + Number(this.data.paddingTop) - this.data.paddingBottom
+        };
+        if (~~this.data.isShowTitle== 1) {
+            this.data.center.y += this.data.titleHeight / 2;
+            h -= this.data.titleHeight;
+        }
+        if (~~this.data.isShowLegend == 1) {
+            if (this.data.legendPosition.indexOf('left')>-1) {
+                this.data.center.x += this.data.legendWidth / 2;
+                w = w - this.data.legendWidth;
+            }
+            else if (this.data.legendPosition.indexOf('right')>-1) {
+                this.data.center.x -= this.data.legendWidth / 2;
+                w = w - this.data.legendWidth;
+            }
+            else if (this.data.legendPosition.indexOf('bottom')>-1) {
+                this.data.center.y -= this.data.legendHeight / 2;
+                h -= this.data.legendHeight;
+            }
+            else if (this.data.legendPosition.indexOf('top')>-1) {
+                this.data.center.y += this.data.legendHeight / 2;
+                h -= this.data.legendHeight;
+            }
+        }
+
+        var r = w > h ? h / 2 : w / 2;
+        if (this.data.outerRadius === undefined) {
+            this.data.outerRadius = r - this.data.labelTextPos - 3 / 2 * this.data.labelTextFontSize;
+        }
+        else {
+            this.data.outerRadius = Number(this.data.outerRadius);
+        }
+
+        this.data.innerRadius = this.data.outerRadius * this.data.innerRadiusRatio - this.data.innerRadiusMargin;
 
         this.data.totalSector = this.data.statistics.length;
         this.data.barNum = this.data.legendData.length;
@@ -85,127 +188,17 @@ Stacked.prototype = {
         this.data.maxY = this.data.maxY || Common.getMaxY(this.data.statistics);
         this.data.minY = 0;
 
-
-        if (+this.data.rotate == 0) {
-            this.data.translateX = 0;
-            this.data.translateY = 0;
-        }
-        else {
-            Common.resetCenter(this.data);
-            console.log(this.data)
-        }
-
         this.data.oriOuterRadius = this.data.outerRadius;
         this.data.oriWidth = this.data.width;
         this.data.oriHeight = this.data.height;
 
-        this.render();
-        
-    },
-
-    initData: function () {
-        if (~~this.data.isShowLegend == 1) {
-            this.getLegendSize();
-        }
-        if (this.data.outerRadius == undefined) {
-            this.data.outerRadius = this.getOuterRadius();
-        }
-        else {
-            this.data.outerRadius = Number(this.data.outerRadius);
-        } 
-        this.data.innerRadius = this.data.outerRadius * this.data.innerRadiusRatio - this.data.innerRadiusMargin;
-        this.data.center = {
-            x: this.data.width / 2 + Number(this.data.paddingLeft) - this.data.paddingRight, 
-            y: this.data.height / 2 + Number(this.data.paddingTop) - this.data.paddingBottom
-        };
-
-        // if (this.data.legendPosition == 'topcenter') {
-        //     this.data.center.y += this.data.legendHeight / 2;
-        // }
-        // else if (this.data.legendPosition == 'bottomcenter') {
-        //     this.data.center.y -= this.data.legendHeight / 2;
-        // }
-        // else if (this.data.legendPosition.indexOf('left') > -1) {
-        //     this.data.center.x += this.data.legendWidth / 2;
-        // }
-        // else if (this.data.legendPosition.indexOf('right') > -1) {
-        //     this.data.center.x -= this.data.legendWidth / 2;
-        // }
         this.data.oriCenterX = this.data.center.x;
         this.data.oriCenterY = this.data.center.y;
 
-        this.sortData();
+        Common.sortData(this.data);
     },
 
-    sortData: function () {
-        var d = this.data.statistics;
-        for (var i = 0; i < d.length; i++) {
-            d[i].data = d[i].data.sort(function (a, b) {
-                return b.numberValue - a.numberValue;
-            });
-        }
-    },
-
-    getLegendSize: function () {
-        if (this.data.legendPosition.indexOf('center') > -1) {
-            this.data.legendHeight = this.data.height * this.data.legendRatio;
-        }
-        else {
-            this.data.legendWidth = this.data.width * this.data.legendRatio;
-        }
-    },
-
-    getOuterRadius: function () {
-        var w = this.data.width - this.data.paddingLeft - this.data.paddingRight;
-        var h = this.data.height - this.data.paddingTop -this.data.paddingBottom - this.data.titleHeight;
-
-        if (this.data.legendPosition.indexOf('center') > -1) {
-            h = h - this.data.legendHeight;
-        }
-        else {
-            w = w - this.data.legendWidth;
-        }
-
-        var r = w > h ? h / 2 : w / 2;
-        return r - this.data.labelTextPos - 3 / 2 * this.data.labelTextFontSize;
-    },
-
-    render: function () {
-        var data = this.data;
-        this.svg.select('g').remove();
-        this.contentWrap = this.svg.append('svg:g')
-            .attr('transform', function () {
-                return 'translate(' + data.translateX + ',' + data.translateY
-                  + ') rotate(' + data.rotate + ')';
-            });
-              
-        if (~~this.data.isShowTitle == 1) {
-            Common.renderTitle(this.contentWrap, this.data);
-        }
-        
-        if (~~this.data.isShowLegend == 1) {
-            Common.renderLegend(this);
-            // data.center.y = ++data.center.y + Number(data.legendHeight)
-            console.log(data.center, data.legendHeight)
-        }
-
-        Common.getYAsix(this.contentWrap, this.data);
-        if (this.data.borderType !== 'none') {
-            Common.renderCircleBorder(this.contentWrap, this.data);
-        }
-        Common.renderInnerCircle(this);
-        Common.renderSectors(this.contentWrap, this.data);
-        if (~~this.data.isShowXAsix == 1) {
-            Common.renderXAsix(this.contentWrap, this.data);
-        }
-        if (~~this.data.isShowYText == 1) {
-            Common.renderYText(this.contentWrap, this.data);
-        }
-
-        this.renderBar();
-
-
-    },
+    
 
     update: function (params) {
         var d = this.data;
@@ -229,8 +222,8 @@ Stacked.prototype = {
         var data = this.data;
         var me = this;
         var arc = d3.arc();
-        this.contentWrap.append('g').attr('id', 'barwrap');
-        this.contentWrap.append('g').attr('id', 'bartextwrap');
+        this.rotateWrap.append('g').attr('id', 'barwrap');
+        this.rotateWrap.append('g').attr('id', 'bartextwrap');
         var startV = {};
         var s, e, barOuterR, arcLength;
         var fillColor, direction, rotateAngle;
@@ -257,7 +250,7 @@ Stacked.prototype = {
                     startAngle: s / 180 * Math.PI,
                     endAngle: e / 180 * Math.PI
                 });
-                this.contentWrap.select('#barwrap').append('path')
+                this.rotateWrap.select('#barwrap').append('path')
                     .attr('d', arcD)
                     .attr('id', 'coxcomb-bar-text-path-' + i + '-' + n)
                     .attr('transform', 'translate(' + data.center.x + ',' + data.center.y + ')')
@@ -272,14 +265,13 @@ Stacked.prototype = {
                 rotateAngle = s + data.barAngle / 2;
 
                 if (~~this.data.isShowBarNum == 1) {
-                    this.contentWrap.select('#bartextwrap').append('g')
+                    this.rotateWrap.select('#bartextwrap').append('g')
                         .attr('transform', function () {
                             if (direction == 2) {
                                 rotateAngle = rotateAngle - 180;
                             }
                             return 'translate('
                                 + (data.center.x + startV.x) + ',' + (data.center.y + startV.y)
-                                // + ')'
                                 + ') rotate(' + rotateAngle + ')'; 
                         })
                         .append('text')
@@ -331,7 +323,7 @@ function Cluster(svg) {
         barTextColor: '#aaa',
         barTextSize: 12,
         paddingLeft: 0,
-        paddingTop: 10,
+        paddingTop: 0,
         paddingRight: 0,
         paddingBottom: 0,
         isShowLegend: true,
@@ -347,6 +339,8 @@ function Cluster(svg) {
         legendMargin: 4,
         legendTextPaddingLeft: 4,
         legendItemMargin: 20,
+        legendX: 0,
+        legendY: 0,
         innerText: '',
         innerTextColor: 'none',
         innerTextSize: 30,
@@ -359,7 +353,53 @@ function Cluster(svg) {
 Cluster.prototype = {
     init: function (params) {
         this.data = Common.mix(params || {}, this.defaultOptions);
-        this.initData();
+        
+        this.render();
+        
+
+    },
+
+    initData: function () {
+
+        var w = this.data.width - this.data.paddingLeft - this.data.paddingRight;
+        var h = this.data.height - this.data.paddingTop -this.data.paddingBottom;
+
+        this.data.center = {
+            x: this.data.width / 2 + Number(this.data.paddingLeft) - this.data.paddingRight, 
+            y: this.data.height / 2 + Number(this.data.paddingTop) - this.data.paddingBottom
+        };
+        if (~~this.data.isShowTitle== 1) {
+            this.data.center.y += this.data.titleHeight / 2;
+            h -= this.data.titleHeight;
+        }
+        if (~~this.data.isShowLegend == 1) {
+            if (this.data.legendPosition.indexOf('left')>-1) {
+                this.data.center.x += this.data.legendWidth / 2;
+                w = w - this.data.legendWidth;
+            }
+            else if (this.data.legendPosition.indexOf('right')>-1) {
+                this.data.center.x -= this.data.legendWidth / 2;
+                w = w - this.data.legendWidth;
+            }
+            else if (this.data.legendPosition.indexOf('bottom')>-1) {
+                this.data.center.y -= this.data.legendHeight / 2;
+                h -= this.data.legendHeight;
+            }
+            else if (this.data.legendPosition.indexOf('top')>-1) {
+                this.data.center.y += this.data.legendHeight / 2;
+                h -= this.data.legendHeight;
+            }
+        }
+
+        var r = w > h ? h / 2 : w / 2;
+        if (this.data.outerRadius === undefined) {
+            this.data.outerRadius = r - this.data.labelTextPos - 3 / 2 * this.data.labelTextFontSize;
+        }
+        else {
+            this.data.outerRadius = Number(this.data.outerRadius);
+        }
+
+        this.data.innerRadius = this.data.outerRadius * this.data.innerRadiusRatio - this.data.innerRadiusMargin;
 
         this.data.totalSector = this.data.statistics.length;
         this.data.barNum = this.data.legendData.length;
@@ -375,67 +415,8 @@ Cluster.prototype = {
         this.data.oriWidth = this.data.width;
         this.data.oriHeight = this.data.height;
 
-        this.render();
-        
-
-    },
-
-    initData: function () {
-        if (~~this.data.isShowLegend == 1) {
-            this.getLegendSize();
-            // this.data.legendWidth = this.data.legendWidthRatio * this.data.width;
-            // this.data.legendHeight = this.data.legendHeightRatio * this.data.height;
-        }
-        if (this.data.outerRadius == undefined) {
-            this.data.outerRadius = this.getOuterRadius();
-        }
-        else {
-            this.data.outerRadius = Number(this.data.outerRadius);
-        } 
-        this.data.innerRadius = this.data.outerRadius * this.data.innerRadiusRatio - this.data.innerRadiusMargin;
-        this.data.center = {
-            x: this.data.width / 2 + Number(this.data.paddingLeft) - this.data.paddingRight, 
-            y: this.data.height / 2 + Number(this.data.paddingTop) - this.data.paddingBottom
-        };
-
-        if (this.data.legendPosition == 'topcenter') {
-            this.data.center.y += this.data.legendHeight / 2;
-        }
-        else if (this.data.legendPosition == 'bottomcenter') {
-            this.data.center.y -= this.data.legendHeight / 2;
-        }
-        else if (this.data.legendPosition.indexOf('left') > -1) {
-            this.data.center.x += this.data.legendWidth / 2;
-        }
-        else if (this.data.legendPosition.indexOf('right') > -1) {
-            this.data.center.x -= this.data.legendWidth / 2;
-        }
         this.data.oriCenterX = this.data.center.x;
         this.data.oriCenterY = this.data.center.y;
-    },
-
-    getLegendSize: function () {
-        if (this.data.legendPosition.indexOf('center') > -1) {
-            this.data.legendHeight = this.data.height * this.data.legendRatio;
-        }
-        else {
-            this.data.legendWidth = this.data.width * this.data.legendRatio;
-        }
-    },
-
-    getOuterRadius: function () {
-        var w = this.data.width - this.data.paddingLeft - this.data.paddingRight;
-        var h = this.data.height - this.data.paddingTop -this.data.paddingBottom;
-
-        if (this.data.legendPosition.indexOf('center') > -1) {
-            h = h - this.data.legendHeight;
-        }
-        else {
-            w = w - this.data.legendWidth;
-        }
-
-        var r = w > h ? h / 2 : w / 2;
-        return r - this.data.labelTextPos - 3 / 2 * this.data.labelTextFontSize;
     },
 
     getBarAngle: function () {
@@ -444,32 +425,60 @@ Cluster.prototype = {
         return data.sectorAngle / (2 * data.classIntervalRatio + data.barNum + (data.barNum - 1) * data.barIntervalRatio);
     },
 
+
+
     render: function () {
+        var data = this.data;
         this.svg.select('g').remove();
         this.contentWrap = this.svg.append('svg:g');
+            
+        this.contentWrap.append('rect')
+            .attr('width', data.width)
+            .attr('height', data.height)
+            .attr('fill', data.backgroundColor);
 
-        Common.renderInnerCircle(this);
-        Common.renderSectors(this.contentWrap, this.data);
-        Common.getYAsix(this.contentWrap, this.data);
+        this.rotateWrap = this.contentWrap.append('g')
+            .attr('id', 'my-coxcomb-component-rotate-wrap')
+            
 
         if (~~this.data.isShowTitle == 1) {
             Common.renderTitle(this.contentWrap, this.data);
         }
+        
+        if (~~this.data.isShowLegend == 1) {
+            this.data.legendSize = Common.renderLegend(this);
+            this.data.legendHeight = this.data.legendSize.height;
+            this.data.legendWidth = this.data.legendSize.width;
+        }
+
+        this.initData();
+
+        Common.getYAsix(this.rotateWrap, this.data);
+        if (this.data.borderType !== 'none') {
+            Common.renderCircleBorder(this.rotateWrap, this.data);
+        }
+        Common.renderInnerCircle(this);
+        Common.renderSectors(this.rotateWrap, this.data);
         if (~~this.data.isShowXAsix == 1) {
-            Common.renderXAsix(this.contentWrap, this.data);
+            Common.renderXAsix(this.rotateWrap, this.data);
         }
         if (~~this.data.isShowYText == 1) {
-            Common.renderYText(this.contentWrap, this.data);
+            Common.renderYText(this.rotateWrap, this.data);
         }
 
-        if (~~this.data.isShowLegend == 1) {
-            Common.renderLegend(this);
-        }
-
-        if (this.data.borderType !== 'none') {
-            Common.renderCircleBorder(this.contentWrap, this.data);
-        }
         this.renderBar();
+
+        this.rotateWrap.attr('transform', function () {
+            var box = d3.select(this).node().getBBox();
+            var params = Common.resetCenter(data, box)
+
+            var temp = Math.PI / 2 - data.rotate*Math.PI/180 - Math.atan(box.height/box.width);
+            var r = Math.sqrt(box.width/2 * box.width/2 + box.height/2 * box.height/2);
+            var tempL = Math.sin(temp) * r;
+            var tempT = Math.cos(temp) * r;
+            return 'translate(' + params.x + ',' + params.y
+              + ') rotate(' + data.rotate + ')';
+        });
     },
 
     update: function (params) {
@@ -494,8 +503,8 @@ Cluster.prototype = {
         var data = this.data;
         var me = this;
         var arc = d3.arc();
-        this.contentWrap.append('g').attr('id', 'barwrap');
-        this.contentWrap.append('g').attr('id', 'bartextwrap');
+        this.rotateWrap.append('g').attr('id', 'barwrap');
+        this.rotateWrap.append('g').attr('id', 'bartextwrap');
         var startV = {};
         var s, e, barOuterR, arcLength;
         for (var i = 0; i < data.totalSector; i++) {
@@ -513,17 +522,20 @@ Cluster.prototype = {
                     ? data.statistics[i].data[n-1].numberValue * avg + data.innerRadius
                     : data.innerRadius + data.innerRadiusMargin;
                 arcLength = 2 * Math.PI * barOuterR * data.barAngle / 360;
+
+                fillColor = data.legendColor[data.legendData.indexOf(data.statistics[i].data[n-1][data.legendType])];
+
                 var arcD = arc({
                     innerRadius: data.innerRadius + data.innerRadiusMargin,
                     outerRadius: barOuterR,
                     startAngle: s / 180 * Math.PI,
                     endAngle: e / 180 * Math.PI
                 });
-                this.contentWrap.select('#barwrap').append('path')
+                this.rotateWrap.select('#barwrap').append('path')
                     .attr('d', arcD)
                     .attr('id', 'coxcomb-bar-text-path-' + i + '-' + n)
                     .attr('transform', 'translate(' + data.center.x + ',' + data.center.y + ')')
-                    .attr('fill', data.legendColor[(n-1) % data.legendColor.length])
+                    .attr('fill', fillColor)
                     .attr('data-start', function () {
                         startV = d3.select(this).node().getPointAtLength(0);
                     });
@@ -532,7 +544,7 @@ Cluster.prototype = {
                     direction =2;
                 }
                 if (~~this.data.isShowBarNum == 1) {
-                    this.contentWrap.select('#bartextwrap').append('g')
+                    this.rotateWrap.select('#bartextwrap').append('g')
                         .attr('transform', function () {
                             var rotateAngle = data.scaleAngle / 2 + i * data.sectorAngle
                                 + (i-1) * data.classIntervalAngle + n * data.barAngle

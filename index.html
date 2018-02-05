@@ -36,8 +36,17 @@
 
         <div class="panel">
            <div class="block">
+               <label>组件类型</label>
+               <select name="type">
+                   <option value='cluster'>簇状</option>
+                   <option value='stacked'>堆积</option>
+               </select>
+               <br/>
                <label>组件背景色</label>
                <input placeholder="组件背景色" name="backgroundColor"></input>
+               <br/>
+               <label>总角度</label>
+               <input placeholder="总角度" name="totalAngle"></input>
                <br/>
                <label>显示标题</label>
                <select name="isShowTitle">
@@ -207,6 +216,13 @@
                    <option value="bottomright">右下</option>
                </select>
                <br/>
+               <label>图例水平偏移</label>
+               <input placeholder="图例水平偏移" name="legendX"></input> 
+               <br/>
+
+               <label>图例垂直偏移</label>
+               <input placeholder="图例垂直偏移" name="legendY"></input> 
+               <br/>
 
                <label>图例字体颜色</label>
                <input placeholder="图例字体颜色" name="legendFontColor"></input> 
@@ -259,12 +275,11 @@
             var svg = d3.select('body').append('svg')
         		.attr('width', initData.width)
         		.attr('height', initData.height)
-            .attr('x', 30)
-            .attr('y', 30)
-        		.style('background', '#333');
 
-          // var chart = new Chart('cluster', svg);
-        	var chart = new Chart('stacked', svg);
+        		// .style('background', '#333');
+
+          var chart = new Chart({type:'cluster'}, svg);
+        	// var chart = new Chart('stacked', svg);
         	chart.init(initData)
 
         var params = {
@@ -286,6 +301,7 @@
                }
             });
 
+           var chart = new Chart(params, svg)
            svg.attr('width', params.width).attr('height', params.height)  
            chart.init(params);
          });

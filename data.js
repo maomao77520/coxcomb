@@ -234,14 +234,14 @@ var initData = {
     labelTextPos: 20,   // 分类标签距离外圆环距离，y轴超出外圆长度
     labelTextFontSize: 16,   // 分类标签字体大小
     labelTextFontWeight: 'normal',   // 分类标签字体加粗
-    classIntervalRatio: 0,   // 类间距
-    barIntervalRatio: -0.5,   // 系列间距
+    classIntervalRatio: 0.3,   // 类间距
+    barIntervalRatio: 0.2,   // 系列间距
     isShowBarNum: true,   // 是否展示柱状数值
     barFloatNum: 0,   // 柱状数值保留小数位数
     barTextColor: '#aaa',   // 柱状数值字体颜色
     barTextSize: 12,   // 柱状字体大小
     paddingLeft: 0,   // 左边距
-    paddingTop: 10,   // 上边距
+    paddingTop: 0,   // 上边距
     paddingRight: 0,  // 右边距
     paddingBottom: 0,   // 下边距
     isShowLegend: true,   // 是否显示图例
@@ -249,10 +249,10 @@ var initData = {
     legendFontSize: 14,      // 图例文字大小
     legendFontWeight: 'normal',   // 图例文字加粗
     legendPosition: 'topcenter',   // 图例位置：topleft,topcenter,topright,middleleft,middleright,bottomleft,bottomcenter,bottomright
-    legendRatio: 0.02, // 图例高度
+    legendRatio: 0.2, // 图例高度
     legendMargin: 4,   // 图例上下间距
     legendTextPaddingLeft: 4,   // 图例文字
-    legendItemMargin: 20, // 横向排列时 图例左右间距 
+    legendItemMargin: 30, // 横向排列时 图例左右间距 
     innerBackgound:'',
     innerText: '',  // 圆心数值
     innerTextColor: '#f00',  // 圆心数值颜色
