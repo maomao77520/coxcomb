@@ -19,6 +19,18 @@ var Common = {
 		return Math.ceil(max / 50) * 50;
 	},
 
+    getMinY: function (data) {
+        var min = data[0].data[0].numberValue;
+        for (var i = 0; i < data.length; i++) {
+            for (var n = 0; n < data[i].data.length; n++) {
+                if (data[i].data[n].numberValue  < min) {
+                    min = data[i].data[n].numberValue;
+                }
+            }
+        }
+        return Math.floor(min / 50) * 50;
+    },
+
 	// 计算每个扇形的角度
 	getSectorAngle: function (data) {
         // totalSector*x + scaleAngleRatio * x = 360;
@@ -40,7 +52,7 @@ var Common = {
         var me = this;
         var len = data.scaleNum - 2;
         var interval = (data.outerRadius - data.innerRadius) / (len + 1);
-        contentWrap.append('g').attr('id', 'xasix');
+        contentWrap.append('g').attr('id', 'coxcomb-component-xasix-wrap');
         var d, r;
         for (var i = 1; i <= len; i++) {
             r = interval * i + data.innerRadius;
@@ -50,7 +62,7 @@ var Common = {
 	            startAngle: data.scaleAngle / 2 / 180 * Math.PI,
 	            endAngle: (data.totalAngle-data.scaleAngle / 2) / 180 * Math.PI
 	        });
-	        contentWrap.select('#xasix').append('path')
+	        contentWrap.select('#coxcomb-component-xasix-wrap').append('path')
 	        .attr('d', d.split('L')[0])
 	        .attr('transform', 'translate(' + data.center.x + ',' + data.center.y + ')')
 	        .attr('stroke', data.scaleColor)
@@ -139,22 +151,23 @@ var Common = {
     // 渲染圆环轴刻度文字
     renderYText: function (contentWrap, data) {
         var scaleLen = (data.outerRadius - data.innerRadius) / (data.scaleNum - 1);
-        var textInterval = data.maxY / (data.scaleNum - 1);
+        var textInterval = (data.maxY - data.minY) / (data.scaleNum - 1);
         var x = data.center.x;
         var y = data.center.y - data.innerRadius;
-        contentWrap.append('g').attr('id', 'ytext');
-        for (var i = 1; i < data.scaleNum; i++) {
-            y = y - scaleLen;
-            contentWrap.select('#ytext').append('text')
-                .attr('class', 'scale-text')
+        contentWrap.append('g').attr('id', 'coxcomb-component-ytext-wrap');
+        for (var i = 0; i < data.scaleNum; i++) {
+            
+            contentWrap.select('#coxcomb-component-ytext-wrap').append('text')
+                .attr('class', 'coxcomb-component-scale-text')
                 .attr('x', x)
                 .attr('y', y)
                 .attr('font-size', data.scaleFontSize)
                 .attr('font-weight', data.scaleFontWeight)
                 .attr('text-anchor', 'middle')
-                .attr('dominant-baseline', 'text-before-edge')
+                .attr('dominant-baseline', 'middle')
                 .attr('fill', data.scaleFontColor)
-                .text(parseInt(textInterval * i))
+                .text(parseInt(textInterval * i) + Number(data.minY))
+            y = y - scaleLen;
         }
     },
 
@@ -176,7 +189,7 @@ var Common = {
 
                 item.append('text')
                     .text(data.legendData[i])
-                    .attr('dominant-baseline', 'middle')
+                    .attr('dominant-baseline', 'text-before-edge')
                     .attr('fill', data.legendFontColor)
                     .attr('font-size', data.legendFontSize)
                     .attr('font-weight', data.legendFontWeight)
@@ -203,8 +216,11 @@ var Common = {
                     .attr('fill', data.legendColor[i % data.legendColor.length])
                     .attr('x', len - data.legendItemWidth - data.legendTextPaddingLeft - textLength)
                     .attr('y', function () {
-                        return y + (data.legendItemHeight - b.height) / 2;
+                        return y + (b.height - data.legendItemHeight) / 2;
                     });
+                item.attr('transform', function () {
+                    return 'translate(0,' + -d3.select(this).node().getBBox().height/2 + ')';
+                })
                 
             }
 
@@ -231,7 +247,7 @@ var Common = {
                 text = data.legendData[i];
                 item.append('text')
                     .text(text)
-                    .attr('dominant-baseline', 'middle')
+                    .attr('dominant-baseline', 'text-before-edge')
                     .attr('fill', data.legendFontColor)
                     .attr('font-size', data.legendFontSize)
                     .attr('font-weight', data.legendFontWeight)
@@ -257,8 +273,11 @@ var Common = {
                     .attr('fill', data.legendColor[i % data.legendColor.length])
                     .attr('x', 0)
                     .attr('y', function () {
-                        return y + (data.legendItemHeight - b.height) / 2;
+                        return y + (b.height - data.legendItemHeight) / 2;
                     });
+                item.attr('transform', function () {
+                    return 'translate(0,' + -d3.select(this).node().getBBox().height/2 + ')';
+                })
                 y = y + Number(data.legendFontSize) + Number(data.legendMargin);
             }
             var  wrapSize = d3.select('#coxcomb-legend-wrap').node().getBBox();
@@ -433,12 +452,10 @@ var Common = {
         var tempL = Math.sin(temp) * r;
         var tempT = Math.cos(temp) * r;
 
-
         var t = Math.atan(box.x/box.y) - d.rotate *Math.PI/180;
         var r = Math.sqrt(box.x*box.x + box.y*box.y);
         var diffx = box.x - Math.sin(t) * r;
-        var diffy = box.y - Math.cos(t) * r;
-
+        var diffy = box.y - Math.cos(t) * r;        
         return {x: diffx + box.width/2 - tempL, y: diffy + box.height/2 - tempT};
 
     },

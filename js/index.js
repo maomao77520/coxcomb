@@ -23,6 +23,7 @@ function Stacked(svg) {
         height: 600,
         titleHeight: 30,
         totalAngle: 360,
+        rotate: 0,
         scaleAngleRatio: 1.5,
         scaleNum: 5,
         borderColor: '#f00',
@@ -108,7 +109,6 @@ Stacked.prototype = {
 
         this.initData();
 
-        Common.getYAsix(this.rotateWrap, this.data);
         if (this.data.borderType !== 'none') {
             Common.renderCircleBorder(this.rotateWrap, this.data);
         }
@@ -122,6 +122,7 @@ Stacked.prototype = {
         }
 
         this.renderBar();
+        Common.getYAsix(this.rotateWrap, this.data);
         
         this.rotateWrap.attr('transform', function () {
             var box = d3.select(this).node().getBBox();
@@ -186,7 +187,7 @@ Stacked.prototype = {
         this.data.classIntervalAngle = this.data.barAngle * this.data.classIntervalRatio;
         
         this.data.maxY = this.data.maxY || Common.getMaxY(this.data.statistics);
-        this.data.minY = 0;
+        this.data.minY = this.data.minY || Common.getMinY(this.data.statistics);
 
         this.data.oriOuterRadius = this.data.outerRadius;
         this.data.oriWidth = this.data.width;
@@ -227,37 +228,77 @@ Stacked.prototype = {
         var startV = {};
         var s, e, barOuterR, arcLength;
         var fillColor, direction, rotateAngle;
+        var color, hoverPop, hoverRect, hoverSize, hoverText;
         for (var i = 0; i < data.totalSector; i++) {
-            var startAngle = data.scaleAngle / 2 + i * data.sectorAngle;
+            var startAngle = data.scaleAngle / 2 + i * (data.sectorAngle);
             var endAngle = startAngle + data.sectorAngle;
-            var avg = (data.outerRadius - data.innerRadius) / data.maxY;
+            var avg = (data.outerRadius - data.innerRadius) / (data.maxY - data.minY);
             for (var n = 1; n <= data.barNum; n++) {
                 if (data.statistics[i].data[n-1].numberValue == undefined) {
                     continue;
                 }
                 s = startAngle + data.classIntervalAngle;
                 e = s + data.barAngle;
-                barOuterR = data.statistics[i].data[n-1].numberValue > 0 
-                    ? data.statistics[i].data[n-1].numberValue * avg + data.innerRadius
+                barOuterR = data.statistics[i].data[n-1].numberValue - data.minY > 0 
+                    ? (data.statistics[i].data[n-1].numberValue - data.minY) * avg + data.innerRadius
                     : data.innerRadius + data.innerRadiusMargin;
                 arcLength = 2 * Math.PI * barOuterR * data.barAngle / 360;
 
                 fillColor = data.legendColor[data.legendData.indexOf(data.statistics[i].data[n-1][data.legendType])]
-
+                color = color = d3.rgb(fillColor);
+                data.statistics[i].data[n-1].tipBg = d3.rgb(
+                        Math.round(color.r + 0.8*(255-color.r)),
+                        Math.round(color.g + 0.8*(255-color.g)),
+                        Math.round(color.b + 0.8*(255-color.b))
+                    )
                 var arcD = arc({
                     innerRadius: data.innerRadius + data.innerRadiusMargin,
                     outerRadius: barOuterR,
                     startAngle: s / 180 * Math.PI,
                     endAngle: e / 180 * Math.PI
                 });
-                this.rotateWrap.select('#barwrap').append('path')
-                    .attr('d', arcD)
-                    .attr('id', 'coxcomb-bar-text-path-' + i + '-' + n)
-                    .attr('transform', 'translate(' + data.center.x + ',' + data.center.y + ')')
-                    .attr('fill', fillColor)
-                    .attr('data-start', function () {
-                        startV = d3.select(this).node().getPointAtLength(0);
-                    });
+                (function (i, n) {
+                    me.rotateWrap.select('#barwrap').append('path')
+                        .attr('d', arcD)
+                        .attr('id', 'coxcomb-bar-text-path-' + i + '-' + n)
+                        .attr('transform', 'translate(' + data.center.x + ',' + data.center.y + ')')
+                        .attr('fill', fillColor)
+                        .attr('data-start', function () {
+                            startV = d3.select(this).node().getPointAtLength(0);
+                        })
+                        .on('mouseenter', function () {
+                            hoverPop = me.rotateWrap.append('g')
+                                .attr('transform', 'translate(' + d3.event.offsetX + ',' + d3.event.offsetY + ')')
+                            hoverRect = hoverPop.append('rect')
+                                .attr('x', 0)
+                                .attr('y', 0)
+                                .attr('rx', 3)
+                                .attr('ry', 3)
+                                .attr('fill', data.statistics[i].data[n-1].tipBg)
+                            hoverText = hoverPop.append('text')
+                                .attr('fill', '#000')
+                                .attr('font-size', 12)
+                                .attr('font-family', 'microsoft yahei')
+                                .attr('dominant-baseline', 'middle')
+                            hoverText.append('tspan').text(data.statistics[i].name)
+                                .attr('dy', 14)
+                                .attr('x', 5)
+                            hoverText.append('tspan').text(data.statistics[i].data[n-1][data.legendType]
+                                + ': ' + data.statistics[i].data[n-1].numberValue)
+                                .attr('dy', 14)
+                                .attr('x', 5)
+                            hoverRect.attr('width', function () {
+                                    hoverSize = hoverText.node().getBBox();
+                                    return hoverSize.width + 10;
+                                })
+                                .attr('height', hoverSize.height + 10)
+                            
+                        })
+                        .on('mouseleave', function () {
+                            hoverPop.remove();
+                        });
+                })(i, n)
+                
                 direction = 1;
                 if (s > 90 && s < 270) {
                     direction = 2;
@@ -265,28 +306,61 @@ Stacked.prototype = {
                 rotateAngle = s + data.barAngle / 2;
 
                 if (~~this.data.isShowBarNum == 1) {
-                    this.rotateWrap.select('#bartextwrap').append('g')
-                        .attr('transform', function () {
-                            if (direction == 2) {
-                                rotateAngle = rotateAngle - 180;
-                            }
-                            return 'translate('
-                                + (data.center.x + startV.x) + ',' + (data.center.y + startV.y)
-                                + ') rotate(' + rotateAngle + ')'; 
-                        })
-                        .append('text')
-                        .text(Number(data.statistics[i].data[n-1].numberValue).toFixed(data.barFloatNum))
-                        .attr('x', function () {
-                            return direction == 1 ? arcLength / 2 : -arcLength / 2;
-                        })
-                        .attr('dy', function () {
-                            if (direction == 2) {
-                                return data.barTextSize
-                            }
-                        })
-                        .attr('text-anchor', 'middle')
-                        .attr('fill', data.barTextColor)
-                        .attr('font-size', data.barTextSize);
+                    (function (i, n) {
+                        me.rotateWrap.select('#bartextwrap').append('g')
+                            .attr('transform', function () {
+                                if (direction == 2) {
+                                    rotateAngle = rotateAngle - 180;
+                                }
+                                return 'translate('
+                                    + (data.center.x + startV.x) + ',' + (data.center.y + startV.y)
+                                    + ') rotate(' + rotateAngle + ')'; 
+                            })
+                            .append('text')
+                            .text(Number(data.statistics[i].data[n-1].numberValue).toFixed(data.barFloatNum))
+                            .attr('x', function () {
+                                return direction == 1 ? arcLength / 2 : -arcLength / 2;
+                            })
+                            .attr('dy', function () {
+                                if (direction == 2) {
+                                    return data.barTextSize
+                                }
+                            })
+                            .attr('text-anchor', 'middle')
+                            .attr('fill', data.barTextColor)
+                            .attr('font-size', data.barTextSize)
+                            .on('mouseenter', function () {
+                                    hoverPop = me.rotateWrap.append('g')
+                                        .attr('transform', 'translate(' + d3.event.offsetX + ',' + d3.event.offsetY + ')')
+                                    hoverRect = hoverPop.append('rect')
+                                        .attr('x', 0)
+                                        .attr('y', 0)
+                                        .attr('rx', 3)
+                                        .attr('ry', 3)
+                                        .attr('fill', data.statistics[i].data[n-1].tipBg)
+                                    hoverText = hoverPop.append('text')
+                                        .attr('fill', '#000')
+                                        .attr('font-size', 12)
+                                        .attr('font-family', 'microsoft yahei')
+                                        .attr('dominant-baseline', 'middle')
+                                    hoverText.append('tspan').text(data.statistics[i].name)
+                                        .attr('dy', 14)
+                                        .attr('x', 5)
+                                    hoverText.append('tspan').text(data.statistics[i].data[n-1][data.legendType]
+                                        + ': ' + data.statistics[i].data[n-1].numberValue)
+                                        .attr('dy', 14)
+                                        .attr('x', 5)
+                                    hoverRect.attr('width', function () {
+                                            hoverSize = hoverText.node().getBBox();
+                                            return hoverSize.width + 10;
+                                        })
+                                        .attr('height', hoverSize.height + 10)
+                                    
+                                })
+                                .on('mouseleave', function () {
+                                    hoverPop.remove();
+                                });
+                        })(i, n)
                 }
             }
         }
@@ -300,6 +374,7 @@ function Cluster(svg) {
         width: 600,
         height: 600,
         totalAngle: 360,
+        rotate: 0,
         scaleAngleRatio: 1.5,
         scaleNum: 5,
         borderColor: '#f00',
@@ -352,6 +427,9 @@ function Cluster(svg) {
 
 Cluster.prototype = {
     init: function (params) {
+
+
+        console.log(params)
         this.data = Common.mix(params || {}, this.defaultOptions);
         
         this.render();
@@ -409,7 +487,7 @@ Cluster.prototype = {
         this.data.barIntervalAngle = this.data.barAngle * this.data.barIntervalRatio;
         this.data.classIntervalAngle = this.data.barAngle * this.data.classIntervalRatio;
         this.data.maxY = this.data.maxY || Common.getMaxY(this.data.statistics);
-        this.data.minY = 0;
+        this.data.minY = this.data.minY || Common.getMinY(this.data.statistics);
 
         this.data.oriOuterRadius = this.data.outerRadius;
         this.data.oriWidth = this.data.width;
@@ -453,7 +531,6 @@ Cluster.prototype = {
 
         this.initData();
 
-        Common.getYAsix(this.rotateWrap, this.data);
         if (this.data.borderType !== 'none') {
             Common.renderCircleBorder(this.rotateWrap, this.data);
         }
@@ -467,6 +544,7 @@ Cluster.prototype = {
         }
 
         this.renderBar();
+        Common.getYAsix(this.rotateWrap, this.data);
 
         this.rotateWrap.attr('transform', function () {
             var box = d3.select(this).node().getBBox();
@@ -495,7 +573,6 @@ Cluster.prototype = {
         this.data.innerRadius = this.data.outerRadius * this.data.innerRadiusRatio;
         this.data.center.x = this.data.oriCenterX + diffW / 2;
         this.data.center.y = this.data.oriCenterY + diffH / 2;
-
         this.render();
     },
 
@@ -507,69 +584,144 @@ Cluster.prototype = {
         this.rotateWrap.append('g').attr('id', 'bartextwrap');
         var startV = {};
         var s, e, barOuterR, arcLength;
+        var hoverPop, color, hoverRect, hoverSize, hoverText;
+
         for (var i = 0; i < data.totalSector; i++) {
             var startAngle = data.scaleAngle / 2 + i * data.sectorAngle;
             var endAngle = startAngle + data.sectorAngle;
      
-            var avg = (data.outerRadius - data.innerRadius) / data.maxY;
+            var avg = (data.outerRadius - data.innerRadius) / (data.maxY - data.minY);
             for (var n = 1; n <= data.barNum; n++) {
                 if (data.statistics[i].data[n-1].numberValue == undefined) {
                     continue;
                 }
                 s = startAngle + data.classIntervalAngle + (n-1) * data.barAngle + (n-1) * data.barIntervalAngle;
                 e = s + data.barAngle;
-                barOuterR = data.statistics[i].data[n-1].numberValue > 0 
-                    ? data.statistics[i].data[n-1].numberValue * avg + data.innerRadius
+                barOuterR = data.statistics[i].data[n-1].numberValue - data.minY > 0 
+                    ? (data.statistics[i].data[n-1].numberValue - data.minY) * avg + data.innerRadius
                     : data.innerRadius + data.innerRadiusMargin;
                 arcLength = 2 * Math.PI * barOuterR * data.barAngle / 360;
 
                 fillColor = data.legendColor[data.legendData.indexOf(data.statistics[i].data[n-1][data.legendType])];
-
+                color = color = d3.rgb(fillColor);
+                data.statistics[i].data[n-1].tipBg = d3.rgb(
+                        Math.round(color.r + 0.8*(255-color.r)),
+                        Math.round(color.g + 0.8*(255-color.g)),
+                        Math.round(color.b + 0.8*(255-color.b))
+                    )
                 var arcD = arc({
                     innerRadius: data.innerRadius + data.innerRadiusMargin,
                     outerRadius: barOuterR,
                     startAngle: s / 180 * Math.PI,
                     endAngle: e / 180 * Math.PI
                 });
-                this.rotateWrap.select('#barwrap').append('path')
-                    .attr('d', arcD)
-                    .attr('id', 'coxcomb-bar-text-path-' + i + '-' + n)
-                    .attr('transform', 'translate(' + data.center.x + ',' + data.center.y + ')')
-                    .attr('fill', fillColor)
-                    .attr('data-start', function () {
-                        startV = d3.select(this).node().getPointAtLength(0);
-                    });
+                (function (i, n) {
+                    
+                    me.rotateWrap.select('#barwrap').append('path')
+                        .attr('d', arcD)
+                        .attr('id', 'coxcomb-bar-text-path-' + i + '-' + n)
+                        .attr('transform', 'translate(' + data.center.x + ',' + data.center.y + ')')
+                        .attr('fill', fillColor)
+                        .attr('data-start', function () {
+                            startV = d3.select(this).node().getPointAtLength(0);
+                        })
+                        .on('mouseenter', function () {
+                            hoverPop = me.rotateWrap.append('g')
+                                .attr('transform', 'translate(' + d3.event.offsetX + ',' + d3.event.offsetY + ')')
+                            hoverRect = hoverPop.append('rect')
+                                .attr('x', 0)
+                                .attr('y', 0)
+                                .attr('rx', 3)
+                                .attr('ry', 3)
+                                .attr('fill', data.statistics[i].data[n-1].tipBg)
+                            hoverText = hoverPop.append('text')
+                                .attr('fill', '#000')
+                                .attr('font-size', 12)
+                                .attr('font-family', 'microsoft yahei')
+                                .attr('dominant-baseline', 'middle')
+                            hoverText.append('tspan').text(data.statistics[i].name)
+                                .attr('dy', 14)
+                                .attr('x', 5)
+                            hoverText.append('tspan').text(data.statistics[i].data[n-1][data.legendType]
+                                + ': ' + data.statistics[i].data[n-1].numberValue)
+                                .attr('dy', 14)
+                                .attr('x', 5)
+                            hoverRect.attr('width', function () {
+                                    hoverSize = hoverText.node().getBBox();
+                                    return hoverSize.width + 10;
+                                })
+                                .attr('height', hoverSize.height + 10)
+                            
+                        })
+                        .on('mouseleave', function () {
+                            hoverPop.remove();
+                        });
+                })(i, n);
                 var direction = 1;
                 if (s > 90 && s < 270) {
                     direction =2;
                 }
                 if (~~this.data.isShowBarNum == 1) {
-                    this.rotateWrap.select('#bartextwrap').append('g')
-                        .attr('transform', function () {
-                            var rotateAngle = data.scaleAngle / 2 + i * data.sectorAngle
-                                + (i-1) * data.classIntervalAngle + n * data.barAngle
-                                + (n-1) * data.barIntervalAngle;
-                            if (direction == 2) {
-                                rotateAngle = rotateAngle - 180;
-                            }
-                            return 'translate('
-                                + (data.center.x + startV.x) + ',' + (data.center.y + startV.y)
-                                + ') rotate(' + rotateAngle + ')'; 
-                        })
-                        .append('text')
-                        .text(Number(data.statistics[i].data[n-1].numberValue).toFixed(data.barFloatNum))
-                        .attr('x', function () {
-                            return direction == 1 ? arcLength / 2 : -arcLength / 2;
-                        })
-                        .attr('dy', function () {
-                            if (direction == 1) {
-                                return d3.select(this).node().getBBox().height / 2;
-                            }
-                            return -(d3.select(this).node().getBBox().height - data.barTextSize) / 2;
-                        })
-                        .attr('text-anchor', 'middle')
-                        .attr('fill', data.barTextColor)
-                        .attr('font-size', data.barTextSize);
+                    (function (i, n) {
+                        me.rotateWrap.select('#bartextwrap').append('g')
+                            .attr('transform', function () {
+                                var rotateAngle = data.scaleAngle / 2 + i * data.sectorAngle
+                                    + (i-1) * data.classIntervalAngle + n * data.barAngle
+                                    + (n-1) * data.barIntervalAngle;
+                                if (direction == 2) {
+                                    rotateAngle = rotateAngle - 180;
+                                }
+                                return 'translate('
+                                    + (data.center.x + startV.x) + ',' + (data.center.y + startV.y)
+                                    + ') rotate(' + rotateAngle + ')'; 
+                            })
+                            .append('text')
+                            .text(Number(data.statistics[i].data[n-1].numberValue).toFixed(data.barFloatNum))
+                            .attr('x', function () {
+                                return direction == 1 ? arcLength / 2 : -arcLength / 2;
+                            })
+                            .attr('dy', function () {
+                                if (direction == 1) {
+                                    return d3.select(this).node().getBBox().height / 2;
+                                }
+                                return -(d3.select(this).node().getBBox().height - data.barTextSize) / 2;
+                            })
+                            .attr('text-anchor', 'middle')
+                            .attr('fill', data.barTextColor)
+                            .attr('font-size', data.barTextSize)
+                            .on('mouseenter', function () {
+                                hoverPop = me.rotateWrap.append('g')
+                                    .attr('transform', 'translate(' + d3.event.offsetX + ',' + d3.event.offsetY + ')')
+                                hoverRect = hoverPop.append('rect')
+                                    .attr('x', 0)
+                                    .attr('y', 0)
+                                    .attr('rx', 3)
+                                    .attr('ry', 3)
+                                    .attr('fill', data.statistics[i].data[n-1].tipBg)
+                                hoverText = hoverPop.append('text')
+                                    .attr('fill', '#000')
+                                    .attr('font-size', 12)
+                                    .attr('font-family', 'microsoft yahei')
+                                    .attr('dominant-baseline', 'middle')
+                                hoverText.append('tspan').text(data.statistics[i].name)
+                                    .attr('dy', 14)
+                                    .attr('x', 5)
+                                hoverText.append('tspan').text(data.statistics[i].data[n-1][data.legendType]
+                                    + ': ' + data.statistics[i].data[n-1].numberValue)
+                                    .attr('dy', 14)
+                                    .attr('x', 5)
+                                hoverRect.attr('width', function () {
+                                        hoverSize = hoverText.node().getBBox();
+                                        return hoverSize.width + 10;
+                                    })
+                                    .attr('height', hoverSize.height + 10)
+                                
+                            })
+                            .on('mouseleave', function () {
+                                hoverPop.remove();
+                            });
+                    })(i, n)
+                    
                 }
             }
         }

@@ -9,14 +9,14 @@
            input, select {
                display: inline-block;
                margin: 4px;
-               width: 80px;
+               width: 60px;
                height: 24px;
                line-height: 24px;
            }
            .panel {
                float: right;
-               margin-right: 10px;
-               width: 380px;
+               margin-right: 5px;
+               width: 500px;
            }
            .block {
                float: left;
@@ -42,68 +42,92 @@
                    <option value='stacked'>堆积</option>
                </select>
                <br/>
+
                <label>组件背景色</label>
                <input placeholder="组件背景色" name="backgroundColor"></input>
                <br/>
+
                <label>总角度</label>
                <input placeholder="总角度" name="totalAngle"></input>
                <br/>
+
                <label>显示标题</label>
                <select name="isShowTitle">
                    <option value='1'>是</option>
                    <option value='0'>否</option>
                </select>
                <br/>
+
                <label>标题内容</label>
                <input placeholder="标题内容" name="titleContent"></input>
                <br/>
+
                <label>标题高度</label>
                <input placeholder="标题高度" name="titleHeight"></input>
                <br/>
+
                <label>标题背景色</label>
                <input placeholder="标题背景色" name="titleBackground"></input>
                <br/>
+
                <label>标题字体大小</label>
                <input placeholder="标题字体大小" name="titleFontSize"></input>
                <br/>
+
                <label>标题字体颜色</label>
                <input placeholder="标题字体颜色" name="titleFontColor"></input>
                <br/>
-              <label>标题字体粗细</label>
+
+               <label>标题字体粗细</label>
                <select name="titleFontWeight">
                    <option value="normal">正常</option>
                    <option value="bold">加粗</option>
                </select>
                <br/>
+
                <label>外圆半径</label>
                <input placeholder="外圆半径" name="outerRadius"></input>
                <br/>
                <label>内圆半径占比</label>
                <input placeholder="内圆半径占比" name="innerRadiusRatio"></input>
                <br/>
-               <label>坐标轴刻度区域</label>
+               <label>坐标刻度区域</label>
                <input placeholder="坐标轴刻度区域" name="scaleAngleRatio"></input>
                <br/>
-               <label>坐标轴刻度数量</label>
+               <label>坐标刻度数量</label>
                <input placeholder="坐标轴刻度数量" name="scaleNum"></input>
                <br/>
-               <label>坐标轴刻度最大值</label>
+               <label>坐标刻度最大值</label>
                <input placeholder="坐标轴刻度最大值" name="maxY"></input>
+               <br/>
+               <label>坐标刻度最小值</label>
+               <input placeholder="坐标轴刻度最小值" name="minY"></input>
                <br/>
                <label>网格线颜色</label>
                <input placeholder="网格线颜色" name="scaleColor"></input>
                <br/>
-               <label>坐标轴字体大小</label>
+               <label>坐标轴字大小</label>
                <input placeholder="坐标轴字体大小" name="scaleFontSize"></input>
                <br/>
-               <label>坐标轴字体颜色</label>
+               <label>坐标轴字颜色</label>
                <input placeholder="坐标轴字体颜色" name="scaleFontColor"></input>
                <br/>
-               <label>坐标轴字体粗细</label>
+               <label>坐标轴字粗细</label>
                <select name="scaleFontWeight">
                    <option value="normal">正常</option>
                    <option value="bold">加粗</option>
                </select>
+               <br/>
+               
+               
+
+           </div>
+           <div class="block">
+               <label>类间距</label>
+               <input placeholder="类间距" name="classIntervalRatio"></input>
+               <br/>
+               <label>系列间距</label>
+               <input placeholder="系列间距" name="barIntervalRatio"></input>
                <br/>
                <label>显示水平网格线</label>
                <select name="isShowXAsix">
@@ -122,6 +146,33 @@
                    <option value='1'>是</option>
                    <option value='0'>否</option>
                </select>
+               <br/>
+               <label>是否显示数值</label>
+               <select name="isShowBarNum">
+                   <option value="1">是</option>
+                   <option value="0">否</option>
+               </select>
+               <br/>
+               <label>数值小数点</label>
+               <input placeholder="数值小数点" name="barFloatNum"></input>
+               <br/>
+               <label>数值字体颜色</label>
+               <input placeholder="数值字体颜色" name="barTextColor"></input>
+               <br/>
+               <label>数值字体大小</label>
+               <input placeholder="数值字体大小" name="barTextSize"></input>
+               <br/>
+               <label>上边距</label>
+               <input placeholder="上边距" name="paddingTop"></input> 
+               <br/>
+               <label>下边距</label>
+               <input placeholder="下边距" name="paddingBottom"></input> 
+               <br/>
+               <label>左边距</label>
+               <input placeholder="左边距" name="paddingLeft"></input> 
+               <br/>
+               <label>右边距</label>
+               <input placeholder="右边距" name="paddingRight"></input> 
                <br/>
                <label>显示分类标签</label>
                <select name="isShowLabel">
@@ -155,41 +206,9 @@
                <input placeholder="边框宽度" name="borderWidth"></input>
                <br/>
 
+               
            </div>
            <div class="block">
-               <label>类间距</label>
-               <input placeholder="类间距" name="classIntervalRatio"></input>
-               <br/>
-               <label>系列间距</label>
-               <input placeholder="系列间距" name="barIntervalRatio"></input>
-               <br/>
-               <label>是否显示数值</label>
-               <select name="isShowBarNum">
-                   <option value="1">是</option>
-                   <option value="0">否</option>
-               </select>
-               <br/>
-               <label>数值小数点</label>
-               <input placeholder="数值小数点" name="barFloatNum"></input>
-               <br/>
-               <label>数值字体颜色</label>
-               <input placeholder="数值字体颜色" name="barTextColor"></input>
-               <br/>
-               <label>数值字体大小</label>
-               <input placeholder="数值字体大小" name="barTextSize"></input>
-               <br/>
-               <label>上边距</label>
-               <input placeholder="上边距" name="paddingTop"></input> 
-               <br/>
-               <label>下边距</label>
-               <input placeholder="下边距" name="paddingBottom"></input> 
-               <br/>
-               <label>左边距</label>
-               <input placeholder="左边距" name="paddingLeft"></input> 
-               <br/>
-               <label>右边距</label>
-               <input placeholder="右边距" name="paddingRight"></input> 
-               <br/>
                
                <label>是否显示图例</label>
                <select name="isShowLegend">
@@ -259,8 +278,15 @@
                </select>
                <br/>
 
-              <label>旋转角度</label>
+               <label>旋转角度</label>
                <input placeholder="旋转角度" name="rotate"></input>
+               <br/>
+               <label>画布宽度</label>
+               <input placeholder="画布宽度" name="width"></input>
+               <br/>
+               <label>画布高度</label>
+               <input placeholder="画布高度" name="height"></input>
+               <br/>
                <br/>
            </div>
            <button id="submitBtn">确定</button>
@@ -276,10 +302,7 @@
         		.attr('width', initData.width)
         		.attr('height', initData.height)
 
-        		// .style('background', '#333');
-
           var chart = new Chart({type:'cluster'}, svg);
-        	// var chart = new Chart('stacked', svg);
         	chart.init(initData)
 
         var params = {
@@ -301,10 +324,12 @@
                }
             });
 
-           var chart = new Chart(params, svg)
+           chart = new Chart(params, svg)
            svg.attr('width', params.width).attr('height', params.height)  
            chart.init(params);
          });
+
+
          for (var o in chart.data) {
             $('input[name=' + o + ']').val(chart.data[o])
          } 
@@ -331,7 +356,6 @@
 
                   chart.data.width = bgWidth + diffW > 0 ? bgWidth + diffW : 0;
                   chart.data.height = bgHeight + diffH > 0 ? bgHeight + diffH : 0;
-       
                   // 拖拽改变属性，重新渲染
                   chart.update(chart.data)
 
@@ -340,6 +364,9 @@
 
           svg.on('mouseup', function () {
               svg.on('mousemove', null);
+              for (var o in chart.data) {
+                  $('input[name=' + o + ']').val(chart.data[o])
+              }
           });
           $('html').on('mouseup', function () {
               svg.on('mousemove', null);
