@@ -178,6 +178,7 @@ Stacked.prototype = {
         }
 
         this.data.innerRadius = this.data.outerRadius * this.data.innerRadiusRatio - this.data.innerRadiusMargin;
+        this.data.innerRadius = this.data.innerRadius > 0 ? this.data.innerRadius : 0;
 
         this.data.totalSector = this.data.statistics.length;
         this.data.barNum = this.data.legendData.length;
@@ -196,6 +197,12 @@ Stacked.prototype = {
         this.data.oriCenterX = this.data.center.x;
         this.data.oriCenterY = this.data.center.y;
 
+        this.data.innerTextSizeRatio = this.data.innerTextSize / this.data.width;
+        this.data.scaleFontSizeRatio = this.data.scaleFontSize / this.data.width;
+        this.data.labelTextFontSizeRatio = this.data.labelTextFontSize / this.data.width;
+        this.data.barTextSizeRatio = this.data.barTextSize / this.data.width;
+        this.data.legendFontSizeRatio = this.data.legendFontSize / this.data.width;
+
         Common.sortData(this.data);
     },
 
@@ -212,9 +219,16 @@ Stacked.prototype = {
             var diff = diffW > diffH ? diffH : diffW;
         }
         this.data.outerRadius = (+d.oriOuterRadius + diff/2) > 0 ? (+d.oriOuterRadius + diff/2) : 0;
-        this.data.innerRadius = this.data.outerRadius * this.data.innerRadiusRatio;
+        this.data.innerRadius = this.data.outerRadius * this.data.innerRadiusRatio - this.data.innerRadiusMargin;
+        this.data.innerRadius = this.data.innerRadius > 0 ? this.data.innerRadius : 0;
         this.data.center.x = this.data.oriCenterX + diffW / 2;
         this.data.center.y = this.data.oriCenterY + diffH / 2;
+
+        this.data.innerTextSize = this.data.innerTextSizeRatio * this.data.width;
+        this.data.scaleFontSize = this.data.scaleFontSizeRatio * this.data.width;
+        this.data.labelTextFontSize = this.data.labelTextFontSizeRatio * this.data.width;
+        this.data.barTextSize = this.data.barTextSizeRatio * this.data.width;
+        this.data.legendFontSize = this.data.legendFontSizeRatio * this.data.width;
 
         this.render();
     },
@@ -478,6 +492,7 @@ Cluster.prototype = {
         }
 
         this.data.innerRadius = this.data.outerRadius * this.data.innerRadiusRatio - this.data.innerRadiusMargin;
+        this.data.innerRadius = this.data.innerRadius > 0 ? this.data.innerRadius : 0;
 
         this.data.totalSector = this.data.statistics.length;
         this.data.barNum = this.data.legendData.length;
@@ -495,6 +510,12 @@ Cluster.prototype = {
 
         this.data.oriCenterX = this.data.center.x;
         this.data.oriCenterY = this.data.center.y;
+
+        this.data.innerTextSizeRatio = this.data.innerTextSize / this.data.width;
+        this.data.scaleFontSizeRatio = this.data.scaleFontSize / this.data.width;
+        this.data.labelTextFontSizeRatio = this.data.labelTextFontSize / this.data.width;
+        this.data.barTextSizeRatio = this.data.barTextSize / this.data.width;
+        this.data.legendFontSizeRatio = this.data.legendFontSize / this.data.width;
     },
 
     getBarAngle: function () {
@@ -570,9 +591,16 @@ Cluster.prototype = {
             var diff = diffW > diffH ? diffH : diffW;
         }
         this.data.outerRadius = (+d.oriOuterRadius + diff/2) > 0 ? (+d.oriOuterRadius + diff/2) : 0;
-        this.data.innerRadius = this.data.outerRadius * this.data.innerRadiusRatio;
+        this.data.innerRadius = this.data.outerRadius * this.data.innerRadiusRatio - this.data.innerRadiusMargin;
+        this.data.innerRadius = this.data.innerRadius > 0 ? this.data.innerRadius : 0;
         this.data.center.x = this.data.oriCenterX + diffW / 2;
         this.data.center.y = this.data.oriCenterY + diffH / 2;
+
+        this.data.innerTextSize = this.data.innerTextSizeRatio * this.data.width;
+        this.data.scaleFontSize = this.data.scaleFontSizeRatio * this.data.width;
+        this.data.labelTextFontSize = this.data.labelTextFontSizeRatio * this.data.width;
+        this.data.barTextSize = this.data.barTextSizeRatio * this.data.width;
+        this.data.legendFontSize = this.data.legendFontSizeRatio * this.data.width;
         this.render();
     },
 
