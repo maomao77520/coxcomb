@@ -78,7 +78,6 @@ var Common = {
         var endV1 = {};
         var endV2 = {};
         var preV = {};
-        // var len = data.classIntervalRatio > 0 ? data.totalSector-1 : data.totalSector;
         contentWrap.append('g').attr('id', 'yasix')
         for (var i = 0; i <= data.totalSector; i++) {
             preV.x = startV2.x;
@@ -241,7 +240,7 @@ var Common = {
         }
         else { 
             var y = 0, len, b, textLength, splitIndex;
-            var text;
+            var text, maxLen=0, line=1, totalLen, res;
             for (var i = 0; i < data.legendData.length; i++) {
                 item = that.legend.append('g')
                 text = data.legendData[i];
@@ -254,16 +253,34 @@ var Common = {
                     .attr('x', function () {
                         textLength = d3.select(this).node().getComputedTextLength();
                         len = textLength + Number(data.legendItemWidth) + Number(data.legendTextPaddingLeft)
-                        if (len > data.width * 0.5) {
-                            splitIndex = (len - data.width * 0.5) / textLength * text.length
-                            text = text.substring(0, text.length - Math.ceil(splitIndex))
+                        maxLen = len > maxLen ? len : maxLen;
+                        b = d3.select(this).node().getBBox();                       
+           
+                        // if (totalLen > data.width * 0.5) {
+                        //     splitIndex = (totalLen - data.width * 0.5) / textLength * text.length
+                        //     text = text.substring(0, text.length - Math.ceil(splitIndex))
+                        //     // return +data.legendItemWidth + Number(data.legendTextPaddingLeft)
+                        // }
+                        res = +data.legendItemWidth + Number(data.legendTextPaddingLeft)
+                        if (b.height * (i + 1) > data.height - data.titleHeight) {
+                            y = line == 1 ? 0 : y;
+                            line = 2;
+                            totalLen = line == 1 ? len : (len + maxLen + Number(data.legendItemWidth) + Number(data.legendTextPaddingLeft) + Number(data.legendItemMargin)); 
+                            if (totalLen > data.width * 0.5) {
+                                splitIndex = (totalLen - data.width * 0.5) / textLength * text.length
+                                text = text.substring(0, text.length - Math.ceil(splitIndex))
+                                if (line == 2) {
+                                    res += maxLen + Number(data.legendItemMargin)
+                                }
+                                return res;
+                            }
+                            return maxLen + Number(data.legendItemMargin) + Number(data.legendItemWidth + Number(data.legendTextPaddingLeft));
                         }
-                        return +data.legendItemWidth + Number(data.legendTextPaddingLeft)
+                        return res;
+
                     })
                     .text(text)
                     .attr('y', function () {
-                        b = d3.select(this).node().getBBox();
-                        
                         return y;
                     })
 
@@ -271,7 +288,12 @@ var Common = {
                     .attr('width', data.legendItemWidth)
                     .attr('height', data.legendItemHeight)
                     .attr('fill', data.legendColor[i % data.legendColor.length])
-                    .attr('x', 0)
+                    .attr('x', function () {
+                        if (line == 2) {
+                            return maxLen + Number(data.legendItemMargin);
+                        }
+                        return 0;
+                    })
                     .attr('y', function () {
                         return y + (b.height - data.legendItemHeight) / 2;
                     });
