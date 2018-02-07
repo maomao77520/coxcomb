@@ -119,18 +119,21 @@ Stacked.prototype = {
 
         this.renderBar();
         Common.getYAsix(this.rotateWrap, this.data);
-        
-        this.rotateWrap.attr('transform', function () {
-            var box = d3.select(this).node().getBBox();
-            var params = Common.resetCenter(data, box)
 
-            var temp = Math.PI / 2 - data.rotate*Math.PI/180 - Math.atan(box.height/box.width);
-            var r = Math.sqrt(box.width/2 * box.width/2 + box.height/2 * box.height/2);
-            var tempL = Math.sin(temp) * r;
-            var tempT = Math.cos(temp) * r;
-            return 'translate(' + params.x + ',' + params.y
-              + ') rotate(' + data.rotate + ')';
-        });
+        this.rotateWrap.attr('transform', 'rotate(' + data.rotate + ')')
+            .attr('transform-origin', data.center.x + ' ' + data.center.y);
+        
+        // this.rotateWrap.attr('transform', function () {
+        //     var box = d3.select(this).node().getBBox();
+        //     var params = Common.resetCenter(data, box)
+
+        //     var temp = Math.PI / 2 - data.rotate*Math.PI/180 - Math.atan(box.height/box.width);
+        //     var r = Math.sqrt(box.width/2 * box.width/2 + box.height/2 * box.height/2);
+        //     var tempL = Math.sin(temp) * r;
+        //     var tempT = Math.cos(temp) * r;
+        //     return 'translate(' + params.x + ',' + params.y
+        //       + ') rotate(' + data.rotate + ')';
+        // });
     },
 
     initData: function () {
@@ -564,17 +567,20 @@ Cluster.prototype = {
         this.renderBar();
         Common.getYAsix(this.rotateWrap, this.data);
 
-        this.rotateWrap.attr('transform', function () {
-            var box = d3.select(this).node().getBBox();
-            var params = Common.resetCenter(data, box)
+        this.rotateWrap.attr('transform', 'rotate(' + data.rotate + ')')
+            .attr('transform-origin', data.center.x + ' ' + data.center.y);
 
-            var temp = Math.PI / 2 - data.rotate*Math.PI/180 - Math.atan(box.height/box.width);
-            var r = Math.sqrt(box.width/2 * box.width/2 + box.height/2 * box.height/2);
-            var tempL = Math.sin(temp) * r;
-            var tempT = Math.cos(temp) * r;
-            return 'translate(' + params.x + ',' + params.y
-              + ') rotate(' + data.rotate + ')';
-        });
+        // this.rotateWrap.attr('transform', function () {
+        //     var box = d3.select(this).node().getBBox();
+        //     var params = Common.resetCenter(data, box)
+
+        //     var temp = Math.PI / 2 - data.rotate*Math.PI/180 - Math.atan(box.height/box.width);
+        //     var r = Math.sqrt(box.width/2 * box.width/2 + box.height/2 * box.height/2);
+        //     var tempL = Math.sin(temp) * r;
+        //     var tempT = Math.cos(temp) * r;
+        //     return 'translate(' + params.x + ',' + params.y
+        //       + ') rotate(' + data.rotate + ')';
+        // });
     },
 
     update: function (params) {

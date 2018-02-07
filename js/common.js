@@ -110,21 +110,21 @@ var Common = {
         var direction = 1;
         var d = 'M' + v1.x + ' ' + v1.y + ' A ' + data.outerRadius + ' ' + data.outerRadius
             + ',0,0,1,' + v2.x + ',' + v2.y;
-    
+ 
         if (v1.y >= data.center.y) {
             d = 'M' + v2.x + ' ' + v2.y + ' A ' + data.outerRadius + ' ' + data.outerRadius
                 + ',0,0,0,' + v1.x + ',' + v1.y;
             direction = 2;
         }
-        contentWrap.append('g').attr('id', 'outertext');
+        contentWrap.append('g').attr('id', 'coxcomb-component-outertext');
         
-        contentWrap.select('#outertext')
+        contentWrap.select('#coxcomb-component-outertext')
             .append('defs')
             .append('path')
             .attr('d', d)
-            .attr('id', 'coxcomb-text-path-' + i);
+            .attr('id', 'coxcomb-text-path-' + i)
 
-        contentWrap.select('#outertext').append('text')
+        var outertext = contentWrap.select('#coxcomb-component-outertext').append('text')
             .attr('dy', function () {
                 if (direction == 1) {
                     return -data.labelTextFontSize / 2;
@@ -133,18 +133,31 @@ var Common = {
             })
             .attr('dominant-baseline', function () {
                 return 'middle'
-            })
-            .append("textPath")
+            });
+
+        outertext.append("textPath")
             .text(data.statistics[i].name)
             .attr('font-size', data.labelTextFontSize)
             .attr('fill', data.labelTextColor)
             .attr('font-weight', data.labelTextFontWeight)
             .attr('xlink:href', '#coxcomb-text-path-' + (i))
             .attr('startOffset', function () {
-                var box = d3.select(this).node().getBBox();
+                var textLength = d3.select(this).node().getComputedTextLength()
                 var pathLength = d3.select('#coxcomb-text-path-' + i).node().getTotalLength();
-                return (pathLength - box.width)/2;
-            });    
+                return (pathLength - textLength) / 2;
+            })
+
+
+        // outertext.attr('transform', function () {
+        //     var box = d3.select(this).node().getBBox();
+
+        //     console.log(box)
+        //     if (data.rotate % 180 == 0) {
+        //         return 'rotate(' + data.rotate
+        //         + ',' + (box.x + box.width / 2) + ' ' + (box.y + box.height/2) + ')'
+        //     }
+        // }) 
+
     },
 
     // 渲染圆环轴刻度文字
@@ -153,7 +166,8 @@ var Common = {
         var textInterval = (data.maxY - data.minY) / (data.scaleNum - 1);
         var x = data.center.x;
         var y = data.center.y - data.innerRadius;
-        contentWrap.append('g').attr('id', 'coxcomb-component-ytext-wrap');
+        contentWrap.append('g').attr('id', 'coxcomb-component-ytext-wrap')
+        var box;
         for (var i = 0; i < data.scaleNum; i++) {
             
             contentWrap.select('#coxcomb-component-ytext-wrap').append('text')
@@ -166,6 +180,13 @@ var Common = {
                 .attr('dominant-baseline', 'middle')
                 .attr('fill', data.scaleFontColor)
                 .text(parseInt(textInterval * i) + Number(data.minY))
+                .attr('transform', function () {
+                    box = d3.select(this).node().getBBox();
+                    if (data.rotate % 180 == 0) {
+                        return 'rotate(' + data.rotate
+                        + ',' + (box.x + box.width / 2) + ' ' + (box.y + box.height/2) + ')'
+                    }
+                })
             y = y - scaleLen;
         }
     },
