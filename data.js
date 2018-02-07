@@ -348,6 +348,7 @@ var initData = {
     scaleFontColor: 'rgba(255,255,255,0.3)',  // 坐标轴字体颜色
     scaleFontWeight: 'normal',   // 坐标轴字体加粗
     maxY: 500,
+    minY: 0,
     isShowXAsix: true,   // 是否显示x轴
     isShowYAsix: true,   // 是否显示y轴
     isShowYText: true,   //  是否显示刻度值
