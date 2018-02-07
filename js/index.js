@@ -120,20 +120,9 @@ Stacked.prototype = {
         this.renderBar();
         Common.getYAsix(this.rotateWrap, this.data);
 
-        this.rotateWrap.attr('transform', 'rotate(' + data.rotate + ')')
-            .attr('transform-origin', data.center.x + ' ' + data.center.y);
+        // this.rotateWrap.attr('transform', 'rotate(' + data.rotate + ')')
+        //     .attr('transform-origin', data.center.x + ' ' + data.center.y);
         
-        // this.rotateWrap.attr('transform', function () {
-        //     var box = d3.select(this).node().getBBox();
-        //     var params = Common.resetCenter(data, box)
-
-        //     var temp = Math.PI / 2 - data.rotate*Math.PI/180 - Math.atan(box.height/box.width);
-        //     var r = Math.sqrt(box.width/2 * box.width/2 + box.height/2 * box.height/2);
-        //     var tempL = Math.sin(temp) * r;
-        //     var tempT = Math.cos(temp) * r;
-        //     return 'translate(' + params.x + ',' + params.y
-        //       + ') rotate(' + data.rotate + ')';
-        // });
     },
 
     initData: function () {
@@ -236,8 +225,8 @@ Stacked.prototype = {
         var data = this.data;
         var me = this;
         var arc = d3.arc();
-        this.rotateWrap.append('g').attr('id', 'barwrap');
-        this.rotateWrap.append('g').attr('id', 'bartextwrap');
+        this.rotateWrap.append('g').attr('id', 'coxcomb-component-barwrap');
+        this.rotateWrap.append('g').attr('id', 'coxcomb-component-bartextwrap');
         var startV = {};
         var s, e, barOuterR, arcLength;
         var fillColor, direction, rotateAngle;
@@ -272,7 +261,7 @@ Stacked.prototype = {
                     endAngle: e / 180 * Math.PI
                 });
                 (function (i, n) {
-                    me.rotateWrap.select('#barwrap').append('path')
+                    me.rotateWrap.select('#coxcomb-component-barwrap').append('path')
                         .attr('d', arcD)
                         .attr('id', 'coxcomb-bar-text-path-' + i + '-' + n)
                         .attr('transform', 'translate(' + data.center.x + ',' + data.center.y + ')')
@@ -321,7 +310,7 @@ Stacked.prototype = {
 
                 if (~~this.data.isShowBarNum == 1) {
                     (function (i, n) {
-                        me.rotateWrap.select('#bartextwrap').append('g')
+                        me.rotateWrap.select('#coxcomb-component-bartextwrap').append('g')
                             .attr('transform', function () {
                                 if (direction == 2) {
                                     rotateAngle = rotateAngle - 180;
@@ -343,6 +332,12 @@ Stacked.prototype = {
                             .attr('text-anchor', 'middle')
                             .attr('fill', data.barTextColor)
                             .attr('font-size', data.barTextSize)
+                            .attr('transform', function () {
+                                if (data.rotate == 180) {
+                                    b = d3.select(this).node().getBBox();
+                                    return 'rotate(180,' + (b.x + b.width/2) + ' ' + (b.y+ b.height/2) + ')'
+                                }
+                            })
                             .on('mouseenter', function () {
                                     hoverPop = me.rotateWrap.append('g')
                                         .attr('transform', 'translate(' + d3.event.offsetX + ',' + d3.event.offsetY + ')')
@@ -378,6 +373,11 @@ Stacked.prototype = {
                 }
             }
         }
+
+        me.rotateWrap.select('#coxcomb-component-barwrap')
+            .attr('transform', 'rotate(' + data.rotate + ',' + data.center.x + ' ' + data.center.y + ')')
+        me.rotateWrap.select('#coxcomb-component-bartextwrap')
+            .attr('transform', 'rotate(' + data.rotate + ',' + data.center.x + ' ' + data.center.y + ')')
     }
 };
 
@@ -567,20 +567,9 @@ Cluster.prototype = {
         this.renderBar();
         Common.getYAsix(this.rotateWrap, this.data);
 
-        this.rotateWrap.attr('transform', 'rotate(' + data.rotate + ')')
-            .attr('transform-origin', data.center.x + ' ' + data.center.y);
+        // this.rotateWrap.attr('transform', 'rotate(' + data.rotate + ')')
+        //     .attr('transform-origin', data.center.x + ' ' + data.center.y);
 
-        // this.rotateWrap.attr('transform', function () {
-        //     var box = d3.select(this).node().getBBox();
-        //     var params = Common.resetCenter(data, box)
-
-        //     var temp = Math.PI / 2 - data.rotate*Math.PI/180 - Math.atan(box.height/box.width);
-        //     var r = Math.sqrt(box.width/2 * box.width/2 + box.height/2 * box.height/2);
-        //     var tempL = Math.sin(temp) * r;
-        //     var tempT = Math.cos(temp) * r;
-        //     return 'translate(' + params.x + ',' + params.y
-        //       + ') rotate(' + data.rotate + ')';
-        // });
     },
 
     update: function (params) {
@@ -611,10 +600,10 @@ Cluster.prototype = {
         var data = this.data;
         var me = this;
         var arc = d3.arc();
-        this.rotateWrap.append('g').attr('id', 'barwrap');
-        this.rotateWrap.append('g').attr('id', 'bartextwrap');
+        this.rotateWrap.append('g').attr('id', 'coxcomb-component-barwrap');
+        this.rotateWrap.append('g').attr('id', 'coxcomb-component-bartextwrap');
         var startV = {};
-        var s, e, barOuterR, arcLength;
+        var s, e, barOuterR, arcLength, b;
         var hoverPop, color, hoverRect, hoverSize, hoverText;
 
         for (var i = 0; i < data.totalSector; i++) {
@@ -648,7 +637,7 @@ Cluster.prototype = {
                 });
                 (function (i, n) {
                     
-                    me.rotateWrap.select('#barwrap').append('path')
+                    me.rotateWrap.select('#coxcomb-component-barwrap').append('path')
                         .attr('d', arcD)
                         .attr('id', 'coxcomb-bar-text-path-' + i + '-' + n)
                         .attr('transform', 'translate(' + data.center.x + ',' + data.center.y + ')')
@@ -694,10 +683,10 @@ Cluster.prototype = {
                 }
                 if (~~this.data.isShowBarNum == 1) {
                     (function (i, n) {
-                        me.rotateWrap.select('#bartextwrap').append('g')
+                        me.rotateWrap.select('#coxcomb-component-bartextwrap').append('g')
                             .attr('transform', function () {
                                 var rotateAngle = data.scaleAngle / 2 + i * data.sectorAngle
-                                    + data.classIntervalAngle + n * data.barAngle
+                                    + data.classIntervalAngle + (n-1) * data.barAngle
                                     + (n-1) * data.barIntervalAngle;
                                 if (direction == 2) {
                                     rotateAngle = rotateAngle + 180;
@@ -720,6 +709,12 @@ Cluster.prototype = {
                             .attr('text-anchor', 'middle')
                             .attr('fill', data.barTextColor)
                             .attr('font-size', data.barTextSize)
+                            .attr('transform', function () {
+                                if (data.rotate == 180) {
+                                    b = d3.select(this).node().getBBox();
+                                    return 'rotate(180,' + (b.x + b.width/2) + ' ' + (b.y+ b.height/2) + ')'
+                                }
+                            })
                             .on('mouseenter', function () {
                                 hoverPop = me.rotateWrap.append('g')
                                     .attr('transform', 'translate(' + d3.event.offsetX + ',' + d3.event.offsetY + ')')
@@ -756,6 +751,11 @@ Cluster.prototype = {
                 }
             }
         }
+
+        me.rotateWrap.select('#coxcomb-component-barwrap')
+            .attr('transform', 'rotate(' + data.rotate + ',' + data.center.x + ' ' + data.center.y + ')')
+        me.rotateWrap.select('#coxcomb-component-bartextwrap')
+            .attr('transform', 'rotate(' + data.rotate + ',' + data.center.x + ' ' + data.center.y + ')')
     }
 };
 

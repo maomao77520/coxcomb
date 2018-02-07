@@ -42,7 +42,7 @@ var Common = {
     getXAsix: function () {
         var len = data.scaleNum - 2;
         var interval = (data.outerRadius - data.innerRadius) / (len + 1);
-        contentWrap.append('g').attr('id', 'xasix')
+        contentWrap.append('g').attr('id', 'coxcomb-component-xasix')
         for (var i = 1; i <= len; i++) {
             this.renderXAsix(interval * i + data.innerRadius);
         }
@@ -64,7 +64,10 @@ var Common = {
 	        });
 	        contentWrap.select('#coxcomb-component-xasix-wrap').append('path')
 	        .attr('d', d.split('L')[0])
-	        .attr('transform', 'translate(' + data.center.x + ',' + data.center.y + ')')
+	        .attr('transform', function () {
+                return 'translate(' + data.center.x + ',' + data.center.y + ') rotate('
+                   + data.rotate + ')'
+            })
 	        .attr('stroke', data.scaleColor)
 	        .attr('fill', 'none')
         }
@@ -78,7 +81,7 @@ var Common = {
         var endV1 = {};
         var endV2 = {};
         var preV = {};
-        contentWrap.append('g').attr('id', 'yasix')
+        contentWrap.append('g').attr('id', 'coxcomb-component-yasix')
         for (var i = 0; i <= data.totalSector; i++) {
             preV.x = startV2.x;
             preV.y = startV2.y;
@@ -100,23 +103,33 @@ var Common = {
     renderYAsix: function (contentWrap, data, v1, v2) {
         var d = 'M ' + v1.x + ' ' + v1.y + ' L ' + v2.x + ' ' + v2.y;
 
-        contentWrap.select('#yasix').append('path')
+        contentWrap.select('#coxcomb-component-yasix').append('path')
 	        .attr('d', d)
 	        .attr('stroke', data.scaleColor)
 	        .attr('fill', 'none')
+            .attr('transform', function () {
+                return 'rotate(' + data.rotate + ',' + data.center.x + ' ' + data.center.y + ')'
+            })
     },
 
     renderLabelText: function (contentWrap, data, v1, v2, i) {
         var direction = 1;
         var d = 'M' + v1.x + ' ' + v1.y + ' A ' + data.outerRadius + ' ' + data.outerRadius
             + ',0,0,1,' + v2.x + ',' + v2.y;
- 
-        if (v1.y >= data.center.y) {
+    
+        if (data.rotate != 180 && (Math.abs(v1.y-v2.y) / 2 + Math.min(v1.y, v2.y)) >= data.center.y) {
             d = 'M' + v2.x + ' ' + v2.y + ' A ' + data.outerRadius + ' ' + data.outerRadius
                 + ',0,0,0,' + v1.x + ',' + v1.y;
             direction = 2;
         }
-        contentWrap.append('g').attr('id', 'coxcomb-component-outertext');
+
+         if (data.rotate == 180 && (Math.abs(v1.y-v2.y) / 2 + Math.min(v1.y, v2.y)) <= data.center.y) {
+            d = 'M' + v2.x + ' ' + v2.y + ' A ' + data.outerRadius + ' ' + data.outerRadius
+                + ',0,0,0,' + v1.x + ',' + v1.y;
+            direction = 2;
+        }
+
+        var outertext = contentWrap.append('g').attr('id', 'coxcomb-component-outertext');
         
         contentWrap.select('#coxcomb-component-outertext')
             .append('defs')
@@ -124,7 +137,7 @@ var Common = {
             .attr('d', d)
             .attr('id', 'coxcomb-text-path-' + i)
 
-        var outertext = contentWrap.select('#coxcomb-component-outertext').append('text')
+        contentWrap.select('#coxcomb-component-outertext').append('text')
             .attr('dy', function () {
                 if (direction == 1) {
                     return -data.labelTextFontSize / 2;
@@ -133,9 +146,8 @@ var Common = {
             })
             .attr('dominant-baseline', function () {
                 return 'middle'
-            });
-
-        outertext.append("textPath")
+            })
+            .append("textPath")
             .text(data.statistics[i].name)
             .attr('font-size', data.labelTextFontSize)
             .attr('fill', data.labelTextColor)
@@ -148,15 +160,12 @@ var Common = {
             })
 
 
-        // outertext.attr('transform', function () {
-        //     var box = d3.select(this).node().getBBox();
-
-        //     console.log(box)
-        //     if (data.rotate % 180 == 0) {
-        //         return 'rotate(' + data.rotate
-        //         + ',' + (box.x + box.width / 2) + ' ' + (box.y + box.height/2) + ')'
-        //     }
-        // }) 
+        outertext.attr('transform', function () {
+            if (data.rotate == 180) {
+                return 'rotate(' + data.rotate
+                + ',' + data.center.x + ' ' + data.center.y + ')'
+            }
+        }) 
 
     },
 
@@ -167,6 +176,7 @@ var Common = {
         var x = data.center.x;
         var y = data.center.y - data.innerRadius;
         contentWrap.append('g').attr('id', 'coxcomb-component-ytext-wrap')
+            .attr('transform', 'rotate(' + data.rotate + ',' + data.center.x + ' ' + data.center.y + ')')
         var box;
         for (var i = 0; i < data.scaleNum; i++) {
             
@@ -401,12 +411,13 @@ var Common = {
                 .append('stop')
                 .attr('offset', function (d) {return d.offset})
                 .attr('stop-color', function (d) {return d.stopColor})
+console.log(data.rotate)
 
             contentWrap.select('#coxcomb-sector-wrap').append('path')
                 .attr('d', d)
                 .attr('transform', 'translate(' + data.center.x + ',' + data.center.y
                     + ') rotate(' + (data.scaleAngle + (data.sectorAngle - data.scaleAngle) / 2
-                    + i * data.sectorAngle) + ')')
+                    + i * data.sectorAngle + Number(data.rotate)) + ')')
                 .attr('fill', 'url(#sector-lineGradient-'+ i + ')')
         }
 
@@ -418,7 +429,7 @@ var Common = {
                 endAngle: (360+data.scaleAngle / 2) / 180 * Math.PI
             }))
             .attr('transform', 'translate(' + data.center.x + ',' + data.center.y
-                + ')')
+                + ') rotate(' + data.rotate + ',' + data.center.x + ' ' + data.center.y + ')')
             .attr('fill', data.backgroundColor)
     },
 
