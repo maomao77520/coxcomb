@@ -195,7 +195,7 @@ var Common = {
                     .attr('x', function () {
                         textLength = d3.select(this).node().getComputedTextLength();
                         len = len + data.legendItemWidth + data.legendTextPaddingLeft + textLength;
-                        if (i!==0 && len > data.width * 0.5) {
+                        if (i !== 0 && len > data.width * 0.8) {
                             y = y + Number(data.legendFontSize) + Number(data.legendMargin);
                             len = data.legendItemWidth + data.legendTextPaddingLeft + textLength;
                         }
@@ -253,50 +253,66 @@ var Common = {
                     .attr('x', function () {
                         textLength = d3.select(this).node().getComputedTextLength();
                         len = textLength + Number(data.legendItemWidth) + Number(data.legendTextPaddingLeft)
-                        maxLen = len > maxLen ? len : maxLen;
-                        b = d3.select(this).node().getBBox();                       
-           
-                        // if (totalLen > data.width * 0.5) {
-                        //     splitIndex = (totalLen - data.width * 0.5) / textLength * text.length
-                        //     text = text.substring(0, text.length - Math.ceil(splitIndex))
-                        //     // return +data.legendItemWidth + Number(data.legendTextPaddingLeft)
-                        // }
-                        res = +data.legendItemWidth + Number(data.legendTextPaddingLeft)
-                        if (b.height * (i + 1) > data.height - data.titleHeight) {
-                            y = line == 1 ? 0 : y;
-                            line = 2;
-                            totalLen = line == 1 ? len : (len + maxLen + Number(data.legendItemWidth) + Number(data.legendTextPaddingLeft) + Number(data.legendItemMargin)); 
+                        b = d3.select(this).node().getBBox(); 
+
+                        if (line === 1) {
+                            res = +data.legendItemWidth + Number(data.legendTextPaddingLeft);
+                            if (len > data.width * 0.5) {
+                                splitIndex = (len - data.width * 0.5) / textLength * text.length
+                                text = text.substring(0, text.length - Math.ceil(splitIndex))
+                            }
+                            if (b.height * (i + 1) > data.height - data.titleHeight) {
+                                y = 0;
+                                line = 2;
+                                totalLen = len + maxLen + Number(data.legendItemWidth) + Number(data.legendTextPaddingLeft) + Number(data.legendItemMargin);
+                                if (len + maxLen + Number(data.legendItemMargin) + Number(data.legendItemWidth) > data.width*0.5) {
+                                    text = '';
+                                }
+                                if (totalLen > data.width * 0.5) {
+                                    splitIndex = (totalLen - data.width * 0.5) / textLength * text.length
+                                    text = text.substring(0, text.length - Math.ceil(splitIndex))
+                                }
+                                else {
+                                    res = maxLen + Number(data.legendItemMargin) + Number(data.legendItemWidth) + Number(data.legendTextPaddingLeft);
+                                }
+                            }
+                            maxLen = len > maxLen ? len : maxLen;
+                            return res;
+                        }
+                        else {
+                            res = maxLen + Number(data.legendItemMargin) + Number(data.legendItemWidth + Number(data.legendTextPaddingLeft));
+                            totalLen = len + maxLen + Number(data.legendItemWidth) + Number(data.legendTextPaddingLeft) + Number(data.legendItemMargin);
+                            if (len + maxLen + Number(data.legendItemMargin) + Number(data.legendItemWidth) > data.width*0.5) {
+                                text = ''
+                            }
                             if (totalLen > data.width * 0.5) {
                                 splitIndex = (totalLen - data.width * 0.5) / textLength * text.length
                                 text = text.substring(0, text.length - Math.ceil(splitIndex))
-                                if (line == 2) {
-                                    res += maxLen + Number(data.legendItemMargin)
-                                }
-                                return res;
                             }
-                            return maxLen + Number(data.legendItemMargin) + Number(data.legendItemWidth + Number(data.legendTextPaddingLeft));
+                                return res;
                         }
-                        return res;
 
                     })
                     .text(text)
                     .attr('y', function () {
                         return y;
-                    })
-
-                item.append('rect')
-                    .attr('width', data.legendItemWidth)
-                    .attr('height', data.legendItemHeight)
-                    .attr('fill', data.legendColor[i % data.legendColor.length])
-                    .attr('x', function () {
-                        if (line == 2) {
-                            return maxLen + Number(data.legendItemMargin);
-                        }
-                        return 0;
-                    })
-                    .attr('y', function () {
-                        return y + (b.height - data.legendItemHeight) / 2;
                     });
+                if (text !== '') {
+                    item.append('rect')
+                        .attr('width', data.legendItemWidth)
+                        .attr('height', data.legendItemHeight)
+                        .attr('fill', data.legendColor[i % data.legendColor.length])
+                        .attr('x', function () {
+                            if (line == 2) {
+                                return maxLen + Number(data.legendItemMargin);
+                            }
+                            return 0;
+                        })
+                        .attr('y', function () {
+                            return y + (b.height - data.legendItemHeight) / 2;
+                        });
+                }
+                
                 item.attr('transform', function () {
                     return 'translate(0,' + -d3.select(this).node().getBBox().height/2 + ')';
                 })

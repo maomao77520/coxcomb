@@ -85,10 +85,6 @@ Stacked.prototype = {
         var data = this.data;
         this.svg.select('g').remove();
         this.contentWrap = this.svg.append('svg:g')
-            // .attr('transform', function () {
-            //     return 'translate(' + data.translateX + ',' + data.translateY
-            //       + ') rotate(' + data.rotate + ')';
-            // });
         this.contentWrap.append('rect')
             .attr('width', data.width)
             .attr('height', data.height)
@@ -259,6 +255,7 @@ Stacked.prototype = {
                 arcLength = 2 * Math.PI * barOuterR * data.barAngle / 360;
 
                 fillColor = data.legendColor[data.legendData.indexOf(data.statistics[i].data[n-1][data.legendType])]
+
                 color = color = d3.rgb(fillColor);
                 data.statistics[i].data[n-1].tipBg = d3.rgb(
                         Math.round(color.r + 0.8*(255-color.r)),
@@ -694,10 +691,10 @@ Cluster.prototype = {
                         me.rotateWrap.select('#bartextwrap').append('g')
                             .attr('transform', function () {
                                 var rotateAngle = data.scaleAngle / 2 + i * data.sectorAngle
-                                    + (i-1) * data.classIntervalAngle + n * data.barAngle
+                                    + data.classIntervalAngle + n * data.barAngle
                                     + (n-1) * data.barIntervalAngle;
                                 if (direction == 2) {
-                                    rotateAngle = rotateAngle - 180;
+                                    rotateAngle = rotateAngle + 180;
                                 }
                                 return 'translate('
                                     + (data.center.x + startV.x) + ',' + (data.center.y + startV.y)
