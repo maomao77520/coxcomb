@@ -161,10 +161,8 @@ var Common = {
 
 
         outertext.attr('transform', function () {
-            if (data.rotate == 180) {
-                return 'rotate(' + data.rotate
-                + ',' + data.center.x + ' ' + data.center.y + ')'
-            }
+            return 'rotate(' + data.rotate
+            + ',' + data.center.x + ' ' + data.center.y + ')'
         }) 
 
     },
