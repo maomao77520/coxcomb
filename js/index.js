@@ -244,7 +244,6 @@ Stacked.prototype = {
                 barOuterR = data.statistics[i].data[n-1].numberValue - data.minY > 0 
                     ? (data.statistics[i].data[n-1].numberValue - data.minY) * avg + data.innerRadius
                     : data.innerRadius + data.innerRadiusMargin;
-                arcLength = 2 * Math.PI * barOuterR * data.barAngle / 360;
 
                 fillColor = data.legendColor[data.legendData.indexOf(data.statistics[i].data[n-1][data.legendType])]
 
@@ -322,20 +321,19 @@ Stacked.prototype = {
                             .append('text')
                             .text(Number(data.statistics[i].data[n-1].numberValue).toFixed(data.barFloatNum))
                             .attr('x', function () {
+                                arcLength = 2 * barOuterR * Math.sin(data.barAngle/2/180* Math.PI);
                                 return direction == 1 ? arcLength / 2 : -arcLength / 2;
                             })
                             .attr('dy', function () {
                                 var dis = barOuterR * (1 - Math.cos(data.barAngle / 2 /180 * Math.PI));
                                 b = d3.select(this).node().getBBox();
                                 if (direction == 1) {
-                                    return 0;
+                                    return -dis;
                                 }
                                 return dis;
                             })
                             .attr('text-anchor', 'middle')
-                            .attr('dominant-baseline', function () {
-                                return direction == 1 ? 'start' : 'middle';
-                            })
+                            .attr('dominant-baseline', 'middle')
                             .attr('fill', data.barTextColor)
                             .attr('font-size', data.barTextSize)
                             .attr('transform', function () {
@@ -447,13 +445,10 @@ function Cluster(svg) {
 Cluster.prototype = {
     init: function (params) {
 
-
-        console.log(params)
         this.data = Common.mix(params || {}, this.defaultOptions);
         
         this.render();
         
-
     },
 
     initData: function () {
@@ -625,7 +620,6 @@ Cluster.prototype = {
                 barOuterR = data.statistics[i].data[n-1].numberValue - data.minY > 0 
                     ? (data.statistics[i].data[n-1].numberValue - data.minY) * avg + data.innerRadius
                     : data.innerRadius + data.innerRadiusMargin;
-                arcLength = 2 * Math.PI * barOuterR * data.barAngle / 360;
 
                 fillColor = data.legendColor[data.legendData.indexOf(data.statistics[i].data[n-1][data.legendType])];
                 color = color = d3.rgb(fillColor);
@@ -703,6 +697,7 @@ Cluster.prototype = {
                             .append('text')
                             .text(Number(data.statistics[i].data[n-1].numberValue).toFixed(data.barFloatNum))
                             .attr('x', function () {
+                                arcLength = 2 * barOuterR * Math.sin(data.barAngle/2/180* Math.PI);
                                 return direction == 1 ? arcLength / 2 : -arcLength / 2;
                             })
                             .attr('dy', function () {

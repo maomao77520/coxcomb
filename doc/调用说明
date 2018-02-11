@@ -1,3 +1,4 @@
+引入common.js和index.js文件
 1. chart = new Chart('cluster', svg)，创建对象	
 2. 调用 chart.init(initData)，初始化，initData参数详见接口说明
 3. 控制面板参数修改后，调用chart.init()重新渲染

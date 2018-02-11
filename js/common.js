@@ -409,7 +409,6 @@ var Common = {
                 .append('stop')
                 .attr('offset', function (d) {return d.offset})
                 .attr('stop-color', function (d) {return d.stopColor})
-console.log(data.rotate)
 
             contentWrap.select('#coxcomb-sector-wrap').append('path')
                 .attr('d', d)
