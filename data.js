@@ -2,14 +2,14 @@ var initData = {
 	'width': 600,
     'height': 600,
     'sectorBgColor': [   // 类扇形背景色
-        {start: 'rgba(138,144,244,1)', end: 'rgba(185,131,201,1)'},
-        {start: 'rgba(138,144,244,1)', end: 'rgba(185,131,201,1)'},
-        {start: 'rgba(138,144,244,1)', end: 'rgba(185,131,201,1)'},
-        {start: 'rgba(138,144,244,1)', end: 'rgba(185,131,201,1)'},
-        {start: 'rgba(115,179,204,1)', end: 'rgba(115,153,197,1)'},
-        {start: 'rgba(115,179,204,1)', end: 'rgba(115,153,197,1)'},
-        {start: 'rgba(115,179,204,1)', end: 'rgba(115,153,197,1)'},
-        {start: 'rgba(115,179,204,1)', end: 'rgba(115,153,197,1)'},
+        {start: 'rgba(55,60,185,1)', end: 'rgba(130,45,143,1)'},
+        {start: 'rgba(55,60,185,1)', end: 'rgba(130,45,143,1)'},
+        {start: 'rgba(55,60,185,1)', end: 'rgba(130,45,143,1)'},
+        {start: 'rgba(55,60,185,1)', end: 'rgba(130,45,143,1)'},
+        {start: 'rgba(21,92,113,1)', end: 'rgba(18,61,112,1)'},
+        {start: 'rgba(21,92,113,1)', end: 'rgba(18,61,112,1)'},
+        {start: 'rgba(21,92,113,1)', end: 'rgba(18,61,112,1)'},
+        {start: 'rgba(21,92,113,1)', end: 'rgba(18,61,112,1)'},
     ],
     statistics: [    // 柱状图数据
         {

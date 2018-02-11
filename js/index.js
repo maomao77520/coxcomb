@@ -325,16 +325,21 @@ Stacked.prototype = {
                                 return direction == 1 ? arcLength / 2 : -arcLength / 2;
                             })
                             .attr('dy', function () {
-                                if (direction == 2) {
-                                    return data.barTextSize
+                                var dis = barOuterR * (1 - Math.cos(data.barAngle / 2 /180 * Math.PI));
+                                b = d3.select(this).node().getBBox();
+                                if (direction == 1) {
+                                    return 0;
                                 }
+                                return dis;
                             })
                             .attr('text-anchor', 'middle')
+                            .attr('dominant-baseline', function () {
+                                return direction == 1 ? 'start' : 'middle';
+                            })
                             .attr('fill', data.barTextColor)
                             .attr('font-size', data.barTextSize)
                             .attr('transform', function () {
                                 if (data.rotate == 180) {
-                                    b = d3.select(this).node().getBBox();
                                     return 'rotate(180,' + (b.x + b.width/2) + ' ' + (b.y+ b.height/2) + ')'
                                 }
                             })
@@ -687,7 +692,7 @@ Cluster.prototype = {
                             .attr('transform', function () {
                                 var rotateAngle = data.scaleAngle / 2 + i * data.sectorAngle
                                     + data.classIntervalAngle + (n-1) * data.barAngle
-                                    + (n-1) * data.barIntervalAngle;
+                                    + (n-1) * data.barIntervalAngle + data.barAngle / 2;
                                 if (direction == 2) {
                                     rotateAngle = rotateAngle + 180;
                                 }
@@ -701,12 +706,11 @@ Cluster.prototype = {
                                 return direction == 1 ? arcLength / 2 : -arcLength / 2;
                             })
                             .attr('dy', function () {
-                                if (direction == 1) {
-                                    return d3.select(this).node().getBBox().height / 2;
-                                }
-                                return -(d3.select(this).node().getBBox().height - data.barTextSize) / 2;
+                                var dis = barOuterR * (1 - Math.cos(data.barAngle / 2 /180 * Math.PI));
+                                return dis;
                             })
                             .attr('text-anchor', 'middle')
+                            .attr('dominant-baseline', 'middle')
                             .attr('fill', data.barTextColor)
                             .attr('font-size', data.barTextSize)
                             .attr('transform', function () {
