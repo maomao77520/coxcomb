@@ -328,9 +328,9 @@ Stacked.prototype = {
                                 var dis = barOuterR * (1 - Math.cos(data.barAngle / 2 /180 * Math.PI));
                                 b = d3.select(this).node().getBBox();
                                 if (direction == 1) {
-                                    return -dis;
+                                    return -dis + 1;
                                 }
-                                return dis;
+                                return dis + 1;
                             })
                             .attr('text-anchor', 'middle')
                             .attr('dominant-baseline', 'middle')
