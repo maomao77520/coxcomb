@@ -311,6 +311,7 @@ Stacked.prototype = {
 
                 if (~~this.data.isShowBarNum == 1) {
                     (function (i, n) {
+
                         me.rotateWrap.select('#coxcomb-component-bartextwrap').append('g')
                             .attr('transform', function () {
                                 if (direction == 2) {

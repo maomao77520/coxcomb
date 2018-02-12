@@ -182,6 +182,7 @@ var Common = {
                 .attr('class', 'coxcomb-component-scale-text')
                 .attr('x', x)
                 .attr('y', y)
+                .attr('dy', '0.1em')
                 .attr('font-size', data.scaleFontSize)
                 .attr('font-weight', data.scaleFontWeight)
                 .attr('text-anchor', 'middle')
