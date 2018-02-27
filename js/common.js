@@ -20,6 +20,9 @@ var Common = {
 	},
 
     getMinY: function (data) {
+        if (data.length <= 0 || data[0].data.length <= 0 || data[0].data[0].numberValue === undefined) {
+            return 0;
+        }
         var min = data[0].data[0].numberValue;
         for (var i = 0; i < data.length; i++) {
             for (var n = 0; n < data[i].data.length; n++) {

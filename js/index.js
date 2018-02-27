@@ -96,8 +96,11 @@ Stacked.prototype = {
         if (~~this.data.isShowTitle == 1) {
             Common.renderTitle(this.contentWrap, this.data);
         }
+        if (this.data.statistics.length <= 0) {
+            return;
+        }
         
-        if (~~this.data.isShowLegend == 1) {
+        if (~~this.data.isShowLegend == 1 && this.data.statistics.length > 0) {
             this.data.legendSize = Common.renderLegend(this);
             this.data.legendHeight = this.data.legendSize.height;
             this.data.legendWidth = this.data.legendSize.width;
@@ -119,9 +122,6 @@ Stacked.prototype = {
 
         this.renderBar();
         Common.getYAsix(this.rotateWrap, this.data);
-
-        // this.rotateWrap.attr('transform', 'rotate(' + data.rotate + ')')
-        //     .attr('transform-origin', data.center.x + ' ' + data.center.y);
         
     },
 
@@ -536,6 +536,10 @@ Cluster.prototype = {
 
         if (~~this.data.isShowTitle == 1) {
             Common.renderTitle(this.contentWrap, this.data);
+        }
+
+        if (this.data.statistics.length <= 0) {
+            return;
         }
         
         if (~~this.data.isShowLegend == 1) {
