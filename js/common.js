@@ -117,17 +117,17 @@ var Common = {
 
     renderLabelText: function (contentWrap, data, v1, v2, i) {
         var direction = 1;
-        var d = 'M' + v1.x + ' ' + v1.y + ' A ' + data.outerRadius + ' ' + data.outerRadius
+        var d = 'M' + v1.x + ' ' + v1.y + ' A ' + (data.outerRadius + data.labelTextPos) + ' ' + (data.outerRadius + data.labelTextPos)
             + ',0,0,1,' + v2.x + ',' + v2.y;
     
         if (data.rotate != 180 && (Math.abs(v1.y-v2.y) / 2 + Math.min(v1.y, v2.y)) >= data.center.y) {
-            d = 'M' + v2.x + ' ' + v2.y + ' A ' + data.outerRadius + ' ' + data.outerRadius
+            d = 'M' + v2.x + ' ' + v2.y + ' A ' + (data.outerRadius + data.labelTextPos) + ' ' + (data.outerRadius + data.labelTextPos)
                 + ',0,0,0,' + v1.x + ',' + v1.y;
             direction = 2;
         }
 
          if (data.rotate == 180 && (Math.abs(v1.y-v2.y) / 2 + Math.min(v1.y, v2.y)) <= data.center.y) {
-            d = 'M' + v2.x + ' ' + v2.y + ' A ' + data.outerRadius + ' ' + data.outerRadius
+            d = 'M' + v2.x + ' ' + v2.y + ' A ' + (data.outerRadius + data.labelTextPos) + ' ' + (data.outerRadius + data.labelTextPos)
                 + ',0,0,0,' + v1.x + ',' + v1.y;
             direction = 2;
         }
