@@ -18,6 +18,7 @@ Chart.prototype = {
 
 function Stacked(svg) {
     this.svg = svg;
+    this.uuid = Common.getUuid();
     this.defaultOptions = {
         width: 600,
         height: 600,
@@ -91,7 +92,7 @@ Stacked.prototype = {
             .attr('fill', data.backgroundColor);
 
         this.rotateWrap = this.contentWrap.append('g')
-            .attr('id', 'my-coxcomb-component-rotate-wrap')
+            .attr('id', this.uuid + '-my-coxcomb-component-rotate-wrap')
 
         if (~~this.data.isShowTitle == 1) {
             Common.renderTitle(this.contentWrap, this.data);
@@ -101,7 +102,7 @@ Stacked.prototype = {
         }
         
         if (~~this.data.isShowLegend == 1 && this.data.statistics.length > 0) {
-            this.data.legendSize = Common.renderLegend(this);
+            this.data.legendSize = Common.renderLegend(this, this.uuid);
             this.data.legendHeight = this.data.legendSize.height;
             this.data.legendWidth = this.data.legendSize.width;
         }
@@ -109,19 +110,19 @@ Stacked.prototype = {
         this.initData();
 
         if (this.data.borderType !== 'none') {
-            Common.renderCircleBorder(this.rotateWrap, this.data);
+            Common.renderCircleBorder(this.rotateWrap, this.data, this.uuid);
         }
         Common.renderInnerCircle(this);
-        Common.renderSectors(this.rotateWrap, this.data);
+        Common.renderSectors(this.rotateWrap, this.data, this.uuid);
         if (~~this.data.isShowXAsix == 1) {
-            Common.renderXAsix(this.rotateWrap, this.data);
+            Common.renderXAsix(this.rotateWrap, this.data, this.uuid);
         }
         if (~~this.data.isShowYText == 1) {
-            Common.renderYText(this.rotateWrap, this.data);
+            Common.renderYText(this.rotateWrap, this.data, this.uuid);
         }
 
         this.renderBar();
-        Common.getYAsix(this.rotateWrap, this.data);
+        Common.getYAsix(this.rotateWrap, this.data, this.uuid);
         
     },
 
@@ -225,8 +226,8 @@ Stacked.prototype = {
         var data = this.data;
         var me = this;
         var arc = d3.arc();
-        this.rotateWrap.append('g').attr('id', 'coxcomb-component-barwrap');
-        this.rotateWrap.append('g').attr('id', 'coxcomb-component-bartextwrap');
+        this.rotateWrap.append('g').attr('id', me.uuid + '-coxcomb-component-barwrap');
+        this.rotateWrap.append('g').attr('id', me.uuid + '-coxcomb-component-bartextwrap');
         var startV = {};
         var s, e, barOuterR, arcLength;
         var fillColor, direction, rotateAngle;
@@ -260,9 +261,9 @@ Stacked.prototype = {
                     endAngle: e / 180 * Math.PI
                 });
                 (function (i, n) {
-                    me.rotateWrap.select('#coxcomb-component-barwrap').append('path')
+                    me.rotateWrap.select('#' + me.uuid + '-coxcomb-component-barwrap').append('path')
                         .attr('d', arcD)
-                        .attr('id', 'coxcomb-bar-text-path-' + i + '-' + n)
+                        .attr('id', me.uuid + '-coxcomb-bar-text-path-' + i + '-' + n)
                         .attr('transform', 'translate(' + data.center.x + ',' + data.center.y + ')')
                         .attr('fill', fillColor)
                         .attr('data-start', function () {
@@ -312,7 +313,7 @@ Stacked.prototype = {
                 if (~~this.data.isShowBarNum == 1) {
                     (function (i, n) {
 
-                        me.rotateWrap.select('#coxcomb-component-bartextwrap').append('g')
+                        me.rotateWrap.select('#' + me.uuid + '-coxcomb-component-bartextwrap').append('g')
                             .attr('transform', function () {
                                 if (direction == 2) {
                                     rotateAngle = rotateAngle - 180;
@@ -371,9 +372,9 @@ Stacked.prototype = {
             }
         }
 
-        me.rotateWrap.select('#coxcomb-component-barwrap')
+        me.rotateWrap.select('#' + me.uuid + '-coxcomb-component-barwrap')
             .attr('transform', 'rotate(' + data.rotate + ',' + data.center.x + ' ' + data.center.y + ')')
-        me.rotateWrap.select('#coxcomb-component-bartextwrap')
+        me.rotateWrap.select('#' + me.uuid + '-coxcomb-component-bartextwrap')
             .attr('transform', 'rotate(' + data.rotate + ',' + data.center.x + ' ' + data.center.y + ')')
     }
 };
@@ -381,6 +382,7 @@ Stacked.prototype = {
 
 function Cluster(svg) {
     this.svg = svg;
+    this.uuid = Common.getUuid();
     this.defaultOptions = {
         width: 600,
         height: 600,
@@ -438,9 +440,7 @@ function Cluster(svg) {
 
 Cluster.prototype = {
     init: function (params) {
-
         this.data = Common.mix(params || {}, this.defaultOptions);
-        
         this.render();
         
     },
@@ -531,7 +531,7 @@ Cluster.prototype = {
             .attr('fill', data.backgroundColor);
 
         this.rotateWrap = this.contentWrap.append('g')
-            .attr('id', 'my-coxcomb-component-rotate-wrap')
+            .attr('id', this.uuid + '-my-coxcomb-component-rotate-wrap')
             
 
         if (~~this.data.isShowTitle == 1) {
@@ -543,7 +543,7 @@ Cluster.prototype = {
         }
         
         if (~~this.data.isShowLegend == 1) {
-            this.data.legendSize = Common.renderLegend(this);
+            this.data.legendSize = Common.renderLegend(this, this.uuid);
             this.data.legendHeight = this.data.legendSize.height;
             this.data.legendWidth = this.data.legendSize.width;
         }
@@ -551,19 +551,19 @@ Cluster.prototype = {
         this.initData();
 
         if (this.data.borderType !== 'none') {
-            Common.renderCircleBorder(this.rotateWrap, this.data);
+            Common.renderCircleBorder(this.rotateWrap, this.data, this.uuid);
         }
         Common.renderInnerCircle(this);
-        Common.renderSectors(this.rotateWrap, this.data);
+        Common.renderSectors(this.rotateWrap, this.data, this.uuid);
         if (~~this.data.isShowXAsix == 1) {
-            Common.renderXAsix(this.rotateWrap, this.data);
+            Common.renderXAsix(this.rotateWrap, this.data, this.uuid);
         }
         if (~~this.data.isShowYText == 1) {
-            Common.renderYText(this.rotateWrap, this.data);
+            Common.renderYText(this.rotateWrap, this.data, this.uuid);
         }
 
         this.renderBar();
-        Common.getYAsix(this.rotateWrap, this.data);
+        Common.getYAsix(this.rotateWrap, this.data, this.uuid);
 
         // this.rotateWrap.attr('transform', 'rotate(' + data.rotate + ')')
         //     .attr('transform-origin', data.center.x + ' ' + data.center.y);
@@ -598,8 +598,8 @@ Cluster.prototype = {
         var data = this.data;
         var me = this;
         var arc = d3.arc();
-        this.rotateWrap.append('g').attr('id', 'coxcomb-component-barwrap');
-        this.rotateWrap.append('g').attr('id', 'coxcomb-component-bartextwrap');
+        this.rotateWrap.append('g').attr('id', me.uuid + '-coxcomb-component-barwrap');
+        this.rotateWrap.append('g').attr('id', me.uuid + '-coxcomb-component-bartextwrap');
         var startV = {}, alen;
         var s, e, barOuterR, arcLength, b;
         var hoverPop, color, hoverRect, hoverSize, hoverText;
@@ -634,9 +634,9 @@ Cluster.prototype = {
                 });
                 (function (i, n) {
                     
-                    me.rotateWrap.select('#coxcomb-component-barwrap').append('path')
+                    me.rotateWrap.select('#' + me.uuid +'-coxcomb-component-barwrap').append('path')
                         .attr('d', arcD)
-                        .attr('id', 'coxcomb-bar-text-path-' + i + '-' + n)
+                        .attr('id', me.uuid + '-coxcomb-bar-text-path-' + i + '-' + n)
                         .attr('transform', 'translate(' + data.center.x + ',' + data.center.y + ')')
                         .attr('fill', fillColor)
                         .attr('data-start', function () {
@@ -682,7 +682,7 @@ Cluster.prototype = {
                 }
                 if (~~this.data.isShowBarNum == 1) {
                     (function (i, n) {
-                        me.rotateWrap.select('#coxcomb-component-bartextwrap').append('g')
+                        me.rotateWrap.select('#' + me.uuid + '-coxcomb-component-bartextwrap').append('g')
                             .attr('transform', function () {
                                 var rotateAngle = data.scaleAngle / 2 + i * data.sectorAngle
                                     + data.classIntervalAngle + (n-1) * data.barAngle
@@ -744,9 +744,9 @@ Cluster.prototype = {
             }
         }
 
-        me.rotateWrap.select('#coxcomb-component-barwrap')
+        me.rotateWrap.select('#' + me.uuid + '-coxcomb-component-barwrap')
             .attr('transform', 'rotate(' + data.rotate + ',' + data.center.x + ' ' + data.center.y + ')')
-        me.rotateWrap.select('#coxcomb-component-bartextwrap')
+        me.rotateWrap.select('#' + me.uuid + '-coxcomb-component-bartextwrap')
             .attr('transform', 'rotate(' + data.rotate + ',' + data.center.x + ' ' + data.center.y + ')')
     }
 };

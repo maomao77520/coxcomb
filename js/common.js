@@ -1,4 +1,15 @@
 var Common = {
+    getUuid: function (len) {
+    　　len = len || 8;
+    　　var $chars = 'abcdefhijkmnprstwxyz';    /****默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1****/
+    　　var maxPos = $chars.length;
+    　　var pwd = '';
+    　　for (i = 0; i < len; i++) {
+    　　　　pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
+    　　}
+    　　return pwd;
+    },
+
 	mix: function (des, src) {
 	    for (var i in src) {
 	        if (! (i in des)) {
@@ -50,12 +61,13 @@ var Common = {
             this.renderXAsix(interval * i + data.innerRadius);
         }
     },
+
     // 根据角度渲染圆环轴刻度线
-    renderXAsix: function (contentWrap, data) {
+    renderXAsix: function (contentWrap, data, uuid) {
         var me = this;
         var len = data.scaleNum - 2;
         var interval = (data.outerRadius - data.innerRadius) / (len + 1);
-        contentWrap.append('g').attr('id', 'coxcomb-component-xasix-wrap');
+        contentWrap.append('g').attr('id', uuid + '-coxcomb-component-xasix-wrap');
         var d, r;
         for (var i = 1; i <= len; i++) {
             r = interval * i + data.innerRadius;
@@ -65,7 +77,7 @@ var Common = {
 	            startAngle: data.scaleAngle / 2 / 180 * Math.PI,
 	            endAngle: (data.totalAngle-data.scaleAngle / 2) / 180 * Math.PI
 	        });
-	        contentWrap.select('#coxcomb-component-xasix-wrap').append('path')
+	        contentWrap.select('#' + uuid + '-coxcomb-component-xasix-wrap').append('path')
 	        .attr('d', d.split('L')[0])
 	        .attr('transform', function () {
                 return 'translate(' + data.center.x + ',' + data.center.y + ') rotate('
@@ -76,7 +88,7 @@ var Common = {
         }
     },
 
-    getYAsix: function (contentWrap, data) {
+    getYAsix: function (contentWrap, data, uuid) {
         var vAngle1 = 0;
         var vAngle2 = 0;
         var startV1 = {};
@@ -84,7 +96,7 @@ var Common = {
         var endV1 = {};
         var endV2 = {};
         var preV = {};
-        contentWrap.append('g').attr('id', 'coxcomb-component-yasix')
+        contentWrap.append('g').attr('id', uuid + '-coxcomb-component-yasix')
         for (var i = 0; i <= data.totalSector; i++) {
             preV.x = startV2.x;
             preV.y = startV2.y;
@@ -94,19 +106,19 @@ var Common = {
             startV2.x = data.center.x + (data.outerRadius + data.labelTextPos) * Math.sin(vAngle1 / 180 * Math.PI);
             startV2.y = data.center.y - (data.outerRadius + data.labelTextPos) * Math.cos(vAngle1 / 180 * Math.PI);
             if (~~data.isShowYAsix == 1) {
-                this.renderYAsix(contentWrap, data, startV1, startV2);
+                this.renderYAsix(contentWrap, data, startV1, startV2, uuid);
             }
 
             if (i > 0 && ~~data.isShowLabel == 1) {
-                this.renderLabelText(contentWrap, data, preV, startV2, i-1);
+                this.renderLabelText(contentWrap, data, preV, startV2, i-1, uuid);
             }
         }
     },
      // 两点连线渲染放射线轴刻度线
-    renderYAsix: function (contentWrap, data, v1, v2) {
+    renderYAsix: function (contentWrap, data, v1, v2, uuid) {
         var d = 'M ' + v1.x + ' ' + v1.y + ' L ' + v2.x + ' ' + v2.y;
 
-        contentWrap.select('#coxcomb-component-yasix').append('path')
+        contentWrap.select('#' + uuid + '-coxcomb-component-yasix').append('path')
 	        .attr('d', d)
 	        .attr('stroke', data.scaleColor)
 	        .attr('fill', 'none')
@@ -115,7 +127,7 @@ var Common = {
             })
     },
 
-    renderLabelText: function (contentWrap, data, v1, v2, i) {
+    renderLabelText: function (contentWrap, data, v1, v2, i, uuid) {
         var direction = 1;
         var d = 'M' + v1.x + ' ' + v1.y + ' A ' + (data.outerRadius + data.labelTextPos) + ' ' + (data.outerRadius + data.labelTextPos)
             + ',0,0,1,' + v2.x + ',' + v2.y;
@@ -132,15 +144,15 @@ var Common = {
             direction = 2;
         }
 
-        var outertext = contentWrap.append('g').attr('id', 'coxcomb-component-outertext');
+        var outertext = contentWrap.append('g').attr('id', uuid + '-coxcomb-component-outertext');
         
-        contentWrap.select('#coxcomb-component-outertext')
+        contentWrap.select('#'+ uuid + '-coxcomb-component-outertext')
             .append('defs')
             .append('path')
             .attr('d', d)
-            .attr('id', 'coxcomb-text-path-' + i)
+            .attr('id', uuid + '-coxcomb-text-path-' + i)
 
-        contentWrap.select('#coxcomb-component-outertext').append('text')
+        contentWrap.select('#' + uuid + '-coxcomb-component-outertext').append('text')
             .attr('dy', function () {
                 if (direction == 1) {
                     return -data.labelTextFontSize / 2;
@@ -155,10 +167,10 @@ var Common = {
             .attr('font-size', data.labelTextFontSize)
             .attr('fill', data.labelTextColor)
             .attr('font-weight', data.labelTextFontWeight)
-            .attr('xlink:href', '#coxcomb-text-path-' + (i))
+            .attr('xlink:href', '#' + uuid + '-coxcomb-text-path-' + (i))
             .attr('startOffset', function () {
                 var textLength = d3.select(this).node().getComputedTextLength()
-                var pathLength = d3.select('#coxcomb-text-path-' + i).node().getTotalLength();
+                var pathLength = d3.select('#' + uuid + '-coxcomb-text-path-' + i).node().getTotalLength();
                 return (pathLength - textLength) / 2;
             })
 
@@ -171,17 +183,17 @@ var Common = {
     },
 
     // 渲染圆环轴刻度文字
-    renderYText: function (contentWrap, data) {
+    renderYText: function (contentWrap, data, uuid) {
         var scaleLen = (data.outerRadius - data.innerRadius) / (data.scaleNum - 1);
         var textInterval = (data.maxY - data.minY) / (data.scaleNum - 1);
         var x = data.center.x;
         var y = data.center.y - data.innerRadius;
-        contentWrap.append('g').attr('id', 'coxcomb-component-ytext-wrap')
+        contentWrap.append('g').attr('id', uuid + '-coxcomb-component-ytext-wrap')
             .attr('transform', 'rotate(' + data.rotate + ',' + data.center.x + ' ' + data.center.y + ')')
         var box;
         for (var i = 0; i < data.scaleNum; i++) {
             
-            contentWrap.select('#coxcomb-component-ytext-wrap').append('text')
+            contentWrap.select('#' + uuid + '-coxcomb-component-ytext-wrap').append('text')
                 .attr('class', 'coxcomb-component-scale-text')
                 .attr('x', x)
                 .attr('y', y)
@@ -203,14 +215,14 @@ var Common = {
         }
     },
 
-    renderLegend: function (that) {
+    renderLegend: function (that, uuid) {
     	var data = that.data;
         var item;
         var me = this;
         var box, item;
         var posx = data.width / 2;
         var posy = +data.paddingTop + Number(data.titleHeight);
-        that.legend = that.contentWrap.append('g').attr('id', 'coxcomb-legend-wrap')
+        that.legend = that.contentWrap.append('g').attr('id', uuid + '-coxcomb-legend-wrap')
             .attr('transform', 'translate(' + posx + ',' + posy +')');
 
         if (data.legendPosition.indexOf('center') > -1) {
@@ -256,9 +268,9 @@ var Common = {
                 
             }
 
-            var  wrapSize = d3.select('#coxcomb-legend-wrap').node().getBBox();
+            var  wrapSize = d3.select('#' + uuid + '-coxcomb-legend-wrap').node().getBBox();
 
-            that.contentWrap.select('#coxcomb-legend-wrap')
+            that.contentWrap.select('#' + uuid + '-coxcomb-legend-wrap')
                 .attr('transform', function () {
                     posx = (data.width - wrapSize.width) / 2 + Number(data.legendX);
                     if (data.legendPosition.indexOf('top') > -1) {
@@ -351,7 +363,7 @@ var Common = {
                 })
                 y = y + Number(data.legendFontSize) + Number(data.legendMargin);
             }
-            var  wrapSize = d3.select('#coxcomb-legend-wrap').node().getBBox();
+            var  wrapSize = d3.select('#' + uuid + '-coxcomb-legend-wrap').node().getBBox();
             if (data.legendPosition.indexOf('left') > -1) {
                 posx = data.paddingLeft;
             }
@@ -365,7 +377,7 @@ var Common = {
                 posy = data.height - wrapSize.height - data.paddingBottom;
             }
 
-            that.contentWrap.select('#coxcomb-legend-wrap')
+            that.contentWrap.select('#' + uuid + '-coxcomb-legend-wrap')
                 .attr('transform', function () {
                     posx = +posx + Number(data.legendX);
                     posy = +posy + b.height / 2 + Number(data.legendY);
@@ -378,9 +390,9 @@ var Common = {
     },
 
     // 渲染每个类区域，填充渐变色
-    renderSectors: function (contentWrap, data) {
+    renderSectors: function (contentWrap, data, uuid) {
         var start = 360 - data.sectorAngle / 2;
-        contentWrap.append('g').attr('id', 'coxcomb-sector-wrap');
+        contentWrap.append('g').attr('id', uuid + '-coxcomb-sector-wrap');
         var arc = d3.arc();
         var d = arc({
             innerRadius: data.innerRadius,
@@ -400,8 +412,8 @@ var Common = {
                     stopColor: data.sectorBgColor[i % data.sectorBgColor.length].end
                 }
             ];
-            var defs = contentWrap.select('#coxcomb-sector-wrap').append('defs').append('radialGradient')
-                .attr('id', 'sector-lineGradient-' + i)
+            var defs = contentWrap.select('#' + uuid +'-coxcomb-sector-wrap').append('defs').append('radialGradient')
+                .attr('id', uuid + '-sector-lineGradient-' + i)
                 .attr('cx', '50%')
                 .attr('cy', '100%')
                 .attr('fx', '50%')
@@ -414,15 +426,15 @@ var Common = {
                 .attr('offset', function (d) {return d.offset})
                 .attr('stop-color', function (d) {return d.stopColor})
 
-            contentWrap.select('#coxcomb-sector-wrap').append('path')
+            contentWrap.select('#' + uuid + '-coxcomb-sector-wrap').append('path')
                 .attr('d', d)
                 .attr('transform', 'translate(' + data.center.x + ',' + data.center.y
                     + ') rotate(' + (data.scaleAngle + (data.sectorAngle - data.scaleAngle) / 2
                     + i * data.sectorAngle + Number(data.rotate)) + ')')
-                .attr('fill', 'url(#sector-lineGradient-'+ i + ')')
+                .attr('fill', 'url(#' + uuid + '-sector-lineGradient-'+ i + ')')
         }
 
-        contentWrap.select('#coxcomb-sector-wrap').append('path')
+        contentWrap.select('#' + uuid +'-coxcomb-sector-wrap').append('path')
             .attr('d', arc({
                 innerRadius: data.innerRadius,
                 outerRadius: data.outerRadius,
@@ -437,7 +449,7 @@ var Common = {
     renderInnerCircle: function (me) {
         var data = me.data;
         me.innerCircle = me.contentWrap.append('g')
-            .attr('id', 'coxcomb-inner-circle');
+            .attr('id', me.uuid + '-coxcomb-inner-circle');
         me.innerCircle.append('circle')
             .attr('cx', data.center.x)
             .attr('cy', data.center.y)
@@ -460,7 +472,7 @@ var Common = {
     },
 
     // 渲染最外层边框
-    renderCircleBorder: function (contentWrap, data) {
+    renderCircleBorder: function (contentWrap, data, uuid) {
         contentWrap.append('circle')
             .attr('cx', data.center.x)
             .attr('cy', data.center.y)

@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+        <title></title>
+        <script src="./assets/d3.v4.js"></script>
+
+        <style type="text/css">
+           input, select {
+               display: inline-block;
+               margin: 4px;
+               width: 60px;
+               height: 24px;
+               line-height: 24px;
+           }
+           .panel {
+               float: right;
+               margin-right: 5px;
+               width: 500px;
+           }
+           .block {
+               float: left;
+           }
+           #content-wrap  {
+               display: inline-block;
+           }
+           button {
+               display: block;
+           }
+           label {
+               font-size: 12px;
+           }
+       </style>
+    </head>
+    <body>
+
+        <div class="panel">
+           <div class="block">
+               <label>组件类型</label>
+               <select name="type">
+                   <option value='cluster'>簇状</option>
+                   <option value='stacked'>堆积</option>
+               </select>
+               <br/>
+
+               <label>组件背景色</label>
+               <input placeholder="组件背景色" name="backgroundColor"></input>
+               <br/>
+
+               <label>总角度</label>
+               <input placeholder="总角度" name="totalAngle"></input>
+               <br/>
+
+               <label>显示标题</label>
+               <select name="isShowTitle">
+                   <option value='1'>是</option>
+                   <option value='0'>否</option>
+               </select>
+               <br/>
+
+               <label>标题内容</label>
+               <input placeholder="标题内容" name="titleContent"></input>
+               <br/>
+
+               <label>标题高度</label>
+               <input placeholder="标题高度" name="titleHeight"></input>
+               <br/>
+
+               <label>标题位置</label>
+               <select name="titlePosition">
+                   <option value="center">居中</option>
+                   <option value="left">左对齐</option>
+                   <option value="right">右对齐</option>
+               </select>
+               <br/>
+
+               <label>标题背景色</label>
+               <input placeholder="标题背景色" name="titleBackground"></input>
+               <br/>
+
+               <label>标题字体大小</label>
+               <input placeholder="标题字体大小" name="titleFontSize"></input>
+               <br/>
+
+               <label>标题字体颜色</label>
+               <input placeholder="标题字体颜色" name="titleFontColor"></input>
+               <br/>
+
+               <label>标题字体粗细</label>
+               <select name="titleFontWeight">
+                   <option value="normal">正常</option>
+                   <option value="bold">加粗</option>
+               </select>
+               <br/>
+
+               <label>外圆半径</label>
+               <input placeholder="外圆半径" name="outerRadius"></input>
+               <br/>
+               <label>内圆半径占比</label>
+               <input placeholder="内圆半径占比" name="innerRadiusRatio"></input>
+               <br/>
+               <label>坐标刻度区域</label>
+               <input placeholder="坐标轴刻度区域" name="scaleAngleRatio"></input>
+               <br/>
+               <label>坐标刻度数量</label>
+               <input placeholder="坐标轴刻度数量" name="scaleNum"></input>
+               <br/>
+               <label>坐标刻度最大值</label>
+               <input placeholder="坐标轴刻度最大值" name="maxY"></input>
+               <br/>
+               <label>坐标刻度最小值</label>
+               <input placeholder="坐标轴刻度最小值" name="minY"></input>
+               <br/>
+               <label>网格线颜色</label>
+               <input placeholder="网格线颜色" name="scaleColor"></input>
+               <br/>
+               <label>坐标轴字大小</label>
+               <input placeholder="坐标轴字体大小" name="scaleFontSize"></input>
+               <br/>
+               <label>坐标轴字颜色</label>
+               <input placeholder="坐标轴字体颜色" name="scaleFontColor"></input>
+               <br/>
+               <label>坐标轴字粗细</label>
+               <select name="scaleFontWeight">
+                   <option value="normal">正常</option>
+                   <option value="bold">加粗</option>
+               </select>
+               <br/>
+               
+               
+
+           </div>
+           <div class="block">
+               <label>类间距</label>
+               <input placeholder="类间距" name="classIntervalRatio"></input>
+               <br/>
+               <label>系列间距</label>
+               <input placeholder="系列间距" name="barIntervalRatio"></input>
+               <br/>
+               <label>显示水平网格线</label>
+               <select name="isShowXAsix">
+                   <option value='1'>是</option>
+                   <option value='0'>否</option>
+               </select>
+               <br/>
+               <label>显示垂直网格线</label>
+               <select name="isShowYAsix">
+                   <option value='1'>是</option>
+                   <option value='0'>否</option>
+               </select>
+               <br/>
+               <label>显示刻度值</label>
+               <select name="isShowYText">
+                   <option value='1'>是</option>
+                   <option value='0'>否</option>
+               </select>
+               <br/>
+               <label>是否显示数值</label>
+               <select name="isShowBarNum">
+                   <option value="1">是</option>
+                   <option value="0">否</option>
+               </select>
+               <br/>
+               <label>数值小数点</label>
+               <input placeholder="数值小数点" name="barFloatNum"></input>
+               <br/>
+               <label>数值字体颜色</label>
+               <input placeholder="数值字体颜色" name="barTextColor"></input>
+               <br/>
+               <label>数值字体大小</label>
+               <input placeholder="数值字体大小" name="barTextSize"></input>
+               <br/>
+               <label>上边距</label>
+               <input placeholder="上边距" name="paddingTop"></input> 
+               <br/>
+               <label>下边距</label>
+               <input placeholder="下边距" name="paddingBottom"></input> 
+               <br/>
+               <label>左边距</label>
+               <input placeholder="左边距" name="paddingLeft"></input> 
+               <br/>
+               <label>右边距</label>
+               <input placeholder="右边距" name="paddingRight"></input> 
+               <br/>
+               <label>显示分类标签</label>
+               <select name="isShowLabel">
+                   <option value='1'>是</option>
+                   <option value='0'>否</option>
+               </select>
+               <br/>
+               <label>分类字体颜色</label>
+               <input placeholder="分类标签字体颜色" name="labelTextColor"></input>
+               <br/>
+               <label>分类字体大小</label>
+               <input placeholder="分类标签字体大小" name="labelTextFontSize"></input>
+               <br/>
+               <label>分类字体粗细</label>
+               <select name="labelTextFontWeight">
+                   <option value="normal">正常</option>
+                   <option value="bold">加粗</option>
+               </select>
+               <br/>
+               <label>图形边框类型</label>
+               <select name="borderType">
+                   <option value="none">无</option>
+                   <option value="solid">实线</option>
+                   <option value="dash">虚线</option>
+               </select>
+               <br/>
+               <label>边框颜色</label>
+               <input placeholder="边框颜色" name="borderColor"></input>
+               <br/>
+               <label>边框宽度</label>
+               <input placeholder="边框宽度" name="borderWidth"></input>
+               <br/>
+
+               
+           </div>
+           <div class="block">
+               
+               <label>是否显示图例</label>
+               <select name="isShowLegend">
+                   <option value="1">是</option>
+                   <option value="0">否</option>
+               </select>
+               <br/>
+               <label>图例key</label>
+               <select name="legendType">
+                   <option value="kpi">kpi</option>
+                   <option value="CPI">CPI</option>
+               </select>
+               <br/>
+               <label>图例位置</label>
+               <select name="legendPosition">
+                   <option value="">图例位置</option>
+                   <option value="topleft">左上</option>
+                   <option value="middleleft">左中</option>
+                   <option value="bottomleft">左下</option>
+                   <option value="topcenter">中上</option>
+                   <option value="bottomcenter">中下</option>
+                   <option value="topright">右上</option>
+                   <option value="middleright">右中</option>
+                   <option value="bottomright">右下</option>
+               </select>
+               <br/>
+               <label>图例水平偏移</label>
+               <input placeholder="图例水平偏移" name="legendX"></input> 
+               <br/>
+
+               <label>图例垂直偏移</label>
+               <input placeholder="图例垂直偏移" name="legendY"></input> 
+               <br/>
+
+               <label>图例字体颜色</label>
+               <input placeholder="图例字体颜色" name="legendFontColor"></input> 
+               <br/>
+               <label>图例字体大小</label>
+               <input placeholder="图例字体大小" name="legendFontSize"></input> 
+               <br/>
+               <label>图例字体加粗</label>
+               <select name="legendFontWeight">
+                   <option value="normal">正常</option>
+                   <option value="bold">加粗</option>
+               </select>
+               <br/>
+
+               <label>圆心内容</label>
+               <input placeholder="圆心内容" name="innerText"></input> 
+               <br/>
+               <label>圆心背景色</label>
+               <input placeholder="圆心背景色" name="innerBackgound"></input> 
+               <br/>
+               <label>圆心字体大小</label>
+               <input placeholder="圆心字体大小" name="innerTextSize"></input> 
+               <br/>
+               <label>圆心字体颜色</label>
+               <input placeholder="圆心字体颜色" name="innerTextColor"></input> 
+               <br/>
+               <label>圆心字体粗细</label>
+               <select name="innerTextWeight">
+                   <option value="normal">正常</option>
+                   <option value="bold">加粗</option>
+               </select>
+               <br/>
+
+               <label>旋转角度</label>
+               <input placeholder="旋转角度" name="rotate"></input>
+               <br/>
+               <label>画布宽度</label>
+               <input placeholder="画布宽度" name="width"></input>
+               <br/>
+               <label>画布高度</label>
+               <input placeholder="画布高度" name="height"></input>
+               <br/>
+               <br/>
+           </div>
+           <button id="submitBtn">确定</button>
+       </div>
+
+        <script type="text/javascript" src="./js/common.js"></script>
+        <script type="text/javascript" src="./data.js"></script>
+        <script type="text/javascript" src="./js/index.js"></script>
+        <script src="./assets/jquery.min.js"></script>
+        <script type="text/javascript">
+
+var str='{"legendData":["内存空闲MB","内存总量MB","内存使用率%","CPU使用率%"],"statistics":[{"name":"生产经营数据采集数据库服务器1","data":[{"CPI":"生产经营数据采集数据库服务器1","instance":"","kpi":"内存使用率%","numberValue":94.33},{"CPI":"生产经营数据采集数据库服务器1","instance":"","kpi":"内存总量MB","numberValue":93.69},{"CPI":"生产经营数据采集数据库服务器1","instance":"","kpi":"CPU使用率%","numberValue":92.67},{"CPI":"生产经营数据采集数据库服务器1","instance":"","kpi":"CPU使用率%","numberValue":88.69},{"CPI":"生产经营数据采集数据库服务器1","instance":"","kpi":"内存总量MB","numberValue":88.16},{"CPI":"生产经营数据采集数据库服务器1","instance":"","kpi":"内存使用率%","numberValue":83.97},{"CPI":"生产经营数据采集数据库服务器1","instance":"","kpi":"CPU使用率%","numberValue":68.98},{"CPI":"生产经营数据采集数据库服务器1","instance":"","kpi":"内存空闲MB","numberValue":65.62},{"CPI":"生产经营数据采集数据库服务器1","instance":"","kpi":"内存总量MB","numberValue":63.16},{"CPI":"生产经营数据采集数据库服务器1","instance":"","kpi":"内存使用率%","numberValue":61.75},{"CPI":"生产经营数据采集数据库服务器1","instance":"","kpi":"内存使用率%","numberValue":61.67},{"CPI":"生产经营数据采集数据库服务器1","instance":"","kpi":"内存使用率%","numberValue":53.08},{"CPI":"生产经营数据采集数据库服务器1","instance":"","kpi":"内存总量MB","numberValue":49.3},{"CPI":"生产经营数据采集数据库服务器1","instance":"","kpi":"内存空闲MB","numberValue":39.31},{"CPI":"生产经营数据采集数据库服务器1","instance":"","kpi":"CPU使用率%","numberValue":32.11},{"CPI":"生产经营数据采集数据库服务器1","instance":"","kpi":"CPU使用率%","numberValue":26.19},{"CPI":"生产经营数据采集数据库服务器1","instance":"","kpi":"内存空闲MB","numberValue":15.94},{"CPI":"生产经营数据采集数据库服务器1","instance":"","kpi":"内存总量MB","numberValue":12.2},{"CPI":"生产经营数据采集数据库服务器1","instance":"","kpi":"CPU使用率%","numberValue":11.56},{"CPI":"生产经营数据采集数据库服务器1","instance":"","kpi":"CPU使用率%","numberValue":0.4}],"count":1102.7800000000002},{"name":"人力资源数据库服务器1","data":[{"CPI":"人力资源数据库服务器1","instance":"","kpi":"内存使用率%","numberValue":96.91},{"CPI":"人力资源数据库服务器1","instance":"","kpi":"内存总量MB","numberValue":91.1},{"CPI":"人力资源数据库服务器1","instance":"","kpi":"CPU使用率%","numberValue":90.24},{"CPI":"人力资源数据库服务器1","instance":"","kpi":"内存总量MB","numberValue":89.15},{"CPI":"人力资源数据库服务器1","instance":"","kpi":"内存空闲MB","numberValue":75.88},{"CPI":"人力资源数据库服务器1","instance":"","kpi":"CPU使用率%","numberValue":74.25},{"CPI":"人力资源数据库服务器1","instance":"","kpi":"内存使用率%","numberValue":64.85},{"CPI":"人力资源数据库服务器1","instance":"","kpi":"内存总量MB","numberValue":57.98},{"CPI":"人力资源数据库服务器1","instance":"","kpi":"内存使用率%","numberValue":57.83},{"CPI":"人力资源数据库服务器1","instance":"","kpi":"内存总量MB","numberValue":33.96},{"CPI":"人力资源数据库服务器1","instance":"","kpi":"内存总量MB","numberValue":30.59},{"CPI":"人力资源数据库服务器1","instance":"","kpi":"内存空闲MB","numberValue":26.98},{"CPI":"人力资源数据库服务器1","instance":"","kpi":"内存空闲MB","numberValue":23.93},{"CPI":"人力资源数据库服务器1","instance":"","kpi":"内存空闲MB","numberValue":23.21},{"CPI":"人力资源数据库服务器1","instance":"","kpi":"内存空闲MB","numberValue":22.72},{"CPI":"人力资源数据库服务器1","instance":"","kpi":"CPU使用率%","numberValue":22.55},{"CPI":"人力资源数据库服务器1","instance":"","kpi":"CPU使用率%","numberValue":21.97},{"CPI":"人力资源数据库服务器1","instance":"","kpi":"内存空闲MB","numberValue":19.25},{"CPI":"人力资源数据库服务器1","instance":"","kpi":"内存空闲MB","numberValue":11.03},{"CPI":"人力资源数据库服务器1","instance":"","kpi":"CPU使用率%","numberValue":9.79},{"CPI":"人力资源数据库服务器1","instance":"","kpi":"内存空闲MB","numberValue":7.4},{"CPI":"人力资源数据库服务器1","instance":"","kpi":"内存使用率%","numberValue":7.27}],"count":958.8399999999998},{"name":"财务共享数据库服务器1","data":[{"CPI":"财务共享数据库服务器1","instance":"","kpi":"内存使用率%","numberValue":97.22},{"CPI":"财务共享数据库服务器1","instance":"","kpi":"CPU使用率%","numberValue":93.57},{"CPI":"财务共享数据库服务器1","instance":"","kpi":"内存空闲MB","numberValue":90.41},{"CPI":"财务共享数据库服务器1","instance":"","kpi":"内存使用率%","numberValue":82.81},{"CPI":"财务共享数据库服务器1","instance":"","kpi":"内存总量MB","numberValue":67.53},{"CPI":"财务共享数据库服务器1","instance":"","kpi":"CPU使用率%","numberValue":42.95},{"CPI":"财务共享数据库服务器1","instance":"","kpi":"内存空闲MB","numberValue":41.38},{"CPI":"财务共享数据库服务器1","instance":"","kpi":"内存总量MB","numberValue":40.27},{"CPI":"财务共享数据库服务器1","instance":"","kpi":"内存总量MB","numberValue":29.31},{"CPI":"财务共享数据库服务器1","instance":"","kpi":"CPU使用率%","numberValue":26.73},{"CPI":"财务共享数据库服务器1","instance":"","kpi":"内存空闲MB","numberValue":25.72},{"CPI":"财务共享数据库服务器1","instance":"","kpi":"内存使用率%","numberValue":17.48},{"CPI":"财务共享数据库服务器1","instance":"","kpi":"内存总量MB","numberValue":16.2},{"CPI":"财务共享数据库服务器1","instance":"","kpi":"内存总量MB","numberValue":12.38},{"CPI":"财务共享数据库服务器1","instance":"","kpi":"内存空闲MB","numberValue":11.3},{"CPI":"财务共享数据库服务器1","instance":"","kpi":"内存使用率%","numberValue":6.8},{"CPI":"财务共享数据库服务器1","instance":"","kpi":"内存总量MB","numberValue":5.32},{"CPI":"财务共享数据库服务器1","instance":"","kpi":"内存总量MB","numberValue":2.55}],"count":709.9300000000001}],"legendColor":["#6ed0ff","#00abff","#4de0d1","#28dbae","#85d755","#7c8ff1","#508fd7","#ff6666","#ffab00","#e8e83a","#3300cc"],"legendType":"kpi","sectorBgColor":[{"start":"rgba(55,60,185,1)","end":"rgba(130,45,143,1)"},{"start":"rgba(55,60,185,1)","end":"rgba(130,45,143,1)"},{"start":"rgba(55,60,185,1)","end":"rgba(130,45,143,1)"},{"start":"rgba(55,60,185,1)","end":"rgba(130,45,143,1)"},{"start":"rgba(21,92,113,1)","end":"rgba(18,61,112,1)"},{"start":"rgba(21,92,113,1)","end":"rgba(18,61,112,1)"},{"start":"rgba(21,92,113,1)","end":"rgba(18,61,112,1)"},{"start":"rgba(21,92,113,1)","end":"rgba(18,61,112,1)"}],"borderWidth":0,"borderColor":"rgba(230,230,230,1)","type":"cluster","coloringScheme":"a","innerRadiusRatio":0.2,"classIntervalRatio":0.26,"barIntervalRatio":0.5,"isShowBarNum":1,"barFloatNum":0,"barTextColor":"rgba(255,255,255,1)","barTextSize":12,"isShowLegend":1,"legendFontSize":9,"legendFontColor":"rgba(90,110,140,1)","legendFontWeight":"normal","legendPosition":"topleft","isShowLabel":1,"labelTextFontSize":19,"labelTextColor":"rgba(240,28,129,1)","labelTextFontWeight":"bold","scaleAngleRatio":0.05,"scaleNum":17,"scaleFontSize":14,"scaleFontColor":"rgba(81,232,10,1)","scaleFontWeight":"bold","isShowYAsix":1,"isShowXAsix":1,"scaleColor":"rgba(0,0,0,1)","backgroundColor":"rgba(33,35,37,1)","secBgColor":[{"start":"rgba(55,60,185,1)","end":"rgba(130,45,143,1)"},{"start":"rgba(55,60,185,1)","end":"rgba(130,45,143,1)"},{"start":"rgba(55,60,185,1)","end":"rgba(130,45,143,1)"},{"start":"rgba(55,60,185,1)","end":"rgba(130,45,143,1)"},{"start":"rgba(21,92,113,1)","end":"rgba(18,61,112,1)"},{"start":"rgba(21,92,113,1)","end":"rgba(18,61,112,1)"},{"start":"rgba(21,92,113,1)","end":"rgba(18,61,112,1)"},{"start":"rgba(21,92,113,1)","end":"rgba(18,61,112,1)"}],"paddingTop":0,"paddingBottom":0,"paddingLeft":0,"paddingRight":0,"showOrderType":"asc","rotate":0,"isShowTitle":1,"titleContent":"ghfhgfhh","titlePosition":"left","titleBackground":"rgba(33,35,37,1)","titleHeight":40,"titleFontSize":20,"titleFontColor":"rgba(90,110,140,1)","titleFontWeight":"normal","innerText":"qwe","innerBackgound":"rgba(33,35,37,1)","innerTextSize":25,"innerTextColor":"rgba(255,255,255,1)","innerTextWeight":"normal","borderType":"none","width":786,"height":637,"maxY":0}';
+// var initData = JSON.parse(str);
+
+
+
+
+            var svg = d3.select('body').append('svg')
+        		.attr('width', initData.width)
+        		.attr('height', initData.height)
+
+          // var chart = new Chart({type:'stacked'}, svg);
+          var chart = new Chart({type:'cluster'}, svg);
+          chart.init(initData)
+
+        var params = {
+            statistics: initData.statistics,
+            legendData: initData.legendData,
+            legendColor: initData.legendColor,
+            sectorBgColor: initData.sectorBgColor,
+            width: initData.width,
+            height: initData.height
+        };
+         $('#submitBtn').on('click', function (e) {
+            $('input').each(function (index, item) {
+                  params[$(item).attr('name')] = $(item).val()
+                
+            });
+            $('select').each(function (index, item) {
+               if ($(item).val() !== '') {
+                   params[$(item).attr('name')] = $(item).val()
+               }
+            });
+
+           chart = new Chart(params, svg)
+           svg.attr('width', params.width).attr('height', params.height)  
+           chart.init(params);
+         });
+
+
+         for (var o in chart.data) {
+            $('input[name=' + o + ']').val(chart.data[o])
+         } 
+
+
+
+         // 这里是我自己模拟的拖拽缩放，应该是在平台层实现的
+         svg.on('mousedown', function () {
+             startX = d3.event.pageX;
+             startY = d3.event.pageY;
+             var diffW;
+              var diffH;
+              var bgWidth = initData.width;
+              var bgHeight = initData.height;
+              svg.on('mousemove', function () {
+                  diff = d3.event.pageX - startX > d3.event.pageY - startY
+                       ? d3.event.pageX - startX
+                       : d3.event.pageY - startY;
+                  diffW = d3.event.pageX - startX;
+                  diffH = d3.event.pageY - startY;
+                  d3.select(this)
+                       .attr('width', bgWidth + diffW)
+                       .attr('height', bgHeight + diffH)
+
+                  chart.data.width = bgWidth + diffW > 0 ? bgWidth + diffW : 0;
+                  chart.data.height = bgHeight + diffH > 0 ? bgHeight + diffH : 0;
+                  // 拖拽改变属性，重新渲染
+                  chart.update(chart.data)
+
+              })
+          })
+
+          svg.on('mouseup', function () {
+              svg.on('mousemove', null);
+              for (var o in chart.data) {
+                  $('input[name=' + o + ']').val(chart.data[o])
+              }
+          });
+          $('html').on('mouseup', function () {
+              svg.on('mousemove', null);
+          })
+        </script>
+    </body>
+</html>
