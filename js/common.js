@@ -442,7 +442,7 @@ var Common = {
                 endAngle: (360+data.scaleAngle / 2) / 180 * Math.PI
             }))
             .attr('transform', 'translate(' + data.center.x + ',' + data.center.y
-                + ') rotate(' + data.rotate + ',' + data.center.x + ' ' + data.center.y + ')')
+                + ') rotate(' + data.rotate + ')')
             .attr('fill', data.backgroundColor)
     },
 
