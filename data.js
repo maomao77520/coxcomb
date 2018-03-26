@@ -18,17 +18,17 @@ var initData = {
                 CPI: '系列1',
                 instance: '新版网站测试服务器2_内存_内存总量MB_系列1',
                 kpi: '新版网站测试服务器2_内存_内存总量MB_系列1',
-                numberValue: 100   // 柱状图数值
+                numberValue: 500   // 柱状图数值
             }, {
                 CPI: '内存总量_系列2',
                 instance: '新版网站测试服务器2_内存_内存总量MB_系列2',
                 kpi: '新版网站测试服务器2_内存_内存总量MB_系列2',
-                numberValue: 500
+                numberValue: 0
             }, {
                 CPI: '系列3',
                 instance: '新版网站测试服务器2_内存_内存总量MB_系列3',
                 kpi: '新版网站测试服务器2_内存_内存总量MB_系列3',
-                numberValue: 200
+                numberValue: 5
             }],
         }, {
             name: '基础设备基础设备基础设备',
@@ -72,7 +72,7 @@ var initData = {
                 CPI: '系列1',
                 instance: '新版网站测试服务器2_内存_内存总量MB_系列1',
                 kpi: '新版网站测试服务器2_内存_内存总量MB_系列1',
-                numberValue: 211   // 柱状图数值
+                numberValue: 1   // 柱状图数值
             }, {
                 CPI: '内存总量_系列2',
                 instance: '新版网站测试服务器2_内存_内存总量MB_系列2',
@@ -82,7 +82,7 @@ var initData = {
                 CPI: '系列3',
                 instance: '新版网站测试服务器2_内存_内存总量MB_系列3',
                 kpi: '新版网站测试服务器2_内存_内存总量MB_系列3',
-                numberValue: 250
+                numberValue: 2
             },{
                 CPI: '系列4',
                 instance: '新版网站测试服务器2_内存_内存总量MB_系列4',
@@ -118,12 +118,12 @@ var initData = {
                 CPI: '新版网站测试服务器2_内存_内存总量MB_系列1',
                 instance: '新版网站测试服务器2_内存_内存总量MB_系列1',
                 kpi: '新版网站测试服务器2_内存_内存总量MB_系列1',
-                numberValue: 100   // 柱状图数值
+                numberValue: 10   // 柱状图数值
             }, {
                 CPI: '新版网站测试服务器2_内存_内存总量MB_系列2',
                 instance: '新版网站测试服务器2_内存_内存总量MB_系列2',
                 kpi: '新版网站测试服务器2_内存_内存总量MB_系列2',
-                numberValue: 450
+                numberValue: 4
             }, {
                 CPI: '新版网站测试服务器2_内存_内存总量MB_系列3',
                 instance: '新版网站测试服务器2_内存_内存总量MB_系列3',

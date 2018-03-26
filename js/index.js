@@ -243,7 +243,7 @@ Stacked.prototype = {
                 s = startAngle + data.classIntervalAngle;
                 e = s + data.barAngle;
                 barOuterR = data.statistics[i].data[n-1].numberValue - data.minY > 0 
-                    ? (data.statistics[i].data[n-1].numberValue - data.minY) * avg + data.innerRadius
+                    ? (data.statistics[i].data[n-1].numberValue - data.minY) * avg + data.innerRadius + data.innerRadiusMargin
                     : data.innerRadius + data.innerRadiusMargin;
 
                 fillColor = data.legendColor[data.legendData.indexOf(data.statistics[i].data[n-1][data.legendType])]
@@ -616,7 +616,7 @@ Cluster.prototype = {
                 s = startAngle + data.classIntervalAngle + (n-1) * data.barAngle + (n-1) * data.barIntervalAngle;
                 e = s + data.barAngle;
                 barOuterR = data.statistics[i].data[n-1].numberValue - data.minY > 0 
-                    ? (data.statistics[i].data[n-1].numberValue - data.minY) * avg + data.innerRadius
+                    ? (data.statistics[i].data[n-1].numberValue - data.minY) * avg + data.innerRadius + data.innerRadiusMargin
                     : data.innerRadius + data.innerRadiusMargin;
 
                 fillColor = data.legendColor[data.legendData.indexOf(data.statistics[i].data[n-1][data.legendType])];
@@ -626,12 +626,14 @@ Cluster.prototype = {
                         Math.round(color.g + 0.8*(255-color.g)),
                         Math.round(color.b + 0.8*(255-color.b))
                     )
+
                 var arcD = arc({
                     innerRadius: data.innerRadius + data.innerRadiusMargin,
                     outerRadius: barOuterR,
                     startAngle: s / 180 * Math.PI,
                     endAngle: e / 180 * Math.PI
                 });
+
                 (function (i, n) {
                     
                     me.rotateWrap.select('#' + me.uuid +'-coxcomb-component-barwrap').append('path')

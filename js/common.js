@@ -70,9 +70,9 @@ var Common = {
         contentWrap.append('g').attr('id', uuid + '-coxcomb-component-xasix-wrap');
         var d, r;
         for (var i = 1; i <= len; i++) {
-            r = interval * i + data.innerRadius;
+            r = interval * i + data.innerRadius + data.innerRadiusMargin;
             d = d3.arc()({
-	            innerRadius: 0,
+	            innerRadius: data.innerRadiusMargin,
 	            outerRadius: r,
 	            startAngle: data.scaleAngle / 2 / 180 * Math.PI,
 	            endAngle: (data.totalAngle-data.scaleAngle / 2) / 180 * Math.PI
@@ -396,7 +396,7 @@ var Common = {
         var arc = d3.arc();
         var d = arc({
             innerRadius: data.innerRadius,
-            outerRadius: data.outerRadius,
+            outerRadius: data.outerRadius + data.innerRadiusMargin,
             startAngle: start / 180 * Math.PI,
             endAngle: (start + data.sectorAngle) / 180 * Math.PI
         });
