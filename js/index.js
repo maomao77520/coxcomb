@@ -91,8 +91,6 @@ Stacked.prototype = {
             .attr('height', data.height)
             .attr('fill', data.backgroundColor);
 
-        this.rotateWrap = this.contentWrap.append('g')
-            .attr('id', this.uuid + '-my-coxcomb-component-rotate-wrap')
 
         if (~~this.data.isShowTitle == 1) {
             Common.renderTitle(this.contentWrap, this.data);
@@ -108,11 +106,13 @@ Stacked.prototype = {
         }
 
         this.initData();
+        Common.renderInnerCircle(this);
+        this.rotateWrap = this.contentWrap.append('g')
+            .attr('id', this.uuid + '-my-coxcomb-component-rotate-wrap')
 
         if (this.data.borderType !== 'none') {
             Common.renderCircleBorder(this.rotateWrap, this.data, this.uuid);
         }
-        Common.renderInnerCircle(this);
         Common.renderSectors(this.rotateWrap, this.data, this.uuid);
         if (~~this.data.isShowXAsix == 1) {
             Common.renderXAsix(this.rotateWrap, this.data, this.uuid);
@@ -530,9 +530,6 @@ Cluster.prototype = {
             .attr('height', data.height)
             .attr('fill', data.backgroundColor);
 
-        this.rotateWrap = this.contentWrap.append('g')
-            .attr('id', this.uuid + '-my-coxcomb-component-rotate-wrap')
-            
 
         if (~~this.data.isShowTitle == 1) {
             Common.renderTitle(this.contentWrap, this.data);
@@ -549,11 +546,15 @@ Cluster.prototype = {
         }
 
         this.initData();
+        Common.renderInnerCircle(this);
+
+        this.rotateWrap = this.contentWrap.append('g')
+            .attr('id', this.uuid + '-my-coxcomb-component-rotate-wrap');   
+        
 
         if (this.data.borderType !== 'none') {
             Common.renderCircleBorder(this.rotateWrap, this.data, this.uuid);
         }
-        Common.renderInnerCircle(this);
         Common.renderSectors(this.rotateWrap, this.data, this.uuid);
         if (~~this.data.isShowXAsix == 1) {
             Common.renderXAsix(this.rotateWrap, this.data, this.uuid);
